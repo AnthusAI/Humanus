@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "event_id": "c83707dd-8b2f-458a-9a36-190514c3c26a",
+  "issue_id": "LIM-bd872270-fc75-4b59-a8c8-8d8788079b39",
+  "event_type": "issue_created",
+  "occurred_at": "2026-10-20T01:22:38.349Z",
+  "actor_id": "home",
+  "payload": {
+    "title": "Policy packs are the editorial contract",
+    "description": "As a CMS integrating Limatus, I want to send my editorial policies as a validated policy pack, so that Limatus enforces our guidelines without reading files from disk.\n\nSpecification: `features/policy-pack-contracts.feature`\n\n```gherkin\n@editorial @contracts\nFeature: Policy packs are the editorial contract\n  As a CMS integrating Limatus\n  I want to send my editorial policies as a validated policy pack\n  So that Limatus enforces our guidelines without reading files from disk\n\n  Scenario: Load a policy pack from a payload\n    Given a policy pack payload with a rules policy and a classifier policy\n    When the policy pack payload is loaded\n    Then the loaded pack has the policies \"no-hype\" and \"concrete-claims\"\n    And policy \"no-hype\" has a \"rules\" detector of kind \"phrase\"\n    And policy \"concrete-claims\" has a \"classifier\" detector with scope \"sentence\"\n    And each loaded policy keeps its version and severity\n\n  Scenario: Accept a guidance-only policy\n    Given a policy pack payload with a guidance-only policy\n    When the policy pack payload is loaded\n    Then the loaded policy \"plain-language\" has no detectors\n\n  Scenario: Reject a classifier detector without a question\n    Given a policy pack payload whose classifier detector has no question\n    When the policy pack payload is loaded\n    Then loading fails with a policy pack validation error\n    And the policy pack error names the location \"policies/1/detectors/0\"\n\n  Scenario: Reject duplicate policy ids\n    Given a policy pack payload with two policies named \"no-hype\"\n    When the policy pack payload is loaded\n    Then loading fails with a policy pack validation error\n    And the policy pack error mentions \"duplicate policy id 'no-hype'\"\n\n  Scenario: Reject a regex detector that does not compile\n    Given a policy pack payload with the regex pattern \"(unclosed\"\n    When the policy pack payload is loaded\n    Then loading fails with a policy pack validation error\n    And the policy pack error mentions \"does not compile\"\n\n  Scenario Outline: Publish each contract schema\n    When I run the limatus command \"schema <name>\"\n    Then the command succeeds\n    And the command prints a JSON Schema whose id ends with \"<name>.json\"\n\n    Examples:\n      | name               |\n      | policy-pack-v1     |\n      | check-request-v1   |\n      | check-result-v1    |\n      | suggest-request-v1 |\n      | suggest-result-v1  |\n```",
+    "issue_type": "story",
+    "status": "open",
+    "priority": 1,
+    "assignee": null,
+    "parent": "LIM-6a84bebb-e5eb-4c99-89b3-a73986797fa7",
+    "labels": [
+      "editorial"
+    ],
+    "agent": {
+      "platform": "claude-code",
+      "model": "claude-opus-5-5",
+      "name": "Claude"
+    }
+  }
+}

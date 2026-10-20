@@ -10,9 +10,14 @@ authors = [
 ]
 dependencies = [
     "PyYAML>=6.0.2,<7.0.0",
+    "jsonschema>=4.18,<5",
+    "markdown-it-py>=3.0,<5",
 ]
 
 [project.optional-dependencies]
+jev = [
+    "typesafe-sdk>=0.7.2,<0.8",
+]
 dev = [
     "behave>=1.2.6",
     "pytest>=8.0.0",
@@ -33,7 +38,7 @@ build-backend = "setuptools.build_meta"
 where = ["src"]
 
 [tool.setuptools.package-data]
-limatus = ["data/SKILL.md"]
+limatus = ["data/SKILL.md", "schemas/*.json", "schemas/*.xml", "packs/*.yml", "packs/*.md"]
 
 [tool.semantic_release]
 version_toml = ["pyproject.toml:project.version"]

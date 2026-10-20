@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "event_id": "40b91755-fbd3-4487-bd2e-52c2817501b8",
+  "issue_id": "LIM-7906a51d-a3d9-406b-a124-9e9882ef289b",
+  "event_type": "field_updated",
+  "occurred_at": "2026-10-19T23:36:05.519Z",
+  "actor_id": "home",
+  "payload": {
+    "changes": {
+      "title": {
+        "from": "Luna rewrite suggestions; retire judge from scan",
+        "to": "Luna rewrite suggestions and authoring assist; remove judge lane"
+      },
+      "description": {
+        "from": "LLM is for rewrites only.\n\n## Scope\n- `suggest(request)`: one finding + policy (guidance, rewriteGuidance) + surrounding paragraph → 2–3 options with patch spans, `factVerificationRequired`, `unresolvedQuestions`. No decisions file required.\n- Model `gpt-6-luna` by default (configurable); send `max_completion_tokens`, omit `temperature`.\n- Remove the OpenAI judge from the `check` path (keep or delete for `compare` per open decision 4).\n- Keep the no-fabrication and evasion guards from `editorial_rewrite_options`.\n\n## Done when\n- `suggest` passes fixture tests with a fake resolver; `check` makes no LLM calls.",
+        "to": "LLM is for rewrites only.\n\n## Scope\n- `suggest(request)`: one finding + policy (guidance, rewriteGuidance) + surrounding paragraph → 2–3 options with patch spans, `factVerificationRequired`, `unresolvedQuestions`. No decisions file required.\n- Model `gpt-6-luna` by default (configurable); send `max_completion_tokens`, omit `temperature`.\n- Delete the OpenAI judge lane, canary and judge-dependent `compare` paths; redesign or drop `decide`/`options`/`apply`/`verify` CLI commands around `check` + `suggest` (no compatibility constraint).\n- Policy-authoring assist: `draft_questions(guideline)` uses Luna to propose classifier detectors for editor approval; never called from `check`.\n- Keep the no-fabrication and evasion guards from `editorial_rewrite_options`.\n\n## Done when\n- `suggest` passes fixture tests with a fake resolver; `check` makes no LLM calls."
+      }
+    }
+  }
+}

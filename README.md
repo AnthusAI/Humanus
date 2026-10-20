@@ -100,6 +100,75 @@ net improvement. The recommendation is advisory and is `accept` only when
 the threshold is met and the working draft has no more unsupported claims than
 the original. No detector score is accepted as input or emitted in output.
 
+## Policy packs and `check`
+
+Limatus is becoming a configurable editorial compliance engine: the caller
+(for example a CMS) sends its editorial policies as a **policy pack** with each
+request, and `check` returns the document as **standoff annotation** —
+segments, protected regions and findings with offsets into the submitted text.
+The contracts are JSON Schemas packaged with Limatus:
+
+| Schema | Purpose |
+| --- | --- |
+| `policy-pack-v1` | Policies, each with prose guidance, severity (`info`/`warn`/`error`) and detectors (`rules` lane: `regex`, `phrase`, `builtin`; `classifier` lane: a zero-shot question at sentence, paragraph or document scope) |
+| `check-request-v1` / `check-result-v1` | Content (`markus`, `markdown` or `text`) plus a pack in; segments, protected regions, findings, coverage and lane status out |
+| `finding-v1` | One located problem, with an id that is stable across rescans |
+| `suggest-request-v1` / `suggest-result-v1` | Rewrite options for one finding |
+
+```bash
+limatus schema policy-pack-v1                 # print a contract schema
+limatus pack import --profile style-profile.yml > pack.json
+limatus pack validate pack.json
+limatus check --draft draft.md --pack pack.json
+```
+
+```python
+from limatus import check
+
+result = check({"schemaVersion": 1, "content": {"format": "markus", "text": text}, "pack": pack})
+```
+
+Result offsets count **UTF-16 code units**, as JavaScript string indexes do.
+Front matter, code, Markus directives, block quotes, tables and raw HTML are
+protected regions, never prose. Paragraph and sentence ids derive from their
+text, so they survive edits elsewhere in the document.
+
+Two lanes find problems:
+
+- **Rules** (deterministic): `phrase`, `regex` and `builtin` detectors run on
+  prose only. `limatus pack builtin ai-writing-tells` prints a starter pack of
+  24 policies adapted from [avoid-ai-writing](https://github.com/conorbronsdon/avoid-ai-writing)
+  (MIT; see `limatus/packs/NOTICE.md`) for a CMS to copy and edit.
+- **Classifier** (TypeSafe Jev, zero-shot): install `limatus[jev]` and set
+  `TYPESAFE_API_KEY`. Each sentence, paragraph or document segment costs one
+  request carrying every question that applies to it; answers are cached by
+  content, so a rescan after an edit only asks about changed text. Findings
+  carry the model's probability; those between `reviewAt` and `threshold`
+  have status `review`. `options.classifier.maxInputTokens` caps spend. If no
+  decision model is configured the lane reports `unavailable` and rules
+  findings are still returned.
+
+Generative help never finds problems; it only helps an editor fix them
+(OpenAI `gpt-6-luna` by default, via `OPENAI_API_KEY`):
+
+- `suggest` (`limatus suggest --request`) returns up to three rewrite options
+  for a finding — rewritten as its whole sentence — or for any span the editor
+  selects, with an optional editor note. Options that change nothing, aim at
+  evading AI detection, or still break the triggering rule are dropped and
+  reported.
+- `draft_questions` (`limatus draft-questions --request`) turns a policy written
+  in prose into proposed classifier detectors for an editor to review.
+
+Editors' decisions make the classifier better:
+
+- `calibrate` (`limatus calibrate --labels`) fits a per-detector calibration
+  from accepted/fixed (violates) and dismissed (does not) findings — Platt
+  scaling from 10 labels, isotonic from 50. Store it on the detector as
+  `calibration`; thresholds then apply to the calibrated probability and
+  findings also report `rawProbability` (use that one in new labels).
+- `options.classifier.examples` passes past decisions with their text; the most
+  similar ones travel with each question as few-shot examples.
+
 ## Portable style profiles
 
 A profile is a versioned YAML or JSON document. The profile below is complete:

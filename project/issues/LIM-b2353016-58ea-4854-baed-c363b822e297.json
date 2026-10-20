@@ -1,0 +1,35 @@
+{
+  "id": "LIM-b2353016-58ea-4854-baed-c363b822e297",
+  "title": "Check a document against a policy pack",
+  "description": "As a CMS copy-editing component, I want one call that takes content plus a policy pack and returns an annotated document, so that I can mark every policy problem on the draft the editor sees.\n\nSpecification: `features/check-contract.feature`\n\n```gherkin\n@editorial @contracts\nFeature: Check a document against a policy pack\n  As a CMS copy-editing component\n  I want one call that takes content plus a policy pack and returns an annotated document\n  So that I can mark every policy problem on the draft the editor sees\n\n  Scenario: Return an annotated document in UTF-16 offsets\n    Given a check request for a Markus document with an emoji before its prose\n    When Limatus checks the request\n    Then the check result is a valid \"check-result-v1\" document\n    And the check result reports offsets in \"utf16\" code units\n    And every result segment's UTF-16 span selects its text as JavaScript would\n    And the check result names the policy pack id and version\n    And the check result includes one document segment and its paragraph and sentence segments\n    And every lane reports a status\n\n  Scenario: Reject an invalid check request\n    Given a check request without content\n    When Limatus checks the request\n    Then checking fails with a check request validation error\n    And the check request error names the location \"content\"\n\n  Scenario: Check from the command line\n    Given a check request file for a Markus document\n    When I run the limatus command \"check --request\" with the request file\n    Then the command succeeds\n    And the command prints a valid \"check-result-v1\" document\n\n  Scenario: A finding keeps its id when another sentence changes\n    Given a finding for policy \"no-hype\" on \"game-changing\" in the sentence \"This is game-changing work.\"\n    When another sentence in the same paragraph is edited and the finding is identified again\n    Then the finding id is unchanged\n\n  Scenario: The same excerpt twice in a sentence gets two ids\n    Given a finding for policy \"no-hype\" on \"very\" in the sentence \"It is very, very good.\"\n    When both occurrences of the excerpt are identified\n    Then the two finding ids differ\n\n  Scenario: Editing the sentence that holds the finding gives it a new id\n    Given a finding for policy \"no-hype\" on \"game-changing\" in the sentence \"This is game-changing work.\"\n    When the sentence becomes \"This is game-changing research.\" and the finding is identified again\n    Then the finding id changes\n```",
+  "type": "story",
+  "status": "closed",
+  "priority": 1,
+  "assignee": null,
+  "creator": null,
+  "parent": "LIM-6a84bebb-e5eb-4c99-89b3-a73986797fa7",
+  "labels": [
+    "editorial"
+  ],
+  "dependencies": [],
+  "comments": [
+    {
+      "id": "8daa707f-3d19-4cb7-8504-f8bc6e60263f",
+      "author": "home",
+      "text": "Specification passing on branch feat/policy-pack-contracts (behave --tags=@contracts: 24 scenarios green; full suites green).",
+      "created_at": "2026-10-20T01:29:48.537607Z",
+      "comment_type": "default"
+    }
+  ],
+  "created_at": "2026-10-20T01:22:38.897Z",
+  "updated_at": "2026-10-20T01:55:22.188649Z",
+  "closed_at": "2026-10-20T01:55:22.188617Z",
+  "agent": {
+    "platform": "claude-code",
+    "model": "claude-opus-5-5",
+    "name": "Claude"
+  },
+  "right_now_summary": null,
+  "right_now_updated_at": null,
+  "custom": {}
+}

@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "event_id": "8227d24d-7659-4ffd-b1df-d552b22852c9",
+  "issue_id": "LIM-3f306578-4e42-4209-afa8-86329d69d5ec",
+  "event_type": "issue_created",
+  "occurred_at": "2026-10-19T22:38:14.061Z",
+  "actor_id": "home",
+  "payload": {
+    "title": "Jev zero-shot classifier lane",
+    "description": "Zero-shot classification with TypeSafe Jev, per sentence, paragraph and document.\n\n## Scope\n- Async client on `typesafe-sdk` (`AsyncTypeSafeClient`, `RetryPolicy`), modelled on `Jev-Flywheel/jev_flywheel/jev.py`: one request per segment with all applicable questions, in-flight de-duplication, bounded concurrency, usage/cost accounting. Env: `TYPESAFE_API_KEY`, optional `TYPESAFE_BASE_URL` (allows Laya fallback).\n- Compile classifier detectors → questions (`noul`/`choice`/`score`, instructions, criteria); policy examples go into `state` as labeled examples.\n- Sentence state `{target, paragraph}`.\n- Cache keyed by question-set fingerprint + segment hash; no raw text stored in cache artifacts.\n- Thresholds and `reviewBand` per detector; mark mid-band results `status: review`.\n- Fake resolver for tests; no network in CI.\n\n## Notes\n- Raw Jev probabilities are overconfident; `confidence` is peakedness, not P(correct). Watch first-option position bias in `choice` criteria ordering.\n- Rough cost: ~150k input tokens per 40-paragraph article (~$0.01).\n\n## Done when\n- `check()` returns classifier findings + coverage for a fixture pack; incremental rescan only re-queries changed segments.",
+    "issue_type": "epic",
+    "status": "open",
+    "priority": 1,
+    "assignee": null,
+    "parent": "LIM-a5828a06-513e-47f7-b1dc-884cde9e27de",
+    "labels": [
+      "editorial"
+    ],
+    "agent": {
+      "platform": "claude-code",
+      "model": "claude-opus-5-5",
+      "name": "Claude"
+    }
+  }
+}

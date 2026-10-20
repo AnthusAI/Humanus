@@ -1,5 +1,13 @@
 """Limatus CLI entry point.
 
+    limatus check --request <check-request.json> | --draft <file> --pack <policy-pack.yml> [--output FILE]
+    limatus suggest --request <suggest-request.json>          (rewrite options; needs OPENAI_API_KEY)
+    limatus draft-questions --request <draft-questions-request.json>
+    limatus calibrate --labels <feedback-labels.json>          (per-detector calibration from editor decisions)
+    limatus schema policy-pack-v1|check-request-v1|check-result-v1|finding-v1|suggest-request-v1|suggest-result-v1
+    limatus pack import --profile <style-profile.yml> [--version V] [--output FILE]
+    limatus pack validate <policy-pack.yml>
+    limatus pack builtin [name]   (list or print starter packs, e.g. ai-writing-tells)
     limatus scan --draft <file> --profile <style-profile.yml> [--require-judge] [...]
     limatus decide --finding-id finding-<hex> --decision skip|rewrite|delete|keep|add \\
                    [--note TEXT] --decisions <decisions.json>
@@ -40,6 +48,15 @@ from .editorial_commands import (
     editorial_standfirst,
     editorial_verify,
 )
+from .contract_commands import (
+    contract_calibrate,
+    contract_check,
+    contract_draft_questions,
+    contract_pack,
+    contract_schema,
+    contract_suggest,
+)
+from .suggest import SuggestUnavailableError
 from .editorial_canary import main as editorial_canary
 from .editorial_eval import main as editorial_eval
 from .skill import load_skill_bytes
@@ -55,6 +72,12 @@ def editorial_skill(flags: list[str]) -> None:
 
 
 COMMANDS = {
+    "check": contract_check,
+    "suggest": contract_suggest,
+    "draft-questions": contract_draft_questions,
+    "calibrate": contract_calibrate,
+    "schema": contract_schema,
+    "pack": contract_pack,
     "scan": editorial_scan,
     "diagnose": editorial_diagnose,
     "decide": editorial_decide,
@@ -89,7 +112,13 @@ def main(argv: list[str] | None = None) -> int:
 
     try:
         result = handler(flags)
-    except (StyleProfileValidationError, UsabilityProfileValidationError, JudgeUnavailableError, ValueError) as exc:
+    except (
+        StyleProfileValidationError,
+        UsabilityProfileValidationError,
+        JudgeUnavailableError,
+        SuggestUnavailableError,
+        ValueError,
+    ) as exc:
         print(f"limatus: {exc}", file=sys.stderr)
         return 1
     return result if isinstance(result, int) else 0

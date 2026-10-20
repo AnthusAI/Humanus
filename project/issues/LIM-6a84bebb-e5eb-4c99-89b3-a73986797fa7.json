@@ -1,0 +1,35 @@
+{
+  "id": "LIM-6a84bebb-e5eb-4c99-89b3-a73986797fa7",
+  "title": "Policy-pack contracts and Markus-aware segmenter",
+  "description": "Define the contracts everything else builds on, and replace regex segmentation.\n\n## Scope\n- JSON Schemas in `src/limatus/schemas/`: `policy-pack-v1`, `check-request-v1`, `check-result-v1`, `suggest-request-v1`, `suggest-result-v1`. Policy and detector shapes as in the initiative.\n- Policy-pack loader from dict/JSON payload (no file paths; reference samples optional/inline).\n- Importer: existing `style-profile.yml` → policy pack.\n- Markus-aware segmenter (markdown-it-py with source maps): paragraph + sentence segments with stable ids and offsets; protected regions (code, directives, quotes, front matter) masked.\n- UTF-16 offset conversion at the output boundary.\n- Stable finding ids: hash(policyId, normalized segment text, relative span).\n- `check()` skeleton returning the result shape with no lanes wired.\n\n## Done when\n- Schemas validate fixtures; round-trip tests for UTF-16 offsets with emoji/astral text.\n- Segmenter handles repeated paragraphs correctly (no `str.find`).\n- A published schema version Papyrus can code against.",
+  "type": "epic",
+  "status": "closed",
+  "priority": 1,
+  "assignee": null,
+  "creator": null,
+  "parent": "LIM-a5828a06-513e-47f7-b1dc-884cde9e27de",
+  "labels": [
+    "editorial"
+  ],
+  "dependencies": [],
+  "comments": [
+    {
+      "id": "e7bace87-8d30-4646-9968-21a371057a9b",
+      "author": "home",
+      "text": "Implemented on branch feat/policy-pack-contracts: schemas (policy-pack, check-request/result, finding, suggest-request/result) packaged under limatus/schemas; load_policy_pack with semantic checks; policy_pack_from_style_profile + `limatus pack import`; markdown-it-py based Markus segmenter (protected regions, stable content-derived ids); check() returning UTF-16 standoff annotation with lane status; finding_id(); `limatus check|schema|pack` CLI. New deps: jsonschema, markdown-it-py. Lanes report 'unavailable' until LIM-dc05d2 / LIM-3f3065. Awaiting commit/PR.",
+      "created_at": "2026-10-20T01:29:48.559034Z",
+      "comment_type": "default"
+    }
+  ],
+  "created_at": "2026-10-19T22:38:03.249402Z",
+  "updated_at": "2026-10-20T01:55:22.211640Z",
+  "closed_at": "2026-10-20T01:55:22.211611Z",
+  "agent": {
+    "platform": "claude-code",
+    "model": "claude-opus-5-5",
+    "name": "Claude"
+  },
+  "right_now_summary": null,
+  "right_now_updated_at": null,
+  "custom": {}
+}

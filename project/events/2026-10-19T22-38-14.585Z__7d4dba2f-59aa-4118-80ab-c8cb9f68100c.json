@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "event_id": "7d4dba2f-59aa-4118-80ab-c8cb9f68100c",
+  "issue_id": "LIM-7906a51d-a3d9-406b-a124-9e9882ef289b",
+  "event_type": "issue_created",
+  "occurred_at": "2026-10-19T22:38:14.585Z",
+  "actor_id": "home",
+  "payload": {
+    "title": "Luna rewrite suggestions; retire judge from scan",
+    "description": "LLM is for rewrites only.\n\n## Scope\n- `suggest(request)`: one finding + policy (guidance, rewriteGuidance) + surrounding paragraph → 2–3 options with patch spans, `factVerificationRequired`, `unresolvedQuestions`. No decisions file required.\n- Model `gpt-6-luna` by default (configurable); send `max_completion_tokens`, omit `temperature`.\n- Remove the OpenAI judge from the `check` path (keep or delete for `compare` per open decision 4).\n- Keep the no-fabrication and evasion guards from `editorial_rewrite_options`.\n\n## Done when\n- `suggest` passes fixture tests with a fake resolver; `check` makes no LLM calls.",
+    "issue_type": "epic",
+    "status": "open",
+    "priority": 1,
+    "assignee": null,
+    "parent": "LIM-a5828a06-513e-47f7-b1dc-884cde9e27de",
+    "labels": [
+      "editorial"
+    ],
+    "agent": {
+      "platform": "claude-code",
+      "model": "claude-opus-5-5",
+      "name": "Claude"
+    }
+  }
+}

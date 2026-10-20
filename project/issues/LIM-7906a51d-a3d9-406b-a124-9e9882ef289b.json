@@ -1,0 +1,40 @@
+{
+  "id": "LIM-7906a51d-a3d9-406b-a124-9e9882ef289b",
+  "title": "Luna suggestions (findings and selections), authoring assist; remove judge",
+  "description": "LLM is for rewrites only.\n\n## Scope\n- **Selection rewrites:** `suggest` accepts either a finding or an editor `selection` span (any sentence or paragraph) plus an optional editor note (\"shorter\", \"less formal\"); a selection is treated as an ad-hoc finding with no policy.\n- `suggest(request)`: one finding + policy (guidance, rewriteGuidance) + surrounding paragraph → 2–3 options with patch spans, `factVerificationRequired`, `unresolvedQuestions`. No decisions file required.\n- Model `gpt-6-luna` by default (configurable); send `max_completion_tokens`, omit `temperature`.\n- Delete the OpenAI judge lane, canary and judge-dependent `compare` paths; redesign or drop `decide`/`options`/`apply`/`verify` CLI commands around `check` + `suggest` (no compatibility constraint).\n- Policy-authoring assist: `draft_questions(guideline)` uses Luna to propose classifier detectors for editor approval; never called from `check`.\n- Keep the no-fabrication and evasion guards from `editorial_rewrite_options`.\n\n## Done when\n- `suggest` passes fixture tests with a fake resolver; `check` makes no LLM calls.",
+  "type": "epic",
+  "status": "closed",
+  "priority": 1,
+  "assignee": null,
+  "creator": null,
+  "parent": "LIM-a5828a06-513e-47f7-b1dc-884cde9e27de",
+  "labels": [
+    "editorial"
+  ],
+  "dependencies": [
+    {
+      "target": "LIM-6a84bebb-e5eb-4c99-89b3-a73986797fa7",
+      "type": "blocked-by"
+    }
+  ],
+  "comments": [
+    {
+      "id": "8d5abf5d-ad16-4da1-9f3e-0d14ad266827",
+      "author": "home",
+      "text": "suggest (findings expand to their sentence; selections exact; editor note; drops identical/duplicate/evasive options and options that still break the triggering rule) and draft_questions (validated noul detectors, defaults 0.8/0.5) done with CLI. Live with gpt-6-luna: finding rewrite 6s, selection 3.5s, draft 4.6s. Legacy judge/scan removal moved to its chore so it ships with the Papyrus migration.",
+      "created_at": "2026-10-20T02:00:38.196218Z",
+      "comment_type": "default"
+    }
+  ],
+  "created_at": "2026-10-19T22:38:14.584973Z",
+  "updated_at": "2026-10-20T02:03:23.209656Z",
+  "closed_at": "2026-10-20T02:03:23.209630Z",
+  "agent": {
+    "platform": "claude-code",
+    "model": "claude-opus-5-5",
+    "name": "Claude"
+  },
+  "right_now_summary": null,
+  "right_now_updated_at": null,
+  "custom": {}
+}

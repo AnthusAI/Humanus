@@ -1,0 +1,40 @@
+{
+  "id": "LIM-9ba0bfe5-a32b-44d7-9d49-98010b0073a5",
+  "title": "Editor feedback labels and calibration",
+  "description": "Turn editor decisions into better detection.\n\n## Scope\n- Label schema: `{policyId, policyVersion, segmentHash, lane, probability, decision: accepted|dismissed|fixed, reason?}` (no raw text required).\n- `calibrate(labels)` → per-detector isotonic map (fallback Platt below a minimum count); applied in `check` when supplied in the pack.\n- Few-shot retrieval: caller may supply past labeled examples; Limatus selects the most similar per target.\n- Offline steering hook compatible with Jev-Flywheel (propose new questions from dismiss reasons).\n\n## Done when\n- Calibration measurably reduces ECE on a held-out fixture set.",
+  "type": "epic",
+  "status": "closed",
+  "priority": 1,
+  "assignee": null,
+  "creator": null,
+  "parent": "LIM-a5828a06-513e-47f7-b1dc-884cde9e27de",
+  "labels": [
+    "editorial"
+  ],
+  "dependencies": [
+    {
+      "target": "LIM-3f306578-4e42-4209-afa8-86329d69d5ec",
+      "type": "blocked-by"
+    }
+  ],
+  "comments": [
+    {
+      "id": "04cf90ce-7b41-4e5c-994e-64d78cca6998",
+      "author": "home",
+      "text": "Done: calibrate (Platt/isotonic), calibrated thresholds with rawProbability, few-shot retrieval of past decisions. Held-out ECE 0.19 -> 0.027 on synthetic overconfident labels. Offline Jev-Flywheel steering hook deferred: draft_questions covers proposing new questions from guidance; proposing from dismiss reasons can reuse it later.",
+      "created_at": "2026-10-20T02:03:23.172280Z",
+      "comment_type": "default"
+    }
+  ],
+  "created_at": "2026-10-19T22:38:15.115453Z",
+  "updated_at": "2026-10-20T02:03:23.191525Z",
+  "closed_at": "2026-10-20T02:03:23.191501Z",
+  "agent": {
+    "platform": "claude-code",
+    "model": "claude-opus-5-5",
+    "name": "Claude"
+  },
+  "right_now_summary": null,
+  "right_now_updated_at": null,
+  "custom": {}
+}

@@ -1,0 +1,1119 @@
+# Patterns adapted from avoid-ai-writing by Conor Bronsdon (MIT License).
+# See NOTICE.md in this directory for attribution and the license text.
+schemaVersion: 1
+packId: ai-writing-tells
+version: "1.0.0"
+title: AI writing tells
+language: en
+guidance: >-
+  Write like a person explaining something to a reader they respect. State the
+  claim, name the source, and stop. Cut chat-interface residue, stock phrases,
+  inflated significance, and words that only announce how the reader should
+  feel. A pattern match is a prompt to look closer, not proof of how the text
+  was written; keep any wording that carries real meaning, and never invent a
+  fact, source, or number to replace something you cut.
+policies:
+
+  - id: chatbot-artifacts
+    version: 1
+    title: Chatbot artifacts
+    severity: error
+    tags: [chatbot, fingerprint]
+    guidance: >-
+      Remove the small talk a chat assistant adds around an answer: cheerful
+      openers, offers of more help, and announcements of what the piece will
+      cover. Published prose starts with the point and ends when it is done.
+    detectors:
+      - id: hope-this-helps
+        lane: rules
+        kind: regex
+        pattern: '\bI\s+hope\s+this\s+helps\b'
+        ignoreCase: true
+      - id: exclamation-openers
+        lane: rules
+        kind: regex
+        pattern: '\b(?:certainly|absolutely|great\s+question)!'
+        ignoreCase: true
+      - id: certainly-here-is
+        lane: rules
+        kind: regex
+        pattern: '\bcertainly,\s+here(?:\s+is|\s+are|[''’]s)\b'
+        ignoreCase: true
+      - id: offers-of-help
+        lane: rules
+        kind: regex
+        pattern: '\b(?:feel\s+free\s+to\s+(?:reach\s+out|ask)|let\s+me\s+know\s+if\s+you\s+need\s+anything\s+else)\b'
+        ignoreCase: true
+      - id: article-meta-opener
+        lane: rules
+        kind: regex
+        pattern: '\bin\s+this\s+(?:article|post|guide),?\s+(?:we|I)\s+will\s+(?:explore|discuss|delve|dive|look\s+at)\b'
+        ignoreCase: true
+    examples:
+      violates:
+        - "Certainly! Here is a summary of the quarterly results."
+        - "I hope this helps, and feel free to reach out with more questions."
+        - "In this article, we will explore three ways to cut cloud costs."
+      complies:
+        - "Quarterly revenue rose 4 percent, driven by renewals."
+        - "Three changes cut our cloud bill by a fifth."
+    rewriteGuidance: >-
+      Delete the artifact outright. If the sentence also carries content, keep
+      that content and start the sentence with it.
+
+  - id: ai-disclaimers
+    version: 1
+    title: AI self-reference and knowledge-cutoff disclaimers
+    severity: error
+    tags: [chatbot, fingerprint]
+    guidance: >-
+      A model describing its own limits (training cutoff, no live data, being
+      an AI) has leaked into the text. Readers should never see it.
+    detectors:
+      - id: as-an-ai
+        lane: rules
+        kind: regex
+        pattern: '\bas\s+an?\s+(?:AI|artificial\s+intelligence|large\s+language|AI\s+language)\s+(?:language\s+)?model\b'
+        ignoreCase: true
+      - id: i-am-an-ai
+        lane: rules
+        kind: regex
+        pattern: '\bI\s*(?:am|[''’]m)\s+(?:just\s+|only\s+)?an?\s+(?:(?:AI|artificial\s+intelligence|large\s+language)\s+(?:assistant|model|language\s+model)\b|AI(?=\s*[,.;!]))'
+        ignoreCase: true
+      - id: knowledge-cutoff
+        lane: rules
+        kind: regex
+        pattern: '\b(?:as\s+of\s+my\s+(?:last\s+(?:update|training)|(?:knowledge|training)\s+cut-?off)|my\s+(?:knowledge\s+cut-?off|training\s+data\s+(?:only\s+)?(?:goes\s+up\s+to|extends\s+to|ends\s+(?:in|at))))\b'
+        ignoreCase: true
+      - id: no-real-time-access
+        lane: rules
+        kind: regex
+        pattern: '\bI\s+(?:don[''’]t|do\s+not)\s+have\s+(?:access\s+to\s+)?real-?time\s+(?:data|information|access)\b'
+        ignoreCase: true
+      - id: limited-details
+        lane: rules
+        kind: regex
+        pattern: '\bspecific\s+details\s+(?:are|remain)\s+(?:limited|scarce)\b'
+        ignoreCase: true
+      - id: cannot-give-advice
+        lane: rules
+        kind: regex
+        pattern: '\bI\s+(?:cannot|can[''’]t)\s+(?:provide|give|offer)\s+(?:legal|medical|financial|professional)\s+advice\b'
+        ignoreCase: true
+    examples:
+      violates:
+        - "As an AI language model, I can't predict next year's interest rates."
+        - "As of my last update, the bridge was still under construction."
+        - "While specific details are limited, the merger appears to be on track."
+      complies:
+        - "The bridge opened to traffic in March 2024."
+        - "I am an AI researcher at the university's robotics lab."
+    rewriteGuidance: >-
+      Delete the disclaimer. If the sentence then lacks a fact (a date, a
+      status), flag the gap for the writer rather than guessing.
+
+  - id: placeholder-leaks
+    version: 1
+    title: Unfilled placeholders
+    severity: error
+    tags: [fingerprint]
+    guidance: >-
+      Bracketed slots like [Your Name] or [Insert link], dummy dates like
+      2025-XX-XX, and to-do comments were meant to be filled before
+      publishing. A visible one is a bug.
+    detectors:
+      - id: directive-slot
+        lane: rules
+        kind: regex
+        pattern: '\[(?:Your|Insert|Add|Enter|Describe|Specify|Choose|Pick)\b[^\]\n]{1,80}\]'
+        ignoreCase: true
+        exceptions:
+          - '\[[^\]\n]{1,80}\]\('
+      - id: template-noun-slot
+        lane: rules
+        kind: regex
+        pattern: '\[(?:Recipient|Sender|Salutation|Company\s+Name|Project\s+Name|Product\s+Name|Date|Topic|Position|Department)(?:\s+[^\]\n]{0,60})?\]'
+        ignoreCase: true
+        exceptions:
+          - '\[[^\]\n]{1,80}\]\('
+      - id: caps-slot
+        lane: rules
+        kind: regex
+        pattern: '\[(?:INSERT|FILL\s+IN|TODO|TBD|PLACEHOLDER)\b[^\]\n]{0,80}\]'
+      - id: date-stub
+        lane: rules
+        kind: regex
+        pattern: '\b(?:(?:19|20)\d{2}-XX-XX|XX/XX/(?:19|20)\d{2})\b'
+      - id: comment-stub
+        lane: rules
+        kind: regex
+        pattern: '<!--\s*(?:add|fill\s+in|insert|todo|placeholder)\b[^>]{0,120}-->'
+        ignoreCase: true
+    examples:
+      violates:
+        - "Best regards, [Your Name]"
+        - "The launch is scheduled for 2025-XX-XX at our main office."
+        - "Read the full study here: [INSERT SOURCE URL]"
+      complies:
+        - "Best regards, Dana Ortiz"
+        - "See [the setup guide](https://example.com/setup) for details."
+    rewriteGuidance: >-
+      Fill the slot only with a value the writer supplies. Otherwise flag it
+      and leave it visible, or cut the sentence that depends on it.
+
+  - id: chat-citation-markup
+    version: 1
+    title: Chat citation markup
+    severity: error
+    tags: [chatbot, fingerprint]
+    guidance: >-
+      Internal citation tokens from chat tools (citeturn0search0, oaicite
+      references, oai_citation, attached_file markers) survive copy and
+      paste. They mean nothing to a reader.
+    detectors:
+      - id: citeturn
+        lane: rules
+        kind: regex
+        pattern: '\bcite(?:turn|news|search|navigation)\d+(?:search|turn|news|navigation)\d+'
+        ignoreCase: true
+      - id: oaicite
+        lane: rules
+        kind: regex
+        pattern: 'contentReference\s*\[oaicite:[^\]\n]{1,40}\](?:\s*\{[^}\n]{0,40}\})?|\boai_citation\b'
+        ignoreCase: true
+      - id: tool-markers
+        lane: rules
+        kind: regex
+        pattern: '\[attached_file:\d+\]|\bgrok_card\b'
+        ignoreCase: true
+    examples:
+      violates:
+        - "The tariff took effect in April. citeturn0search3"
+        - "Sales doubled last year.:contentReference[oaicite:2]{index=2}"
+      complies:
+        - "The tariff took effect in April, according to the trade ministry."
+    rewriteGuidance: >-
+      Strip the token. If the writer supplies the intended source, cite it in
+      the publication's own style; otherwise flag the missing citation.
+
+  - id: ai-tool-url-params
+    version: 1
+    title: AI-tool tracking parameters in links
+    severity: error
+    tags: [fingerprint]
+    guidance: >-
+      Links copied from AI tools often carry a referrer parameter such as
+      utm_source=chatgpt.com. Remove that parameter and keep the rest of the
+      link.
+    detectors:
+      - id: ai-utm-source
+        lane: rules
+        kind: regex
+        pattern: '[?&](?:utm_source|referrer)=(?:chatgpt|openai|copilot|claude|grok|gemini|perplexity)(?:\.com|\.ai)?\b'
+        ignoreCase: true
+    examples:
+      violates:
+        - "Details are at https://example.com/report?utm_source=chatgpt.com"
+        - "See https://example.org/faq?page=2&utm_source=perplexity.ai for more."
+      complies:
+        - "Details are at https://example.com/report?page=2"
+        - "See https://example.org/faq?utm_source=newsletter for more."
+    rewriteGuidance: >-
+      Delete only the AI referrer parameter (and a dangling ? or &). Leave the
+      URL and its functional parameters alone.
+
+  - id: sycophancy
+    version: 1
+    title: Sycophantic praise
+    severity: warn
+    tags: [chatbot]
+    guidance: >-
+      Praising the reader or their question ("great question", "you're
+      absolutely right") is a chat reward, not writing. Answer instead.
+    detectors:
+      - id: absolutely-right
+        lane: rules
+        kind: regex
+        pattern: '\byou[''’]?re\s+(?:absolutely|totally|completely)\s+right\b'
+        ignoreCase: true
+      - id: praise-the-question
+        lane: rules
+        kind: regex
+        pattern: '\b(?:that[''’]?s\s+(?:a|an)|what\s+(?:a|an))\s+(?:really\s+|very\s+)?(?:great|excellent|insightful|fantastic|wonderful|thoughtful)\s+(?:question|point|observation)\b'
+        ignoreCase: true
+      - id: excellent-question
+        lane: rules
+        kind: regex
+        pattern: '\b(?:excellent|fantastic|wonderful)\s+(?:question|point)\b'
+        ignoreCase: true
+    examples:
+      violates:
+        - "You're absolutely right, the cache should be cleared first."
+        - "That's a really insightful question about pricing."
+        - "Excellent point! The deadline does matter."
+      complies:
+        - "The cache should be cleared first, or the old values persist."
+        - "Pricing depends on seat count, not usage."
+    rewriteGuidance: >-
+      Delete the praise and start with the answer or the agreement's
+      substance.
+
+  - id: reasoning-artifacts
+    version: 1
+    title: Leaked reasoning scaffolding
+    severity: warn
+    tags: [chatbot]
+    guidance: >-
+      Phrases like "let me think step by step" or "here's my thought process"
+      are a model's working notes. Give the reader the reasoning, not the
+      announcement that reasoning is happening.
+    detectors:
+      - id: step-by-step
+        lane: rules
+        kind: regex
+        pattern: '\blet\s+me\s+think\s+(?:this\s+through\s+)?step\s+by\s+step\b|\bhere[''’]?s\s+my\s+thought\s+process\b|\bto\s+approach\s+this\s+systematically\b|\bworking\s+through\s+this\s+logically\b|\bfirst,?\s+let[''’]?s\s+consider\b'
+        ignoreCase: true
+    examples:
+      violates:
+        - "Let me think step by step about why the build fails."
+        - "Here's my thought process: the cache expired, so the query ran cold."
+      complies:
+        - "The build fails because the cache expired and the query ran cold."
+    rewriteGuidance: >-
+      Cut the scaffolding phrase and keep the reasoning that follows it.
+
+  - id: significance-inflation
+    version: 1
+    title: Significance inflation
+    severity: warn
+    tags: [inflation]
+    guidance: >-
+      Do not dress a routine event up as a turning point in history. Say what
+      happened and let the reader judge how much it matters.
+    detectors:
+      - id: pivotal-moment
+        lane: rules
+        kind: regex
+        pattern: '\bmarking\s+a\s+(?:pivotal|significant|important|major|defining)\s+(?:moment|milestone|turning\s+point)\b|\ba\s+(?:pivotal|defining)\s+moment\s+(?:in|for)\b|\ba\s+watershed\s+moment\b'
+        ignoreCase: true
+      - id: in-the-evolution-of
+        lane: rules
+        kind: regex
+        pattern: '\b(?:moment|milestone|chapter|era|turning\s+point|watershed|inflection\s+point|leap|role|new\s+phase)\s+in\s+the\s+evolution\s+of\b'
+        ignoreCase: true
+      - id: stands-as-testament
+        lane: rules
+        kind: regex
+        pattern: '\bstands\s+as\s+a\s+(?:testament|reminder|symbol|beacon)\b'
+        ignoreCase: true
+      - id: emerged-as-leading
+        lane: rules
+        kind: regex
+        pattern: '\bhas\s+emerged\s+as\s+(?:a|the|one\s+of\s+the)\s+(?:leading|key|major|critical|essential|fundamental|pivotal|prominent|dominant)\b|\bhas\s+become\s+increasingly\s+(?:important|critical|relevant|essential|prominent)\b'
+        ignoreCase: true
+      - id: pivotal-role
+        lane: rules
+        kind: regex
+        pattern: '\bplay(?:s|ed|ing)?\s+an?\s+(?:pivotal|crucial|vital|instrumental)\s+role\b'
+        ignoreCase: true
+    examples:
+      violates:
+        - "The new bylaw passed on Tuesday, marking a pivotal moment for the town."
+        - "The release is a milestone in the evolution of open-source databases."
+        - "Rust has emerged as a leading choice for systems work."
+      complies:
+        - "The new bylaw passed on Tuesday by a vote of five to two."
+        - "The lens is a key stage in the evolution of the vertebrate eye."
+    rewriteGuidance: >-
+      Delete the inflating clause. If the sentence still reads complete, it
+      was never needed. Keep any concrete fact the clause carried.
+
+  - id: promotional-language
+    version: 1
+    title: Promotional puffery
+    severity: warn
+    tags: [puffery]
+    guidance: >-
+      Brochure adjectives (nestled, vibrant, bustling, breathtaking,
+      game-changing) add color without a checkable claim. Describe the thing
+      plainly or give the number.
+    detectors:
+      - id: brochure-words
+        lane: rules
+        kind: phrase
+        phrases: [nestled, vibrant, bustling, breathtaking, thriving, game-changer, game-changers, game-changing, must-visit]
+      - id: cutting-edge
+        lane: rules
+        kind: phrase
+        phrases: [cutting-edge]
+        replacement: latest
+      - id: thrives-despite
+        lane: rules
+        kind: regex
+        pattern: '\bdespite\s+(?:the\s+|these\s+|its\s+|many\s+)?challenges,?\s+[^.!?\n]{1,80}?\bcontinues?\s+to\s+(?:thrive|flourish|grow)\b|\bwhile\s+facing\s+headwinds\b'
+        ignoreCase: true
+    examples:
+      violates:
+        - "Nestled in the hills, the town is a vibrant hub of innovation."
+        - "Despite challenges, the company continues to thrive."
+        - "This cutting-edge tool is a game-changer for accountants."
+      complies:
+        - "The town sits in the hills and has about forty software firms."
+        - "Revenue grew 8 percent despite a supplier strike in May."
+    rewriteGuidance: >-
+      Replace the adjective with the plain fact behind it (a location, a
+      count, a measured change), using only facts the source gives. If there
+      is none, cut the modifier.
+
+  - id: vague-attributions
+    version: 1
+    title: Vague attributions
+    severity: warn
+    tags: [sourcing]
+    guidance: >-
+      "Experts agree" and "studies show" borrow authority without naming
+      anyone. Name the expert, study, or report, or say the claim is
+      unsourced.
+    detectors:
+      - id: experts-say
+        lane: rules
+        kind: regex
+        pattern: '\b(?:many\s+|most\s+|some\s+|leading\s+)?experts\s+(?:believe|say|suggest|agree|argue|warn)\b'
+        ignoreCase: true
+      - id: studies-show
+        lane: rules
+        kind: regex
+        pattern: '\b(?:studies|research|surveys)\s+(?:show|shows|suggest|suggests|indicate|indicates|confirm|confirms|ha(?:ve|s)\s+shown)\b'
+        ignoreCase: true
+        exceptions:
+          - '\b(?:our|their|his|her|my|this|that|these|those|[A-Za-z][\w-]*[''’]s)\s+(?:recent\s+|own\s+)?(?:studies|research|surveys)\s+\w+(?:\s+\w+)?'
+          - '\b(?:studies|research|surveys)\s+\w+(?:\s+\w+)?\s*[(\[]'
+      - id: unnamed-authorities
+        lane: rules
+        kind: regex
+        pattern: '\b(?:industry\s+(?:leaders|insiders|observers)|analysts|observers)\s+(?:agree|believe|say)\b|\bit\s+is\s+(?:widely|generally|commonly)\s+(?:believed|accepted|agreed|acknowledged)\b|\b(?:independent|third-party)\s+(?:testing|tests|benchmarks|reviews)\s+(?:confirm|confirms|show|shows|prove|proves)\b'
+        ignoreCase: true
+    examples:
+      violates:
+        - "Experts agree that remote work boosts productivity."
+        - "Studies show that standing desks reduce back pain."
+        - "Independent testing confirms our model leads the field."
+      complies:
+        - "A 2023 Stanford study of 1,600 workers found remote work cut quit rates."
+        - "Our research shows a 12 percent drop in support tickets."
+    rewriteGuidance: >-
+      Name the source if the writer supplied one. If not, flag the missing
+      source; do not invent a study and do not quietly drop the attribution so
+      the claim becomes the writer's own.
+
+  - id: negative-parallelism
+    version: 1
+    title: '"Not just X, it''s Y" framing'
+    severity: warn
+    tags: [structure]
+    guidance: >-
+      "It isn't just a tool, it's a movement" and "This isn't about X, it's
+      about Y" set up a straw version to knock down. State the positive claim
+      directly. A literal correction ("It isn't raining, it's snowing") is
+      fine.
+    detectors:
+      - id: minimizer-reveal
+        lane: rules
+        kind: regex
+        pattern: '(?:\b(?:is|are|was|were)(?:n[''’]t|\s+not)|\b(?:it|this|that|they|he|she|we|you)[''’](?:s|re)\s+not)\s+(?:just|merely|simply)\s+[^,;:.!?\n—–]{1,80}?(?:\s*[,;:—–]|\s+--)\s*(?:it|this|that|they)(?:[''’](?:s|re)|\s+(?:is|are|was|were))\b'
+        ignoreCase: true
+      - id: about-reveal
+        lane: rules
+        kind: regex
+        pattern: '(?:\b(?:is|are|was|were)(?:n[''’]t|\s+not)|\b(?:it|this|that|they)[''’](?:s|re)\s+not)\s+about\s+[^,;:.!?\n—–]{1,80}?(?:\s*[,;:.—–]|\s+--)\s*(?:it|this|that|they)(?:[''’](?:s|re)|\s+(?:is|are|was|were))\s+about\b'
+        ignoreCase: true
+    examples:
+      violates:
+        - "This isn't just a software update, it's a new way of working."
+        - "It's not about the money; it's about respect."
+        - "The plan is not merely a budget — it is a statement of values."
+      complies:
+        - "It isn't raining, it's snowing."
+        - "The update changes how invoices are grouped by project."
+    rewriteGuidance: >-
+      Keep the positive half as a direct statement. Keep the negated half only
+      if a reader would otherwise assume it, and never drop a value judgment
+      the writer made.
+
+  - id: generic-conclusions
+    version: 1
+    title: Generic conclusions
+    severity: warn
+    tags: [filler]
+    guidance: >-
+      Endings like "the future looks bright" or "only time will tell" sound
+      conclusive and say nothing. End on the last real point.
+    detectors:
+      - id: stock-closers
+        lane: rules
+        kind: phrase
+        phrases:
+          - in conclusion
+          - in summary
+          - to summarize
+          - the future looks bright
+          - the future is bright
+          - only time will tell
+          - one thing is certain
+          - as we move forward
+      - id: future-narrative
+        lane: rules
+        kind: regex
+        pattern: '\b(?:may|could|will|is\s+poised\s+to|is\s+set\s+to)\s+become\s+(?:one\s+of\s+the\s+most\s+\w+|the\s+(?:defining|next|biggest|dominant|most\s+\w+))\s+(?:narratives?|stories|story|trends?|movements?|chapters?|themes?|forces?)\b'
+        ignoreCase: true
+    examples:
+      violates:
+        - "In conclusion, the new policy has trade-offs."
+        - "Whether the plan works, only time will tell."
+        - "Edge computing may become one of the most important narratives of the decade."
+      complies:
+        - "The policy saves money but slows hiring by about two weeks."
+        - "We will know whether the plan works when the June figures arrive."
+    rewriteGuidance: >-
+      Cut the stock line. If the piece needs a closing thought, use one the
+      writer already supplied; do not invent a prediction.
+
+  - id: signposting
+    version: 1
+    title: Signposting and meta-commentary
+    severity: warn
+    tags: [filler]
+    guidance: >-
+      "Let's dive in", "It's worth noting", and "Here's what's interesting"
+      tell the reader something is coming instead of giving it to them. Start
+      with the thing itself.
+    detectors:
+      - id: lets-verb
+        lane: rules
+        kind: regex
+        pattern: '\blet[''’]?s\s+(?:dive\s+(?:in|into)|delve|explore|take\s+a\s+(?:closer\s+)?look|break\s+(?:this|it)\s+down|examine|unpack|walk\s+through)\b'
+        ignoreCase: true
+      - id: worth-noting
+        lane: rules
+        kind: regex
+        pattern: '\b(?:it[''’]?s|it\s+is)\s+worth\s+(?:noting|mentioning|pointing\s+out)\b'
+        ignoreCase: true
+      - id: heres-what
+        lane: rules
+        kind: regex
+        pattern: '\bhere[''’]?s\s+(?:what[''’]?s\s+interesting|the\s+interesting\s+part|what\s+(?:caught\s+my\s+eye|stood\s+out))\b'
+        ignoreCase: true
+      - id: without-further-ado
+        lane: rules
+        kind: phrase
+        phrases: [without further ado]
+    examples:
+      violates:
+        - "Let's dive in and look at the numbers."
+        - "It's worth noting that the API is rate-limited."
+        - "Here's what caught my eye: the error rate doubled."
+      complies:
+        - "The API allows 100 requests per minute."
+        - "The error rate doubled after the deploy."
+    rewriteGuidance: >-
+      Delete the signpost and lead with the fact it introduced.
+
+  - id: filler-phrases
+    version: 1
+    title: Filler phrases
+    severity: info
+    tags: [filler, clarity]
+    guidance: >-
+      Padding such as "it is important to note that" and "the reality is
+      that" adds words and no meaning. State the point.
+    detectors:
+      - id: important-to-note
+        lane: rules
+        kind: regex
+        pattern: '\b(?:it[''’]?s|it\s+is)\s+important\s+to\s+(?:note|remember|understand)\s+that\b'
+        ignoreCase: true
+      - id: padding
+        lane: rules
+        kind: phrase
+        phrases: [the reality is that, in terms of]
+    examples:
+      violates:
+        - "It is important to note that backups run nightly."
+        - "The reality is that most users never change the defaults."
+      complies:
+        - "Backups run nightly."
+        - "Most users never change the defaults."
+    rewriteGuidance: >-
+      Delete the padding and keep the clause that follows it.
+
+  - id: hedge-stacking
+    version: 1
+    title: Stacked hedges
+    severity: info
+    tags: [clarity]
+    guidance: >-
+      One qualifier is honest; two in a row ("could potentially", "may
+      eventually") cancel each other out. Keep the one that matches the
+      writer's actual confidence.
+    detectors:
+      - id: modal-plus-hedge
+        lane: rules
+        kind: regex
+        pattern: '\b(?:could|may|might)\s+(?:(?!not\b|never\b|hardly\b|scarcely\b|barely\b)\w+\s+)?(?:potentially|eventually|ultimately|possibly|conceivably)\b|\b(?:potentially|eventually|ultimately)\s+(?:could|may|might)\b'
+        ignoreCase: true
+    examples:
+      violates:
+        - "The change could potentially reduce latency."
+        - "This approach may eventually unlock new revenue."
+      complies:
+        - "The change could reduce latency if the working set fits in memory."
+        - "We could not possibly finish by Friday."
+    rewriteGuidance: >-
+      Remove one of the two hedges. Keep any condition the writer stated, and
+      do not upgrade a guess into a certainty.
+
+  - id: ai-vocabulary
+    version: 1
+    title: AI-frequency vocabulary
+    severity: warn
+    tags: [vocabulary]
+    guidance: >-
+      Some words (delve, tapestry, testament, realm, pivotal, seamless,
+      intricate, holistic, and friends) show up far more in machine prose
+      than in ordinary writing. One may be fine; a cluster reads as
+      generated. Prefer the plain word, or describe the specific thing.
+    detectors:
+      - id: delve-into
+        lane: rules
+        kind: phrase
+        phrases: [delve into]
+        replacement: explore
+      - id: delves-into
+        lane: rules
+        kind: phrase
+        phrases: [delves into]
+        replacement: explores
+      - id: delved-into
+        lane: rules
+        kind: phrase
+        phrases: [delved into]
+        replacement: explored
+      - id: delving-into
+        lane: rules
+        kind: phrase
+        phrases: [delving into]
+        replacement: exploring
+      - id: delve-bare
+        lane: rules
+        kind: regex
+        pattern: '\bdelv(?:e|es|ed|ing)\b(?!\s+into\b)'
+        ignoreCase: true
+      - id: is-a-testament-to
+        lane: rules
+        kind: phrase
+        phrases: [is a testament to]
+        replacement: shows
+      - id: testament-to
+        lane: rules
+        kind: regex
+        pattern: '\btestaments?\s+to\b'
+        ignoreCase: true
+        exceptions:
+          - '\bis\s+a\s+testament\s+to\b'
+      - id: embark-on
+        lane: rules
+        kind: phrase
+        phrases: [embark on]
+        replacement: start
+      - id: embarked-on
+        lane: rules
+        kind: phrase
+        phrases: [embarked on]
+        replacement: started
+      - id: embarking-on
+        lane: rules
+        kind: phrase
+        phrases: [embarking on]
+        replacement: starting
+      - id: underscores
+        lane: rules
+        kind: phrase
+        phrases: [underscores]
+        replacement: shows
+      - id: underscored
+        lane: rules
+        kind: phrase
+        phrases: [underscored]
+        replacement: showed
+      - id: showcase
+        lane: rules
+        kind: phrase
+        phrases: [showcase]
+        replacement: show
+      - id: showcases
+        lane: rules
+        kind: phrase
+        phrases: [showcases]
+        replacement: shows
+      - id: showcasing
+        lane: rules
+        kind: phrase
+        phrases: [showcasing]
+        replacement: showing
+      - id: seamless
+        lane: rules
+        kind: phrase
+        phrases: [seamless]
+        replacement: smooth
+      - id: seamlessly
+        lane: rules
+        kind: phrase
+        phrases: [seamlessly]
+        replacement: smoothly
+      - id: meticulous
+        lane: rules
+        kind: phrase
+        phrases: [meticulous]
+        replacement: careful
+      - id: meticulously
+        lane: rules
+        kind: phrase
+        phrases: [meticulously]
+        replacement: carefully
+      - id: comprehensive
+        lane: rules
+        kind: phrase
+        phrases: [comprehensive]
+        replacement: thorough
+      - id: actionable
+        lane: rules
+        kind: phrase
+        phrases: [actionable]
+        replacement: practical
+      - id: impactful
+        lane: rules
+        kind: phrase
+        phrases: [impactful]
+        replacement: effective
+      - id: learnings
+        lane: rules
+        kind: phrase
+        phrases: [learnings]
+        replacement: lessons
+      - id: ever-evolving
+        lane: rules
+        kind: phrase
+        phrases: [ever-evolving]
+        replacement: changing
+      - id: deep-dive
+        lane: rules
+        kind: phrase
+        phrases: [deep dive, deep-dive, dive into]
+      - id: marker-words
+        lane: rules
+        kind: phrase
+        phrases:
+          - tapestry
+          - tapestries
+          - realm
+          - realms
+          - pivotal
+          - intricate
+          - intricacies
+          - complexities
+          - holistic
+          - holistically
+          - synergy
+          - synergies
+          - interplay
+          - daunting
+          - thought leader
+          - thought leaders
+          - thought leadership
+          - best practices
+          - at its core
+      - id: paradigm
+        lane: rules
+        kind: regex
+        pattern: '\bparadigms?\b'
+        ignoreCase: true
+        exceptions:
+          - '\bprogramming\s+paradigms?\b'
+      - id: beacon-of
+        lane: rules
+        kind: regex
+        pattern: '\bbeacons?\s+of\b'
+        ignoreCase: true
+      - id: robust
+        lane: rules
+        kind: regex
+        pattern: '\brobust(?:ly|ness)?\b'
+        ignoreCase: true
+        exceptions:
+          - '\brobust(?:ly)?\s+(?:estimators?|statistics|regression|standard\s+errors?|control|optimi[sz]ation|covariance)\b'
+          - '\brobustness\s+(?:checks?|tests?|analys[ie]s)\b'
+      - id: leverage
+        lane: rules
+        kind: regex
+        pattern: '\bleverag(?:e|es|ed|ing)\b'
+        ignoreCase: true
+        exceptions:
+          - '\b(?:financial|operating|operational|high|more|less|no|some|negotiating|bargaining|political|their|our|its|of|the|any|much)\s+leverage\b'
+          - '\bleverage\s+(?:ratios?|buyouts?)\b'
+      - id: metaphor-landscape
+        lane: rules
+        kind: regex
+        pattern: '\b(?:competitive|digital|business|tech|technology|regulatory|political|media|threat|market|evolving|ever-changing|changing|current|AI|startup|security|marketing|healthcare|financial|economic|cultural)\s+landscapes?\b'
+        ignoreCase: true
+      - id: unpack
+        lane: rules
+        kind: regex
+        pattern: '\bunpack(?:s|ed|ing)?\b'
+        ignoreCase: true
+        exceptions:
+          - '\bunpack(?:s|ed|ing)?\s+(?:(?:the|a|an|your|my|our|their|his|her|this|that|these|those)\s+)?(?:box|boxes|bag|bags|suitcase|suitcases|luggage|archive|archives|tarball|zip|file|files|tuple|tuples|list|lists|arguments?|groceries|crates?)\b'
+    examples:
+      violates:
+        - "Let me delve into the rich tapestry of the city's history."
+        - "The launch is a testament to the team's meticulous planning."
+        - "We leverage a robust, holistic approach to the security landscape."
+      complies:
+        - "The city grew from a fishing village into a rail hub by 1890."
+        - "The team planned the launch for six months and shipped on schedule."
+        - "Please unpack the boxes in the kitchen and use a robust estimator for the outliers."
+    rewriteGuidance: >-
+      Swap in the plain word, or better, name the specific thing the word
+      gestures at, using only facts the writer supplied. Keep technical senses
+      (a robust estimator, a programming paradigm).
+
+  - id: plain-words
+    version: 1
+    title: Plain-word swaps
+    severity: info
+    tags: [clarity]
+    guidance: >-
+      Wordy or inflated forms where a short word says the same thing. These
+      are clarity edits, not evidence of machine writing: plenty of people
+      write "utilize" and "in order to".
+    detectors:
+      - id: utilize
+        lane: rules
+        kind: phrase
+        phrases: [utilize, utilise]
+        replacement: use
+      - id: utilizes
+        lane: rules
+        kind: phrase
+        phrases: [utilizes, utilises]
+        replacement: uses
+      - id: utilized
+        lane: rules
+        kind: phrase
+        phrases: [utilized, utilised]
+        replacement: used
+      - id: utilizing
+        lane: rules
+        kind: phrase
+        phrases: [utilizing, utilising]
+        replacement: using
+      - id: in-order-to
+        lane: rules
+        kind: phrase
+        phrases: [in order to]
+        replacement: to
+      - id: due-to-the-fact-that
+        lane: rules
+        kind: phrase
+        phrases: [due to the fact that]
+        replacement: because
+      - id: serves-as
+        lane: rules
+        kind: phrase
+        phrases: [serves as]
+        replacement: is
+      - id: boasts
+        lane: rules
+        kind: phrase
+        phrases: [boasts]
+        replacement: has
+      - id: commence
+        lane: rules
+        kind: phrase
+        phrases: [commence]
+        replacement: start
+      - id: commences
+        lane: rules
+        kind: phrase
+        phrases: [commences]
+        replacement: starts
+      - id: commenced
+        lane: rules
+        kind: phrase
+        phrases: [commenced]
+        replacement: started
+      - id: commencing
+        lane: rules
+        kind: phrase
+        phrases: [commencing]
+        replacement: starting
+      - id: ascertain
+        lane: rules
+        kind: phrase
+        phrases: [ascertain]
+        replacement: find out
+      - id: ascertained
+        lane: rules
+        kind: phrase
+        phrases: [ascertained]
+        replacement: found out
+      - id: endeavor-to
+        lane: rules
+        kind: phrase
+        phrases: [endeavor to, endeavour to]
+        replacement: try to
+      - id: endeavors-to
+        lane: rules
+        kind: phrase
+        phrases: [endeavors to, endeavours to]
+        replacement: tries to
+    examples:
+      violates:
+        - "We utilize caching in order to speed up page loads."
+        - "The festival will commence at noon."
+        - "The lobby serves as a gallery due to the fact that it gets good light."
+      complies:
+        - "We use caching to speed up page loads."
+        - "The festival starts at noon."
+    rewriteGuidance: >-
+      Apply the suggested replacement and adjust the surrounding grammar.
+      Keep the original where it names a real role ("serves as chair").
+
+  - id: hollow-intensifiers
+    version: 1
+    title: Hollow intensifiers
+    severity: info
+    tags: [clarity]
+    guidance: >-
+      "Genuinely", "truly", "to be honest", and "real" or "actual" in front of
+      an abstract noun add emphasis but no information, and hint that
+      everything else was less sincere.
+    detectors:
+      - id: intensifier-words
+        lane: rules
+        kind: phrase
+        phrases: [genuinely, truly, quite frankly, to be honest]
+      - id: lets-be-clear
+        lane: rules
+        kind: regex
+        pattern: '\blet[''’]?s\s+be\s+clear\b'
+        ignoreCase: true
+      - id: real-actual-inflation
+        lane: rules
+        kind: regex
+        pattern: '\b(?:real|actual|genuine|true)\s+(?:on-?chain\s+)?(?:tokenomics|utility|adoption|sustainability|impact|fundamentals|traction|innovation|value)\b'
+        ignoreCase: true
+        exceptions:
+          - '\b(?:real|actual|genuine|true)\s+[^,.;!?\n]{1,60}?,?\s+not\s+\w+'
+    examples:
+      violates:
+        - "This is a truly remarkable result."
+        - "The protocol offers real utility to its users."
+        - "To be honest, the old design was slow."
+      complies:
+        - "The result beat the previous record by 3 seconds."
+        - "The old design took four seconds to load."
+    rewriteGuidance: >-
+      Delete the intensifier. If the sentence named a contrast ("actual
+      revenue, not grants"), keep it.
+
+  - id: emphasis-cues
+    version: 1
+    title: Emphasis cues
+    severity: info
+    tags: [clarity]
+    guidance: >-
+      Words like "interestingly", "notably", and "make no mistake" tell the
+      reader how to feel about a fact. Let the fact do that work.
+    detectors:
+      - id: cue-words
+        lane: rules
+        kind: phrase
+        phrases:
+          - interestingly
+          - surprisingly
+          - notably
+          - undoubtedly
+          - without a doubt
+          - make no mistake
+          - the truth is
+          - the real question is
+    examples:
+      violates:
+        - "Interestingly, the smaller model scored higher."
+        - "Make no mistake, this vote will shape the budget."
+      complies:
+        - "The smaller model scored higher on all four tests."
+        - "This vote sets next year's budget."
+    rewriteGuidance: >-
+      Delete the cue. If the fact needs context to seem notable, give the
+      context the writer supplied.
+
+  - id: stock-transitions
+    version: 1
+    title: Stock transitions
+    severity: info
+    tags: [clarity]
+    guidance: >-
+      "Moreover", "furthermore", "additionally", and "when it comes to" are
+      essay glue. Used once in a while they are fine; leaned on, they make
+      prose sound assembled. Let the sentences connect through their content.
+    detectors:
+      - id: transition-words
+        lane: rules
+        kind: phrase
+        phrases:
+          - moreover
+          - furthermore
+          - additionally
+          - when it comes to
+          - at the end of the day
+          - that being said
+    examples:
+      violates:
+        - "Moreover, the plan reduces cost."
+        - "When it comes to pricing, the team chose a flat rate."
+      complies:
+        - "The plan also reduces cost."
+        - "The team chose a flat rate for pricing."
+    rewriteGuidance: >-
+      Drop the transition or use a plain one ("and", "also", "but").
+
+  - id: formulaic-openers
+    version: 1
+    title: Formulaic openers
+    severity: warn
+    tags: [structure]
+    guidance: >-
+      "In today's fast-paced world" and "In the rapidly evolving landscape
+      of" are throat-clearing. Open with the news or the claim.
+    detectors:
+      - id: evolving-world-of
+        lane: rules
+        kind: regex
+        pattern: '\bin\s+the\s+(?:rapidly\s+|ever-?\s?)?(?:evolving|changing|expanding|growing|shifting)\s+(?:world|landscape|realm|space|field|domain|era)\s+of\b'
+        ignoreCase: true
+      - id: todays-world
+        lane: rules
+        kind: regex
+        pattern: '\bin\s+today[''’]?s\s+(?:fast-paced|digital|rapidly|ever-changing|modern|hyper-connected|interconnected|competitive)\b|\bin\s+an\s+era\s+(?:where|of)\b|\bin\s+(?:the|this)\s+(?:digital\s+)?age\s+(?:where|of)\b'
+        ignoreCase: true
+    examples:
+      violates:
+        - "In today's fast-paced world, teams need better tools."
+        - "In the rapidly evolving world of finance, banks are adopting AI."
+      complies:
+        - "Three of the five largest banks now use AI to screen loans."
+        - "The team adopted a new ticketing tool in May."
+    rewriteGuidance: >-
+      Cut the opener and start with the first concrete claim.
+
+  - id: template-phrases
+    version: 1
+    title: Template phrases
+    severity: warn
+    tags: [structure]
+    guidance: >-
+      Slot-fill constructions ("a major step forward for", "whether you're a
+      beginner or an expert", "imagine a world where") would read the same
+      about anything. Address the actual reader and the actual change.
+    detectors:
+      - id: big-step-toward
+        lane: rules
+        kind: regex
+        pattern: '\ban?\s+(?:meaningful|significant|major|crucial|important|big|huge|bold|giant|monumental|pivotal|critical|vital|massive|tremendous|substantial|landmark|historic|exciting|transformative)\s+step\s+(?:towards?|forward)\b'
+        ignoreCase: true
+      - id: whether-youre
+        lane: rules
+        kind: regex
+        pattern: '\bwhether\s+you[''’]?re\s+an?\s+[^,.;!?\n]{1,40}?\s+or\s+an?\s'
+        ignoreCase: true
+      - id: had-the-pleasure
+        lane: rules
+        kind: regex
+        pattern: '\bI\s+recently\s+had\s+the\s+pleasure\s+of\b'
+        ignoreCase: true
+      - id: imagine-a-world
+        lane: rules
+        kind: regex
+        pattern: '\b(?:imagine|picture|envision)(?:\s*,[^,\n]{1,30},)?\s+a\s+(?:world|future|reality)\s+(?:where|in\s+which)\b'
+        ignoreCase: true
+    examples:
+      violates:
+        - "The release is a major step forward for data privacy."
+        - "Whether you're a beginner or an expert, this guide has something for you."
+        - "Imagine a world where invoices pay themselves."
+      complies:
+        - "The release encrypts backups by default."
+        - "This guide is for people setting up their first home server."
+        - "This is a first step towards the full API."
+    rewriteGuidance: >-
+      Replace the template with the specific change or audience the writer
+      supplied. If none was supplied, cut it.
+
+  - id: performed-insight
+    version: 1
+    title: Performed insight and novelty claims
+    severity: warn
+    tags: [structure]
+    guidance: >-
+      "What nobody tells you", "sit with that", "that's not nothing", and
+      "don't take my word for it" stage a reveal without adding a fact. Make
+      the point plainly.
+    detectors:
+      - id: novelty-claims
+        lane: rules
+        kind: regex
+        pattern: '\bwhat\s+nobody\s+tells\s+you\b|\bthe\s+insight\s+everyone[''’]?s?\s+missing\b|\ba\s+problem\s+nobody\s+talks\s+about\b|\bthe\s+failure\s+mode\s+nobody[''’]?s?\s+naming\b'
+        ignoreCase: true
+      - id: staged-reveals
+        lane: rules
+        kind: regex
+        pattern: '\b(?:that|this|it|which)(?:[''’]s|\s+(?:is|was))\s+not\s+nothing\b|\byou\s+already\s+know\s+the\s+answer\b|\b(?:do\s+not|don[''’]t)\s+(?:have\s+to\s+)?take\s+my\s+word\s+for\s+it\b|\bsit\s+with\s+(?:that|this)\s+for\s+a\s+(?:moment|minute|second)\b|\bthe\s+only\s+[\w-]+\s+that\s+(?:matters|counts)\b'
+        ignoreCase: true
+    examples:
+      violates:
+        - "Here is what nobody tells you about remote hiring."
+        - "A 2 percent gain sounds small, but that's not nothing."
+        - "Don't take my word for it: try the demo."
+      complies:
+        - "Remote hiring takes about three weeks longer for senior roles."
+        - "A 2 percent gain adds roughly $40,000 a year."
+    rewriteGuidance: >-
+      Cut the staging phrase and state the claim. Replace "not nothing" with a
+      size only if the writer gave one.
+
+  - id: narrated-candor
+    version: 1
+    title: Narrated candor
+    severity: info
+    tags: [chatbot]
+    guidance: >-
+      Announcing that you are about to be honest ("I want to be upfront:",
+      "To be fully transparent:") is a frame, not content. Keep the disclosure
+      and drop the announcement. A conflict-of-interest disclosure is a
+      convention, not this pattern.
+    detectors:
+      - id: candor-frames
+        lane: rules
+        kind: regex
+        pattern: '\bI\s+(?:want|need)\s+to\s+be\s+(?:upfront|transparent)\b|\bto\s+be\s+(?:fully|completely|totally|perfectly)\s+(?:transparent|upfront|candid)\b|\brather\s+than\s+bury\s+(?:this|it)\b|\bI\s+could\s+have\s+left\s+this\s+out\b'
+        ignoreCase: true
+    examples:
+      violates:
+        - "I want to be upfront: we have not tested this on Windows."
+        - "To be fully transparent, the numbers are preliminary."
+      complies:
+        - "We have not tested this on Windows."
+        - "In the interest of full disclosure, I own shares in the company."
+    rewriteGuidance: >-
+      Delete the frame and keep the disclosure that follows it.

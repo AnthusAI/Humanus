@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "event_id": "9e6ff75a-14ed-453e-b46d-db42bd8acf51",
+  "issue_id": "LIM-a5828a06-513e-47f7-b1dc-884cde9e27de",
+  "event_type": "issue_created",
+  "occurred_at": "2026-10-19T22:37:48.454Z",
+  "actor_id": "home",
+  "payload": {
+    "title": "Configurable editorial compliance engine",
+    "description": "# Limatus: configurable editorial compliance engine\n\n## Intent\n\nAs a **publication's editorial team**, I want Limatus to enforce *our* editorial policies — supplied by our CMS at request time — using deterministic scans and a zero-shot decision model, and to suggest rewrites only when asked, so editors see every policy problem marked on the draft and stay in control of what changes.\n\nFirst integration: **Papyrus CMS** (linked Papyrus initiative — see PPY board, \"Limatus editorial checks in Papyrus\").\n\n## Product shape\n\n- **Policy pack, not style profile.** A versioned set of policies plus settings, sent by the caller with each request; Limatus is stateless. Each policy: `id, version, title, guidance, severity (info|warn|block), enabled, detectors[], examples{violates[],complies[]}, rewriteGuidance`. Existing `style-profile.yml` files become an import path.\n- **Three lanes:**\n  - **Rules** (deterministic/NLP): existing always-lane checks + regex/lexicon/phrase detectors as policies; built-in \"AI-writing tells\" pack ported from avoid-ai-writing (MIT, attribute); optional NLP extra (e.g. spaCy).\n  - **Classifier** (Jev, TypeSafe System One): per-segment requests at sentence, paragraph and document scope, all applicable questions batched in one request; sentence state = `{target, paragraph}`; cache by fingerprint(question set) + hash(segment text); `reviewBand` until calibrated.\n  - **Suggestions** (OpenAI `gpt-6-luna`): on-demand `suggest(finding)` → 2–3 options, no fabricated facts. **Never used to find problems**; the OpenAI judge lane leaves the scan path.\n- **Output: standoff annotation.** `segments[]` (paragraph/sentence ids + offsets), `findings[]` (policyId, policyVersion, lane, segmentId, span, severity, probability, status violation|review, message, evidence), `coverage[]` (per segment × policy probabilities, including passes). Offsets in **UTF-16 code units**; finding ids stable across rescans (hash of policy + normalized segment text). Markus directive rendering stays as an optional output.\n- **Entry points:** `check(request) -> result`, `suggest(request) -> options`; JSON Schemas published by Limatus are the contract.\n- **Feedback:** editor dismiss/accept → labels → per-policy calibration (isotonic), retrieved few-shot examples, offline Jev-Flywheel question steering.\n\n## Epic order\n\n1. Contracts + Markus-aware segmenter (unblocks Papyrus work)\n2. Rules lane on policies + AI-tells pack\n3. Jev classifier lane\n4. Luna suggestions; retire judge from scan\n5. Feedback labels and calibration\n\n## Open decisions\n\n1. May Luna draft Jev questions from an editor's prose guideline at policy-authoring time (editor approves)?\n2. Pre-publish: do `block` findings stop publishing, or only warn?\n3. Replace Papyrus's body `<Textarea>` with CodeMirror 6?\n4. Must the existing `scan → decide → options → apply` CLI stay compatible?\n\n## References\n\n- avoid-ai-writing: https://github.com/conorbronsdon/avoid-ai-writing\n- Jev client template: `~/Projects/Jev-Flywheel/jev_flywheel/jev.py`; calibration: `~/Projects/Jev-Calibration/README.md`\n- Luna LiteLLM quirks (max_completion_tokens, no temperature): `~/Projects/Decision-Flywheel-Evaluations/src/decision_flywheel_evaluations/unified_openai.py`",
+    "issue_type": "initiative",
+    "status": "open",
+    "priority": 1,
+    "assignee": null,
+    "parent": null,
+    "labels": [
+      "editorial"
+    ]
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://limatus.anth.us/schemas/calibration-v1.json",
+  "title": "CalibrationResult",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "detectors"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "detectors": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "policyId",
+          "detectorId",
+          "labels"
+        ],
+        "properties": {
+          "policyId": {
+            "type": "string"
+          },
+          "detectorId": {
+            "type": "string"
+          },
+          "labels": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "calibration": {
+            "$ref": "policy-pack-v1.json#/$defs/calibration"
+          },
+          "note": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

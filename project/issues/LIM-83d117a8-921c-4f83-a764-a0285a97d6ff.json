@@ -1,0 +1,35 @@
+{
+  "id": "LIM-83d117a8-921c-4f83-a764-a0285a97d6ff",
+  "title": "Import a style profile as a policy pack",
+  "description": "As a publication moving from style profiles to policy packs, I want my existing style profile converted into an equivalent policy pack, so that I keep my house rules without rewriting them by hand.\n\nSpecification: `features/style-profile-import.feature`\n\n```gherkin\n@editorial @contracts\nFeature: Import a style profile as a policy pack\n  As a publication moving from style profiles to policy packs\n  I want my existing style profile converted into an equivalent policy pack\n  So that I keep my house rules without rewriting them by hand\n\n  Scenario: Convert every profile control into policies\n    Given the portable style profile fixture\n    When the style profile is imported as a policy pack\n    Then the imported pack is a valid \"policy-pack-v1\" document\n    And the imported pack id is the profile's publication key\n    And the avoid lexicon becomes a policy with a \"phrase\" detector\n    And each banned pattern becomes a \"regex\" detector that keeps its message\n    And each enabled check becomes a \"builtin\" detector\n    And tone, sentence style and evidence rules become guidance-only policies\n    And the reference samples are embedded with their text\n\n  Scenario: Import from the command line\n    When I run the limatus command \"pack import --profile features/fixtures/editorial-style-profile/portable-profile.json\"\n    Then the command succeeds\n    And the command prints a valid \"policy-pack-v1\" document\n```",
+  "type": "story",
+  "status": "closed",
+  "priority": 1,
+  "assignee": null,
+  "creator": null,
+  "parent": "LIM-6a84bebb-e5eb-4c99-89b3-a73986797fa7",
+  "labels": [
+    "editorial"
+  ],
+  "dependencies": [],
+  "comments": [
+    {
+      "id": "1d8a482e-d309-40c7-85c2-5c796fe46868",
+      "author": "home",
+      "text": "Specification passing on branch feat/policy-pack-contracts (behave --tags=@contracts: 24 scenarios green; full suites green).",
+      "created_at": "2026-10-20T01:29:48.491331Z",
+      "comment_type": "default"
+    }
+  ],
+  "created_at": "2026-10-20T01:22:38.553222Z",
+  "updated_at": "2026-10-20T01:55:22.144681Z",
+  "closed_at": "2026-10-20T01:55:22.144647Z",
+  "agent": {
+    "platform": "claude-code",
+    "model": "claude-opus-5-5",
+    "name": "Claude"
+  },
+  "right_now_summary": null,
+  "right_now_updated_at": null,
+  "custom": {}
+}
