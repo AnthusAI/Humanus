@@ -1,0 +1,25 @@
+{
+  "id": "LIM-2f46c9ae-942b-4aa3-a877-ad3c9b31b717",
+  "title": "Decide fate of ASD-STE100 rule-set PR #45 (draft, conflicting, board state only on stale branches)",
+  "description": "**Problem**\nPR #45 (branch cursor/limatus-ste100-impl-ddf6, draft since 2026-10-03, merge state CONFLICTING, one check 'test' passing) says all six ASD-STE100 epics are complete. Verified 2026-10-20 against origin/main (c9f70c2): none of that work is on main. There is no ASD-STE100 code, dictionary or feature file on main, and the board on main holds no ASD-STE100 issues.\n\n**Where the issue records live**\n- LIM-501c5c (initiative), epics LIM-b5f481, LIM-55e2b7, LIM-34df42, LIM-d8d79b, LIM-beea9e, LIM-b4c2f7 and tasks such as LIM-0f40b3, LIM-17d9a1, LIM-b32121 exist only on origin/develop (last board commit 0808b23, 2026-10-17) and on PR #45's branch.\n- On origin/develop they are all still open. On PR #45's branch the initiative and the three tasks are closed, but epic LIM-b5f481 (Epic 1) is still open, which contradicts the PR body.\n- So the claim 'epics done' is true only on the unmerged PR branch, not on the integration board.\n\n**Decision needed (Ryan)**\nRebase PR #45 onto main (0.31.0, after the legacy loop retirement in PR #47) and merge, or close it. If it merges, bring the STE issue records onto main with it and close them there with test evidence. If it closes, mark the develop copies as dropped.\n\n**Acceptance**\nPR #45 is merged or closed, and the ASD-STE100 issue records match that outcome on main.",
+  "type": "task",
+  "status": "open",
+  "priority": 2,
+  "assignee": null,
+  "creator": null,
+  "parent": null,
+  "labels": [],
+  "dependencies": [],
+  "comments": [],
+  "created_at": "2026-10-20T13:16:42.742448Z",
+  "updated_at": "2026-10-20T13:16:42.742501Z",
+  "closed_at": null,
+  "agent": {
+    "platform": "claude-code",
+    "model": "claude-opus-5-5",
+    "name": "drift-fix"
+  },
+  "right_now_summary": null,
+  "right_now_updated_at": null,
+  "custom": {}
+}
