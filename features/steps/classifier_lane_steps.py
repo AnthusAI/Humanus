@@ -25,8 +25,14 @@ class FakeDecisionModel:
         self.tokens = tokens
         self.requests: list[dict] = []
 
+    delay = 0.0
+
     async def ask(self, state, questions, model):
         self.requests.append({"state": state, "questions": questions, "model": model})
+        if self.delay:
+            import asyncio
+
+            await asyncio.sleep(self.delay)
         target = state["target"].lower()
         p = next((value for word, value in self.triggers if word in target), self.default)
         return DecisionAnswers(answers={name: {"type": "noul", "noul": p} for name in questions}, input_tokens=self.tokens)
@@ -274,3 +280,14 @@ def step_rules_still(context):
     assert [f["policyId"] for f in context.check_result["findings"]] == ["phrase-rule"], json.dumps(
         context.check_result["findings"]
     )
+
+
+@given("each decision takes {delay:g} seconds and the lane may run {concurrency:d} request at a time with a {deadline:g} second deadline")
+def step_deadline(context, delay, concurrency, deadline):
+    context.decision_model.delay = delay
+    context.classifier_options = {"maxConcurrency": concurrency, "deadlineSeconds": deadline}
+
+
+@then("the decision model received fewer than {count:d} requests")
+def step_fewer_requests(context, count):
+    assert len(context.decision_model.requests) < count, len(context.decision_model.requests)

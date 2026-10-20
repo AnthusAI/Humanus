@@ -90,6 +90,11 @@
               "minimum": 0,
               "maximum": 32,
               "default": 4
+            },
+            "deadlineSeconds": {
+              "type": "number",
+              "exclusiveMinimum": 0,
+              "description": "Stop starting new requests after this many seconds; the lane reports partial. Keeps a synchronous API call under its timeout."
             }
           }
         }

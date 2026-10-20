@@ -91,3 +91,13 @@ Feature: Zero-shot classifier lane
     When the document is classified
     Then the classifier lane reports status "partial"
     And the decision model received 2 requests
+
+  Scenario: A deadline stops the lane from starting new requests and says so
+    Given the document to classify is:
+      """
+      One. Two. Three. Four. Five.
+      """
+    And each decision takes 0.2 seconds and the lane may run 1 request at a time with a 0.5 second deadline
+    When the document is classified
+    Then the classifier lane reports status "partial"
+    And the decision model received fewer than 6 requests

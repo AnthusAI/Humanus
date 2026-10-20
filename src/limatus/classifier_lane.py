@@ -188,9 +188,13 @@ async def _run_jobs(
     library = _ExampleLibrary(options.get("examples", ()), options.get("maxExamplesPerQuestion", DEFAULT_MAX_EXAMPLES))
     failures: list[str] = []
     skipped = 0
+    late = 0
+    deadline = options.get("deadlineSeconds")
+    loop = asyncio.get_running_loop()
+    started = loop.time()
 
     async def run(job: _Job) -> None:
-        nonlocal skipped
+        nonlocal skipped, late
         questions = {
             name: _question_payload(policy, detector, library.select(policy.id, detector.id, job.state["target"]))
             for name, policy, detector in job.detectors
@@ -201,6 +205,9 @@ async def _run_jobs(
             outcome.cache_hits += 1
         else:
             async with semaphore:
+                if deadline is not None and loop.time() - started >= deadline:
+                    late += 1
+                    return
                 if not await meter.reserve():
                     skipped += 1
                     return
@@ -221,10 +228,12 @@ async def _run_jobs(
 
     if failures and outcome.requests == 0 and outcome.cache_hits == 0:
         outcome.status = {"status": "failed", "reason": failures[0], "detectors": detector_count}
-    elif failures or skipped:
+    elif failures or skipped or late:
         reasons = []
         if skipped:
             reasons.append(f"{skipped} segment(s) skipped: input-token budget of {budget} reached")
+        if late:
+            reasons.append(f"{late} segment(s) skipped: {deadline}s deadline reached")
         if failures:
             reasons.append(f"{len(failures)} request(s) failed: {failures[0]}")
         outcome.status = {"status": "partial", "reason": "; ".join(reasons), "detectors": detector_count}
