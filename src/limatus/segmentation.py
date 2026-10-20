@@ -292,7 +292,7 @@ _INLINE_MASKS = (
 
 def split_sentences(source: str) -> list[tuple[int, int]]:
     """Sentence spans within ``source`` (a single prose block)."""
-    masked = _mask_inline(source)
+    masked = mask_inline(source)
     spans: list[tuple[int, int]] = []
     start = 0
     index = 0
@@ -315,7 +315,8 @@ def split_sentences(source: str) -> list[tuple[int, int]]:
     return [span for span in spans if span[0] < span[1]]
 
 
-def _mask_inline(source: str) -> str:
+def mask_inline(source: str) -> str:
+    """Replace inline code, URLs, link targets, citations and directive attributes with x's (same length)."""
     masked = source
     for pattern in _INLINE_MASKS:
         masked = pattern.sub(lambda m: "x" * len(m.group(0)), masked)

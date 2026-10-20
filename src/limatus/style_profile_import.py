@@ -16,6 +16,8 @@ from .editorial_style import DEFAULT_DIAGNOSE_CHECKS, load_style_profile
 
 # Style-profile check names (camelCase) to builtin detector checks.
 _CHECKS = {name: re.sub(r"(?<!^)(?=[A-Z])", "_", name).lower() for name in DEFAULT_DIAGNOSE_CHECKS}
+# The legacy voiceMismatch check flagged passive voice when the profile asked for active voice.
+_CHECKS["voiceMismatch"] = "passive_voice"
 
 _GUIDANCE_SECTIONS = (
     ("tone", "Tone", "tone"),
@@ -78,7 +80,12 @@ def policy_pack_from_style_profile(path: str | Path, version: str | None = None)
             severity="info",
         )
 
-    builtins = [_builtin(name, profile) for name, enabled in profile.checks.items() if enabled]
+    prefers_active = "active voice" in " ".join(profile.sentence_style).lower()
+    builtins = [
+        _builtin(name, profile)
+        for name, enabled in profile.checks.items()
+        if enabled and (name != "voiceMismatch" or prefers_active)
+    ]
     if rules.contrast_cap is not None:
         builtins.append({"id": "contrast-cap", "lane": "rules", "kind": "builtin", "check": "contrast_cap", "params": {"max": rules.contrast_cap}})
     if rules.no_emojis:

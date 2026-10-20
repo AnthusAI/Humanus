@@ -62,7 +62,8 @@ class BuiltinDetector:
 class Question:
     type: str
     instructions: str
-    criteria: Mapping[str, str | None] | None = None
+    # noul: {"true": ..., "false": ...}; choice: label -> description; score: level descriptions
+    criteria: Mapping[str, str | None] | tuple[str, ...] | None = None
 
 
 @dataclass(frozen=True)
@@ -126,10 +127,15 @@ class PolicyPack:
         return tuple(policy for policy in self.policies if policy.enabled)
 
 
-def load_policy_pack(source: Mapping[str, Any] | str | Path) -> PolicyPack:
-    """Load and validate a policy pack from a payload or a JSON/YAML file path."""
+def load_policy_pack(source: Mapping[str, Any] | str | Path, *, schema_checked: bool = False) -> PolicyPack:
+    """Load and validate a policy pack from a payload or a JSON/YAML file path.
+
+    ``schema_checked`` skips the JSON Schema pass when the caller already
+    validated the payload as part of a larger document.
+    """
     payload = _read_source(source)
-    validate_payload(SCHEMA_NAME, payload, PolicyPackValidationError)
+    if not schema_checked:
+        validate_payload(SCHEMA_NAME, payload, PolicyPackValidationError)
     pack = _parse_pack(payload)
     _check_semantics(pack)
     return pack
@@ -191,7 +197,7 @@ def _parse_detector(raw: Mapping[str, Any]) -> Detector:
             question=Question(
                 type=question["type"],
                 instructions=question["instructions"],
-                criteria=question.get("criteria"),
+                criteria=tuple(question["criteria"]) if isinstance(question.get("criteria"), list) else question.get("criteria"),
             ),
             violation=dict(raw["violation"]),
             threshold=raw["threshold"],
@@ -249,6 +255,8 @@ def _check_classifier(detector: ClassifierDetector, location: str) -> None:
         unknown = set(violation["labels"]) - set(detector.question.criteria or {})
         if unknown:
             _fail(f"violation labels not among question criteria: {sorted(unknown)}", f"{location}/violation")
+    if question_type == "score" and not 0 < violation["scoreBelow"] < len(detector.question.criteria or ()):
+        _fail("scoreBelow must fall between the lowest and highest score level", f"{location}/violation")
 
 
 def _fail(message: str, location: str) -> None:

@@ -133,8 +133,20 @@ Front matter, code, Markus directives, block quotes, tables and raw HTML are
 protected regions, never prose. Paragraph and sentence ids derive from their
 text, so they survive edits elsewhere in the document.
 
-The rules and classifier lanes are not wired into `check` yet; until they
-are, a lane with detectors reports `unavailable`.
+Two lanes find problems:
+
+- **Rules** (deterministic): `phrase`, `regex` and `builtin` detectors run on
+  prose only. `limatus pack builtin ai-writing-tells` prints a starter pack of
+  24 policies adapted from [avoid-ai-writing](https://github.com/conorbronsdon/avoid-ai-writing)
+  (MIT; see `limatus/packs/NOTICE.md`) for a CMS to copy and edit.
+- **Classifier** (TypeSafe Jev, zero-shot): install `limatus[jev]` and set
+  `TYPESAFE_API_KEY`. Each sentence, paragraph or document segment costs one
+  request carrying every question that applies to it; answers are cached by
+  content, so a rescan after an edit only asks about changed text. Findings
+  carry the model's probability; those between `reviewAt` and `threshold`
+  have status `review`. `options.classifier.maxInputTokens` caps spend. If no
+  decision model is configured the lane reports `unavailable` and rules
+  findings are still returned.
 
 ## Portable style profiles
 

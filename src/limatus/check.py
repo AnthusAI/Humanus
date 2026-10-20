@@ -7,27 +7,42 @@ UTF-16 code units so a browser editor can use them directly.
 from __future__ import annotations
 
 import hashlib
+from bisect import bisect_right
 from itertools import accumulate
 from typing import Any, Mapping
 
 from .contracts import ContractValidationError, validate_payload
+from .classifier_lane import ClassifierCache, DecisionModel, default_decision_model, process_cache, run_classifier_lane
+from .finding_ids import finding_id
 from .policy_pack import PolicyPack, PolicyPackValidationError, load_policy_pack
-from .segmentation import ProtectedRegion, Segment, SegmentedDocument, segment_document
+from .rules_lane import Hit, run_rules_lane
+from .segmentation import ProtectedRegion, Segment, SegmentedDocument, normalize_text, segment_document
 
 REQUEST_SCHEMA = "check-request-v1"
-RESULT_SCHEMA = "check-result-v1"
-LANES = ("rules", "classifier")
 
 
 class CheckRequestValidationError(ContractValidationError):
     """The request is not a valid ``check-request-v1`` document."""
 
 
-def check(request: Mapping[str, Any]) -> dict[str, Any]:
-    """Check ``request["content"]`` against ``request["pack"]``."""
+_DEFAULT = object()
+
+
+def check(
+    request: Mapping[str, Any],
+    *,
+    decision_model: DecisionModel | None | object = _DEFAULT,
+    classifier_cache: ClassifierCache | None = None,
+) -> dict[str, Any]:
+    """Check ``request["content"]`` against ``request["pack"]``.
+
+    ``decision_model`` defaults to Jev when ``TYPESAFE_API_KEY`` is set; pass
+    ``None`` to run without one. ``classifier_cache`` defaults to a cache shared
+    by every check in this process.
+    """
     validate_payload(REQUEST_SCHEMA, request, CheckRequestValidationError)
     try:
-        pack = load_policy_pack(request["pack"])
+        pack = load_policy_pack(request["pack"], schema_checked=True)
     except PolicyPackValidationError as exc:
         location = "/".join(part for part in ("pack", exc.location) if part)
         raise CheckRequestValidationError(REQUEST_SCHEMA, str(exc), location) from exc
@@ -35,22 +50,50 @@ def check(request: Mapping[str, Any]) -> dict[str, Any]:
     content = request["content"]
     document = segment_document(content["text"], content["format"])
     lane_options = request.get("options", {}).get("lanes", {})
-    result = _annotate(document, pack, lanes={lane: _lane_status(pack, lane, lane_options) for lane in LANES})
-    validate_payload(RESULT_SCHEMA, result)
-    return result
+    lanes: dict[str, Any] = {}
+    hits: list[Hit] = []
+
+    if lane_options.get("rules", True):
+        rule_hits, detectors = run_rules_lane(document, pack)
+        hits.extend(rule_hits)
+        lanes["rules"] = {"status": "ran", "detectors": detectors}
+    else:
+        lanes["rules"] = {"status": "disabled"}
+
+    coverage: list[dict[str, Any]] = []
+    usage: dict[str, int] = {}
+    if lane_options.get("classifier", True):
+        outcome = run_classifier_lane(
+            document,
+            pack,
+            decision_model=default_decision_model() if decision_model is _DEFAULT else decision_model,
+            cache=classifier_cache if classifier_cache is not None else process_cache(),
+            options=request.get("options", {}).get("classifier", {}),
+        )
+        hits.extend(outcome.hits)
+        coverage = outcome.coverage
+        lanes["classifier"] = outcome.status
+        usage = {
+            "classifierRequests": outcome.requests,
+            "classifierInputTokens": outcome.input_tokens,
+            "classifierCacheHits": outcome.cache_hits,
+        }
+    else:
+        lanes["classifier"] = {"status": "disabled"}
+
+    return _annotate(document, pack, hits, lanes, coverage, usage)
 
 
-def _lane_status(pack: PolicyPack, lane: str, lane_options: Mapping[str, bool]) -> dict[str, Any]:
-    if not lane_options.get(lane, True):
-        return {"status": "disabled"}
-    if not any(d.lane == lane for p in pack.enabled_policies for d in p.detectors):
-        return {"status": "ran", "detectors": 0}
-    return {"status": "unavailable", "reason": f"the {lane} lane is not implemented in this version", "detectors": 0}
-
-
-def _annotate(document: SegmentedDocument, pack: PolicyPack, lanes: dict[str, Any]) -> dict[str, Any]:
+def _annotate(
+    document: SegmentedDocument,
+    pack: PolicyPack,
+    hits: list[Hit],
+    lanes: dict[str, Any],
+    coverage: list[dict[str, Any]],
+    usage: dict[str, int],
+) -> dict[str, Any]:
     to_utf16 = Utf16Offsets(document.text)
-    return {
+    result = {
         "schemaVersion": 1,
         "offsetUnit": "utf16",
         "document": {
@@ -60,10 +103,13 @@ def _annotate(document: SegmentedDocument, pack: PolicyPack, lanes: dict[str, An
         "pack": {"packId": pack.pack_id, "version": pack.version},
         "segments": [_segment_payload(segment, to_utf16) for segment in document.segments],
         "protected": [_region_payload(region, to_utf16) for region in document.protected],
-        "findings": [],
-        "coverage": [],
+        "findings": _finding_payloads(document, hits, to_utf16),
+        "coverage": coverage,
         "lanes": lanes,
     }
+    if usage:
+        result["usage"] = usage
+    return result
 
 
 def _segment_payload(segment: Segment, to_utf16: "Utf16Offsets") -> dict[str, Any]:
@@ -79,6 +125,62 @@ def _segment_payload(segment: Segment, to_utf16: "Utf16Offsets") -> dict[str, An
     if segment.parent_id is not None:
         payload["parentId"] = segment.parent_id
     return payload
+
+
+def _finding_payloads(document: SegmentedDocument, hits: list[Hit], to_utf16: "Utf16Offsets") -> list[dict[str, Any]]:
+    locate = SegmentLocator(document)
+    occurrences: dict[tuple[str, str, str, str], int] = {}
+    findings: list[dict[str, Any]] = []
+    for hit in sorted(hits, key=lambda h: (h.start, h.end, h.policy.id, h.detector.id)):
+        segment = hit.segment or locate(hit.start, hit.end)
+        whole_document = segment.kind == "document"
+        excerpt = "" if whole_document else document.text[hit.start : hit.end]
+        key = (hit.policy.id, hit.detector.id, segment.id, normalize_text(excerpt))
+        occurrence = occurrences.get(key, 0)
+        occurrences[key] = occurrence + 1
+        finding: dict[str, Any] = {
+            "id": finding_id(
+                policy_id=hit.policy.id,
+                detector_id=hit.detector.id,
+                segment_text=None if whole_document else segment.source,
+                excerpt=excerpt,
+                occurrence=occurrence,
+            ),
+            "policyId": hit.policy.id,
+            "policyVersion": hit.policy.version,
+            "detectorId": hit.detector.id,
+            "lane": hit.detector.lane,
+            "severity": hit.policy.severity,
+            "status": hit.status,
+            "segmentId": segment.id,
+            "span": {"start": to_utf16(hit.start), "end": to_utf16(hit.end)},
+            "excerpt": excerpt,
+            "message": hit.message,
+        }
+        if hit.probability is not None:
+            finding["probability"] = hit.probability
+        if hit.replacement is not None:
+            finding["replacement"] = hit.replacement
+        findings.append(finding)
+    return findings
+
+
+class SegmentLocator:
+    """Find the smallest segment (sentence, then paragraph, then document) containing a span."""
+
+    def __init__(self, document: SegmentedDocument) -> None:
+        self._document_segment = document.segments[0]
+        self._levels = [
+            (level, [segment.start for segment in level])
+            for level in (document.sentences(), document.paragraphs)
+        ]
+
+    def __call__(self, start: int, end: int) -> Segment:
+        for level, starts in self._levels:
+            index = bisect_right(starts, start) - 1
+            if index >= 0 and end <= level[index].end:
+                return level[index]
+        return self._document_segment
 
 
 def _region_payload(region: ProtectedRegion, to_utf16: "Utf16Offsets") -> dict[str, Any]:

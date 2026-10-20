@@ -4,6 +4,7 @@
     limatus schema policy-pack-v1|check-request-v1|check-result-v1|finding-v1|suggest-request-v1|suggest-result-v1
     limatus pack import --profile <style-profile.yml> [--version V] [--output FILE]
     limatus pack validate <policy-pack.yml>
+    limatus pack builtin [name]   (list or print starter packs, e.g. ai-writing-tells)
     limatus scan --draft <file> --profile <style-profile.yml> [--require-judge] [...]
     limatus decide --finding-id finding-<hex> --decision skip|rewrite|delete|keep|add \\
                    [--note TEXT] --decisions <decisions.json>

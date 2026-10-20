@@ -9,6 +9,7 @@ from typing import Any
 
 from .check import check
 from .contracts import CONTRACT_SCHEMAS, load_schema
+from .packs import builtin_pack, list_builtin_packs
 from .policy_pack import load_policy_pack
 from .style_profile_import import policy_pack_from_style_profile
 
@@ -56,10 +57,17 @@ def contract_pack(flags: list[str]) -> int:
     importer.add_argument("--output", help="write the pack here instead of stdout")
     validator = commands.add_parser("validate", help="validate a policy pack file")
     validator.add_argument("path")
+    starter = commands.add_parser("builtin", help="list starter packs, or print one")
+    starter.add_argument("name", nargs="?", help="starter pack to print")
     args = parser.parse_args(flags)
 
     if args.command == "import":
         _emit(policy_pack_from_style_profile(args.profile, version=args.version), args.output)
+    elif args.command == "builtin":
+        if args.name:
+            _emit(builtin_pack(args.name), None)
+        else:
+            print("\n".join(list_builtin_packs()))
     else:
         pack = load_policy_pack(args.path)
         print(f"{pack.pack_id} {pack.version}: {len(pack.policies)} policies valid")
