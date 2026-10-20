@@ -1,12 +1,99 @@
 # CHANGELOG
 
 
+## v0.30.0 (2026-10-20)
+
+### Features
+
+- Configurable editorial compliance engine ([#46](https://github.com/AnthusAI/Limatus/pull/46),
+  [`4e64a49`](https://github.com/AnthusAI/Limatus/commit/4e64a49e035674550c6818cc17027fea7c0d7bb4))
+
+* feat(contracts): policy packs, Markus segmenter and check() (LIM-6a84be)
+
+Introduce the contract layer for the configurable editorial compliance engine (LIM-a5828a):
+
+- JSON Schemas packaged under limatus/schemas: policy-pack-v1, check-request-v1, check-result-v1,
+  finding-v1, suggest-request-v1, suggest-result-v1; `limatus schema <name>` prints them. -
+  load_policy_pack: schema plus semantic validation (unique ids, compilable regexes, coherent
+  classifier thresholds). - policy_pack_from_style_profile and `limatus pack import|validate`. -
+  Markus-aware segmenter (markdown-it-py): paragraph and sentence segments with exact offsets,
+  content-derived stable ids, protected regions for front matter, code, directives, quotes, tables
+  and HTML. - check(): standoff annotation with UTF-16 offsets and lane status; finding_id() for ids
+  stable across rescans; `limatus check`.
+
+Lanes report "unavailable" until LIM-dc05d2 and LIM-3f3065 land.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+
+* chore(kanbus): commit board state
+
+* docs(wiki): record editorial compliance engine vision (LIM-a5828a)
+
+* feat(check): rules lane, AI-writing tells pack and Jev classifier lane
+
+Rules lane (LIM-dc05d2): phrase, regex and builtin detectors run on prose segments only (never code,
+  quotes, directives or tables). Builtins reuse the always-lane heuristics on the new segmentation;
+  uncontracted forms and emoji carry deterministic replacements. `voice_mismatch` is renamed
+  `passive_voice`. Starter pack `ai-writing-tells` (24 policies, 108 detectors) adapted from
+  avoid-ai-writing (MIT, see packs/NOTICE.md); `limatus pack builtin [name]`.
+
+Classifier lane (LIM-3f3065): zero-shot decisions from TypeSafe Jev via the optional `limatus[jev]`
+  extra. One request per segment with every applicable question; sentences judged with their
+  paragraph as context; policy examples ride along with each question. Content-keyed answer cache,
+  bounded concurrency, input-token budget (lane reports partial), review band, coverage of every
+  decision, and graceful degradation when the model is missing or failing. Question criteria now
+  match the Jev API (noul {true,false}, choice labels, score level list).
+
+check() validates the request once and no longer re-validates its own result (specs assert the
+  contract), cutting runtime by about 75%.
+
+* feat(suggest): Luna rewrite options for findings and selections; draft classifier questions
+  (LIM-7906a5)
+
+- suggest(): rewrite options for a finding or any editor selection, with an optional editor note. A
+  finding's target expands to its sentence (flagged words marked) so options are whole sentences,
+  not fragments. The prompt carries the policy guidance, rewrite guidance, compliant examples, house
+  policies and a voice sample; options that are identical, duplicated, evasion-motivated, or still
+  break the triggering rule are dropped and reported. Spans must cover prose. - draft_questions():
+  turns a prose policy into atomic noul classifier detectors (sentence/paragraph/document scope,
+  threshold 0.8, review from 0.5), each validated against policy-pack-v1; rejects are noted. -
+  Contracts: suggest-request accepts finding or selection; suggest-result reports target and dropped
+  options; draft-questions-request/result-v1. - CLI: `limatus suggest --request`, `limatus
+  draft-questions --request`. Defaults to gpt-6-luna through OPENAI_API_KEY.
+
+* feat(calibration): learn from editor decisions (LIM-9ba0bf)
+
+- calibrate(): per-detector calibration from feedback labels — none below 10 labels, Platt scaling
+  from 10, isotonic (PAV) from 50. Synthetic overconfident detector: held-out ECE 0.19 -> 0.027. -
+  Detectors carry an optional `calibration`; check() thresholds on the calibrated probability and
+  reports rawProbability on findings and coverage. - Few-shot retrieval: options.classifier.examples
+  (past decisions with text); the most similar per target (word Jaccard) ride along with each
+  question, capped by maxExamplesPerQuestion. - Contracts feedback-labels-v1 and calibration-v1;
+  `limatus calibrate`.
+
+* feat(classifier): deadlineSeconds keeps synchronous checks under API timeouts (LIM-3f3065)
+
+The classifier lane stops starting new requests once the deadline passes and reports partial, so a
+  CMS can call check() inside a 30-second AppSync resolver.
+
+* feat(check): plain text on segments and findings for rendered previews
+
+Paragraph and sentence segments carry their plain text and findings their plain excerptText, so a
+  CMS can place findings on a rendered preview, not only on the markup source.
+
+---------
+
+Co-authored-by: Claude Opus 5.5 <noreply@anthropic.com>
+
+Co-authored-by: Kanbus <kanbus@localhost>
+
+
 ## v0.29.0 (2026-09-27)
 
 ### Features
 
 - **skills**: Add effective story writing guidance
-  ([`f124d29`](https://github.com/AnthusAI/Limatus/commit/f124d298e8e053cca9d66f1b1960677b373fcd76))
+  ([`7920df6`](https://github.com/AnthusAI/Limatus/commit/7920df6f3c79a42de1fe952ada68adab5b7a0343))
 
 
 ## v0.28.0 (2026-09-12)
@@ -14,13 +101,13 @@
 ### Chores
 
 - **kanbus**: Commit board state (issues)
-  ([`2cd835f`](https://github.com/AnthusAI/Limatus/commit/2cd835f1d5fe380d2f7eae2710f1b916bf891c5e))
+  ([`f174b39`](https://github.com/AnthusAI/Limatus/commit/f174b398fb26a6c210c77c5d1099bd6c09ecefba))
 
 ### Features
 
 - **usability**: Add generic_feature_row scan (LIM-d75641)
   ([#39](https://github.com/AnthusAI/Limatus/pull/39),
-  [`3bc99ae`](https://github.com/AnthusAI/Limatus/commit/3bc99aea072df4b910c4ad5179e81a20680cc341))
+  [`6063025`](https://github.com/AnthusAI/Limatus/commit/606302546dab1a1b5d4d8c63bf43b7a08300de63))
 
 Detect consecutive sibling feature cards with shared leading class and images; gate via
   template.flagFeatureRow (default true).
@@ -31,13 +118,13 @@ Detect consecutive sibling feature cards with shared leading class and images; g
 ### Chores
 
 - **kanbus**: Commit board state (issues)
-  ([`65fd120`](https://github.com/AnthusAI/Limatus/commit/65fd120295fb3eeff7d5493253a738fe79ec8661))
+  ([`ee800ec`](https://github.com/AnthusAI/Limatus/commit/ee800ecf8edb6d18420b19f2649f255101006d74))
 
 ### Features
 
 - **usability**: Add generic_gradient_hero scan (LIM-f9e7cf)
   ([#38](https://github.com/AnthusAI/Limatus/pull/38),
-  [`891d05c`](https://github.com/AnthusAI/Limatus/commit/891d05c951c063fe0472ea866b7a18105c0d0663))
+  [`09d74c2`](https://github.com/AnthusAI/Limatus/commit/09d74c2443aeffea02bbab51244b97975391b9ec))
 
 Detect linear-gradient backgrounds on hero-region selectors when template.flagGradientHero is
   enabled (default true).
@@ -48,13 +135,13 @@ Detect linear-gradient backgrounds on hero-region selectors when template.flagGr
 ### Chores
 
 - **kanbus**: Commit board state (issues)
-  ([`35fd293`](https://github.com/AnthusAI/Limatus/commit/35fd293cc33b2f4c5c15076dff923477eba14e17))
+  ([`9d10e10`](https://github.com/AnthusAI/Limatus/commit/9d10e104837c63a4ed5390a040baa08217acfc7e))
 
 ### Features
 
 - **usability**: Emoji_heading scan kind (LIM-f7bce7)
   ([#37](https://github.com/AnthusAI/Limatus/pull/37),
-  [`a915c7b`](https://github.com/AnthusAI/Limatus/commit/a915c7be2d124a6d6f212da6b47c993dd4f35178))
+  [`8a3c345`](https://github.com/AnthusAI/Limatus/commit/8a3c345096801322d505e552a9fa6827d89fbbaf))
 
 Extract shared EMOJI_PATTERN, add emoji.flagInHeadings profile toggle, and flag headings that
   contain emoji in usability scan.
@@ -65,13 +152,13 @@ Extract shared EMOJI_PATTERN, add emoji.flagInHeadings profile toggle, and flag 
 ### Chores
 
 - **kanbus**: Commit board state (issues)
-  ([`103ad6a`](https://github.com/AnthusAI/Limatus/commit/103ad6ada37dbd0b074e642b273ee2c47e7d472c))
+  ([`8b1e5d2`](https://github.com/AnthusAI/Limatus/commit/8b1e5d22bceea655f3dbb58847c6ddda107f120a))
 
 ### Features
 
 - **usability**: Add missing_lang scan kind (LIM-1d9020)
   ([#36](https://github.com/AnthusAI/Limatus/pull/36),
-  [`781060b`](https://github.com/AnthusAI/Limatus/commit/781060b1f34786804fadda1130fad6079f9c4368))
+  [`a7f5aae`](https://github.com/AnthusAI/Limatus/commit/a7f5aaee8c500e095cb70ed297e0c73793b6e173))
 
 Flag root html elements without a non-empty lang attribute, gated by lang.flagMissing in the
   usability profile (default true).
@@ -82,22 +169,22 @@ Flag root html elements without a non-empty lang attribute, gated by lang.flagMi
 ### Chores
 
 - **kanbus**: Commit board state (issues)
-  ([`9680d01`](https://github.com/AnthusAI/Limatus/commit/9680d01ffdf5f28bd865b3e194e32af2b8b7f1f5))
+  ([`e4f33f8`](https://github.com/AnthusAI/Limatus/commit/e4f33f8e185431363521694ba1516e2e4244b0af))
 
 - **kanbus**: Commit board state (issues)
-  ([`2ded0de`](https://github.com/AnthusAI/Limatus/commit/2ded0deac5fc9140309697d91ffae0b2e7affba0))
+  ([`1419eda`](https://github.com/AnthusAI/Limatus/commit/1419eda5ad32649e3fd5970ac071a70d212e1a74))
 
 ### Documentation
 
 - **skill**: Lim-15fa45 document HTML usability scan in SKILL.md
   ([#35](https://github.com/AnthusAI/Limatus/pull/35),
-  [`3349178`](https://github.com/AnthusAI/Limatus/commit/33491784f26e147087a6e73c3e76eb8c876f34a0))
+  [`1c67317`](https://github.com/AnthusAI/Limatus/commit/1c67317e8cf865aed42fe47ff31b96ba58f4b83d))
 
 ### Features
 
 - **usability**: Add missing_accessible_name scan (LIM-dbfe8e)
   ([#34](https://github.com/AnthusAI/Limatus/pull/34),
-  [`74002a4`](https://github.com/AnthusAI/Limatus/commit/74002a47d4d33f5ca49f9f16932a1336cf2dba2b))
+  [`f562257`](https://github.com/AnthusAI/Limatus/commit/f56225700fdd0c3ddd9c79afd80b21c6465d88a7))
 
 Extend usability scan with accessibleName.flagMissing profile option and DOM checks for input,
   select, and textarea naming.
@@ -108,13 +195,13 @@ Extend usability scan with accessibleName.flagMissing profile option and DOM che
 ### Chores
 
 - **kanbus**: Commit board state (issues)
-  ([`cbf8879`](https://github.com/AnthusAI/Limatus/commit/cbf8879758f14a1de387d0620f5d047c1315cbc3))
+  ([`afcff2c`](https://github.com/AnthusAI/Limatus/commit/afcff2cfb3e186ca9f4e73d643ec190f49a929a1))
 
 ### Features
 
 - **usability**: Flag suppressed focus outline (LIM-942618)
   ([#33](https://github.com/AnthusAI/Limatus/pull/33),
-  [`7f2985a`](https://github.com/AnthusAI/Limatus/commit/7f2985a080031ce3e2f9358bc17fef6f4c2aac00))
+  [`0d669d7`](https://github.com/AnthusAI/Limatus/commit/0d669d739dffd3fe0e4dcd10afce1cb789a092a2))
 
 Add suppressed_focus_outline scan for interactive controls when focus styles remove outline without
   a compensating box-shadow, with profile focus.flagSuppressedOutline (default true).
@@ -125,13 +212,13 @@ Add suppressed_focus_outline scan for interactive controls when focus styles rem
 ### Chores
 
 - **kanbus**: Commit board state (issues)
-  ([`95cecb0`](https://github.com/AnthusAI/Limatus/commit/95cecb0ffec320a7e134d0f69e969a2d853351aa))
+  ([`c60cac5`](https://github.com/AnthusAI/Limatus/commit/c60cac50b9d81b6f5e71a2231cb6622bb2fd1bf1))
 
 ### Features
 
 - **usability**: Add small tap target scan (LIM-17723e)
   ([#32](https://github.com/AnthusAI/Limatus/pull/32),
-  [`a4375e2`](https://github.com/AnthusAI/Limatus/commit/a4375e29dc8d873e6a9c3a991cb9af028f91310e))
+  [`1d64ad0`](https://github.com/AnthusAI/Limatus/commit/1d64ad0a069832e6895f16f5a1804102293829e0))
 
 Extend usability scan with small_tap_target findings, tapTarget.minPx profile default, and
   deterministic width/height resolution from attrs, inline styles, and embedded CSS rules.
@@ -142,19 +229,19 @@ Extend usability scan with small_tap_target findings, tapTarget.minPx profile de
 ### Chores
 
 - **kanbus**: Commit board state (issues)
-  ([`995a263`](https://github.com/AnthusAI/Limatus/commit/995a263de7a3e16b8fbaeb7cd99363d67ffe547c))
+  ([`599b7c2`](https://github.com/AnthusAI/Limatus/commit/599b7c25dc8dee7908f6f0f18e76206291b181d6))
 
 - **kanbus**: Commit board state (issues)
-  ([`aaea8b7`](https://github.com/AnthusAI/Limatus/commit/aaea8b7a32ff79ccb82013f2fb3fd4d97a9a4165))
+  ([`4585a1c`](https://github.com/AnthusAI/Limatus/commit/4585a1c8304c79687e28038276696cd7a1732e08))
 
 - **kanbus**: Commit board state (issues)
-  ([`3287c46`](https://github.com/AnthusAI/Limatus/commit/3287c46b310067e5d515d55118c768e4591f18ad))
+  ([`cb0c905`](https://github.com/AnthusAI/Limatus/commit/cb0c9059632462e145adf6b15a7e82a93502fc31))
 
 ### Features
 
 - **usability**: Read-only HTML scan (LIM-274a81)
   ([#31](https://github.com/AnthusAI/Limatus/pull/31),
-  [`0a2f37d`](https://github.com/AnthusAI/Limatus/commit/0a2f37decbb91cfc225026912788527f4024e761))
+  [`c87ecaa`](https://github.com/AnthusAI/Limatus/commit/c87ecaae1c219c0e8ce96f59f5b2cf3f0517016f))
 
 * feat(usability): add read-only HTML scan for LIM-274a81
 
@@ -172,13 +259,13 @@ Pop void tags off the parser stack so siblings are not nested under img, harden 
 ### Chores
 
 - **kanbus**: Close rewrite-loop epic; start LIM-3863ed skill CLI
-  ([`5bca7dd`](https://github.com/AnthusAI/Limatus/commit/5bca7dd29318258d79ec5e7540e47cc106233dde))
+  ([`9d5914d`](https://github.com/AnthusAI/Limatus/commit/9d5914d6b8653e4a2093927d4979e21b34a0982f))
 
 ### Features
 
 - **cli**: Print packaged SKILL.md via limatus skill
   ([#30](https://github.com/AnthusAI/Limatus/pull/30),
-  [`6c60b3d`](https://github.com/AnthusAI/Limatus/commit/6c60b3d8406bde1fb8a87e875291b945e542cc25))
+  [`7a4e197`](https://github.com/AnthusAI/Limatus/commit/7a4e197cfd35ced3b791bdc47ecb52113d48936f))
 
 LIM-3863ed — Package copy-edit Agent Skill in the wheel and expose it through a
   progressive-disclosure `limatus skill` subcommand.
@@ -189,13 +276,13 @@ LIM-3863ed — Package copy-edit Agent Skill in the wheel and expose it through 
 ### Chores
 
 - **kanbus**: Close LIM-fc61e8; start preferredPhrasing LIM-74d5fb
-  ([`31fe252`](https://github.com/AnthusAI/Limatus/commit/31fe252b8e41fcb161728f95fabfd55cb6e09192))
+  ([`8ffdbce`](https://github.com/AnthusAI/Limatus/commit/8ffdbcec719c30e1aa549ad3b73ff6394bd2b766))
 
 ### Features
 
 - **style**: Preferredphrasing from/to profile reword hints
   ([#29](https://github.com/AnthusAI/Limatus/pull/29),
-  [`a498f22`](https://github.com/AnthusAI/Limatus/commit/a498f22660910dc946d738e4637412534017a840))
+  [`22bbee6`](https://github.com/AnthusAI/Limatus/commit/22bbee6c37dce4cfdbb7a747dbd3873eb80d0d88))
 
 
 ## v0.18.0 (2026-09-11)
@@ -203,29 +290,29 @@ LIM-3863ed — Package copy-edit Agent Skill in the wheel and expose it through 
 ### Chores
 
 - **kanbus**: Close evals epic (#28); start LIM-fc61e8 voice audit
-  ([`de4633a`](https://github.com/AnthusAI/Limatus/commit/de4633aba2cb87cb2cfb08d91ac2106072532ab0))
+  ([`341c374`](https://github.com/AnthusAI/Limatus/commit/341c3741b093d40ab3487117eae88fe0a8b1116e))
 
 - **kanbus**: Close false HITL wait; start Papyrus SDK adapter
-  ([`2cf8b30`](https://github.com/AnthusAI/Limatus/commit/2cf8b302918dbc2599cc35cb1758bfc5b51d085f))
+  ([`c6e4efc`](https://github.com/AnthusAI/Limatus/commit/c6e4efcd161576d92f81d7f698312f87252be0f1))
 
 LIM-80209b was parked on a stale Ryan-option-id gate. LIM-3ff8d0 / LIM-209793 in progress.
 
 - **kanbus**: Close LIM-3ff8d0 Papyrus SDK integration
-  ([`60c3d81`](https://github.com/AnthusAI/Limatus/commit/60c3d81d0ef27234a51e2d914c21d553bf4d11de))
+  ([`a56a400`](https://github.com/AnthusAI/Limatus/commit/a56a40010914efc929d0859b39ca4b814c132017))
 
 Papyrus #80 landed on develop. LIM-209793 and the epic are done.
 
 - **kanbus**: Close LIM-81ecb1 (#27); start LIM-658c60 metrics
-  ([`25e7a07`](https://github.com/AnthusAI/Limatus/commit/25e7a0723edd4859e3ae7e98f1eaa91d4ae5db97))
+  ([`3d95571`](https://github.com/AnthusAI/Limatus/commit/3d95571941c5408ec94c4dba3fe21f8522fbd9a7))
 
 - **kanbus**: Lim-fc61e8 Chatticus covered; Anth.us PPY-cc58ab
-  ([`18e864f`](https://github.com/AnthusAI/Limatus/commit/18e864f6d49390db8d43a999468f94b7aa33257d))
+  ([`a9c3bb3`](https://github.com/AnthusAI/Limatus/commit/a9c3bb3819b538762c355bc4c08e415d4dd4fa6a))
 
 - **kanbus**: Pr #80 revision for Tactus lockfile
-  ([`bd01f31`](https://github.com/AnthusAI/Limatus/commit/bd01f31d7d9eef2adadb85901e02466ab0c98ee0))
+  ([`67c8c0c`](https://github.com/AnthusAI/Limatus/commit/67c8c0c5cbe7ca051fdb5a6010ea11a9072bf24e))
 
 - **kanbus**: Start LIM-81ecb1 eval CI and fixture corpus close-out
-  ([`5788855`](https://github.com/AnthusAI/Limatus/commit/5788855be56a8a6bdf1d259be45a3cda326196fa))
+  ([`2196040`](https://github.com/AnthusAI/Limatus/commit/21960408536ea8970265aeb372b7ba46e60b31a5))
 
 Offline runner already exists (LIM-c1a014). Remaining: CI, docs, more fixtures.
 
@@ -233,7 +320,7 @@ Offline runner already exists (LIM-c1a014). Remaining: CI, docs, more fixtures.
 
 - **eval**: Smoke pytest and offline corpus on PRs
   ([#27](https://github.com/AnthusAI/Limatus/pull/27),
-  [`588596f`](https://github.com/AnthusAI/Limatus/commit/588596f32c7fa8cd71f865e1bd6f99c72f1ad932))
+  [`b1b6fbc`](https://github.com/AnthusAI/Limatus/commit/b1b6fbc371d16625b29d3ab39906d75d79ed73cc))
 
 Add CI workflow for pytest, offline eval corpus, and Behave smoke. Expand editorial corpus fixtures,
   document eval workflow in README, and fix portable profile test to resolve reference samples.
@@ -242,7 +329,7 @@ Add CI workflow for pytest, offline eval corpus, and Behave smoke. Expand editor
 
 - **eval**: Report finding precision/recall and option claim flags
   ([#28](https://github.com/AnthusAI/Limatus/pull/28),
-  [`6109937`](https://github.com/AnthusAI/Limatus/commit/6109937a0ee988bb2fa77313ef1941777da7aa6c))
+  [`fd24784`](https://github.com/AnthusAI/Limatus/commit/fd2478476d043cb3fad63f0b24fa83fe4640715a))
 
 
 ## v0.17.1 (2026-09-11)
@@ -251,7 +338,7 @@ Add CI workflow for pytest, offline eval corpus, and Behave smoke. Expand editor
 
 - **diagnosis**: Lim-ed02c3 ignore image alts and blockquote redundancy
   ([#26](https://github.com/AnthusAI/Limatus/pull/26),
-  [`e80298d`](https://github.com/AnthusAI/Limatus/commit/e80298d05902d068cb137121b844f7844fba8267))
+  [`974c12a`](https://github.com/AnthusAI/Limatus/commit/974c12a21a9c99d27d15c284b2e74271ffce4a7b))
 
 * fix(diagnosis): ignore image markdown and blockquote refrain in redundancy
 
@@ -266,28 +353,28 @@ Per-occurrence quoted context: blockquote lines, emphasis spans, and Markus pull
 ### Chores
 
 - **kanbus**: Close HITL apply gate, park usability epic, start LIM-ed02c3
-  ([`661db44`](https://github.com/AnthusAI/Limatus/commit/661db44b7ef92f694ed9cab52560b2688a6f228d))
+  ([`e776b54`](https://github.com/AnthusAI/Limatus/commit/e776b5402dd9b784aad4a42ea627722393c08a33))
 
 LIM-2d43b1 stays closed. LIM-30ca2a closed (CLI apply gate). LIM-e872b1 returned to open. LIM-ed02c3
   in progress as the last HITL WIP child. LIM-3ff8d0 left open, not started.
 
 - **kanbus**: Close LIM-2d43b1 portable CLI+SDK epic
-  ([`84d6818`](https://github.com/AnthusAI/Limatus/commit/84d681805d9d18a3b8ea3802b380a923a20a03b1))
+  ([`e6d3f26`](https://github.com/AnthusAI/Limatus/commit/e6d3f260eb60adbbc2d1df243e83a9124b60eb20))
 
 Children are done on main. Papyrus adapter remains LIM-209793 under LIM-3ff8d0.
 
 - **kanbus**: Close LIM-ed02c3 and HITL packets epic
-  ([`30bb8c2`](https://github.com/AnthusAI/Limatus/commit/30bb8c2a07b6ecb991e367902e7ff6da9c5bddb1))
+  ([`ec2efe0`](https://github.com/AnthusAI/Limatus/commit/ec2efe0e38547e2b867c57c365f212532861ba24))
 
 #26 landed on main. LIM-0b9d81 children are all closed.
 
 - **kanbus**: Lim-ed02c3 revision for italic and pull-quote refrain
-  ([`1f461d9`](https://github.com/AnthusAI/Limatus/commit/1f461d9b2f0efb22eb72c190019128ae55690ef5))
+  ([`7ca27cc`](https://github.com/AnthusAI/Limatus/commit/7ca27ccb0d2c53bd67e78564c84bd2174248c73b))
 
 PR #26 image mask stands; live confession liturgy still flagged.
 
 - **kanbus**: Record LIM-ed02c3 worktree
-  ([`72bda03`](https://github.com/AnthusAI/Limatus/commit/72bda03004c5fdcbe014dc6f14f6f16327c3d8b6))
+  ([`3b53063`](https://github.com/AnthusAI/Limatus/commit/3b53063930055332dea72d355dff26ce10602a7d))
 
 Composer worktree /tmp/limatus-ed02c3-redundancy on fix/LIM-ed02c3-redundancy-alts.
 
@@ -298,7 +385,7 @@ Composer worktree /tmp/limatus-ed02c3-redundancy on fix/LIM-ed02c3-redundancy-al
 
 - Explicit pass/fail verdict on the density block
   ([#24](https://github.com/AnthusAI/Limatus/pull/24),
-  [`c9b7447`](https://github.com/AnthusAI/Limatus/commit/c9b744756e9ed54a78aa3f2d56f0bd990178b25e))
+  [`dad4a7f`](https://github.com/AnthusAI/Limatus/commit/dad4a7f74be5e54c69f070e7e89c88e41fb7fabe))
 
 A diagnosis's `density` block reported raw numbers (wordCount, lexicalDensity, gzipRatio) with no
   verdict. A caller had to already know the profile's thresholds and cross-reference
@@ -328,7 +415,7 @@ Co-authored-by: Claude <noreply@anthropic.com>
 
 - Verify recognizes a reworded claim as preserved, not deleted
   ([#25](https://github.com/AnthusAI/Limatus/pull/25),
-  [`0a322c1`](https://github.com/AnthusAI/Limatus/commit/0a322c14fba40313db734e8ba581c58c2703afe7))
+  [`63aa6f9`](https://github.com/AnthusAI/Limatus/commit/63aa6f948c317b5fd844917447fce5297a170226))
 
 verify's diff was exact-string matching: any sentence whose normalized text didn't appear
   byte-for-byte in the working copy was flagged deleted_claim, and any new fact-pattern token
@@ -376,7 +463,7 @@ Co-authored-by: Claude <noreply@anthropic.com>
 
 - Three quiet correctness gaps found using Limatus on a real draft
   ([#21](https://github.com/AnthusAI/Limatus/pull/21),
-  [`2b60c8a`](https://github.com/AnthusAI/Limatus/commit/2b60c8ad164ea9d772db4a0d878d63ccb077cb34))
+  [`f091f92`](https://github.com/AnthusAI/Limatus/commit/f091f9248fb55eb43f90cd46751f2112df9e5e2e))
 
 Found while copy-editing a real Pilobolus article and diagnosed with the help of an Explore agent,
   which pinned exact file/line references for each before any change was made.
@@ -432,7 +519,7 @@ Co-authored-by: Claude <noreply@anthropic.com>
 
 - **judge**: Body scan blanks YAML so title is a later pass
   ([#20](https://github.com/AnthusAI/Limatus/pull/20),
-  [`0e26c24`](https://github.com/AnthusAI/Limatus/commit/0e26c24d8980a3d2b05f3f5e80493fa727812478))
+  [`88004fa`](https://github.com/AnthusAI/Limatus/commit/88004fa9cb81e3c48113a4a317dd66d09b8e7499))
 
 LIM-530ec2: the OpenAI judge was scoring the YAML title. Mask frontmatter the same way the profile
   lane does, drop YAML-span findings/rubric evidence, and bump JUDGE_PROMPT_VERSION with the canary
@@ -441,7 +528,7 @@ LIM-530ec2: the OpenAI judge was scoring the YAML title. Mask frontmatter the sa
 ### Chores
 
 - **kanbus**: Close LIM-530ec2 after PR #20
-  ([`9db7d0b`](https://github.com/AnthusAI/Limatus/commit/9db7d0babce682d2c9b13b7aa81e7ef1c98749aa))
+  ([`4e23177`](https://github.com/AnthusAI/Limatus/commit/4e231771b7fbe73b43652380394493bd33936396))
 
 Judge body scan blanks YAML on main; title and subtitle stay a later pass.
 
@@ -452,7 +539,7 @@ Judge body scan blanks YAML on main; title and subtitle stay a later pass.
 
 - **headline**: Subtitle options must summarize the article under the title
   ([#19](https://github.com/AnthusAI/Limatus/pull/19),
-  [`cb68fc3`](https://github.com/AnthusAI/Limatus/commit/cb68fc3f6ca1d29957eadb529b26e6cb930866b6))
+  [`94c068d`](https://github.com/AnthusAI/Limatus/commit/94c068dd5c8887575840a846be332dc7c98cda29))
 
 
 ## v0.16.0 (2026-09-11)
@@ -460,13 +547,13 @@ Judge body scan blanks YAML on main; title and subtitle stay a later pass.
 ### Chores
 
 - **kanbus**: Close LIM-565ba8 after PR #18
-  ([`bc7346c`](https://github.com/AnthusAI/Limatus/commit/bc7346c3c8edd0b0bbcec2d573cffbba3ed83381))
+  ([`beddd27`](https://github.com/AnthusAI/Limatus/commit/beddd2762bbd806f0d384b5658f2fc907cd9146a))
 
 ### Features
 
 - **headline**: Profile-bound title/subtitle HITL after body (LIM-565ba8)
   ([#18](https://github.com/AnthusAI/Limatus/pull/18),
-  [`0e2a375`](https://github.com/AnthusAI/Limatus/commit/0e2a3754bdb84e5f9c97848e4e42e8f1a3650e4c))
+  [`665f79d`](https://github.com/AnthusAI/Limatus/commit/665f79d9d44f5a756e2ceba94e1feef255f26851))
 
 Add headline schema and CLI options pass, YAML scalar spans for frontmatter fields, and
   suggest_rewrite frontmatter preservation for body-only candidates.
@@ -478,7 +565,7 @@ Add headline schema and CLI options pass, YAML scalar spans for frontmatter fiel
 
 - **editorial**: Coalesce unread span prefix onto suffix-start replacements (LIM-af431b)
   ([#17](https://github.com/AnthusAI/Limatus/pull/17),
-  [`d2a8006`](https://github.com/AnthusAI/Limatus/commit/d2a80061cc63465c9ce5efda8c640672cedfb7ef))
+  [`311f58b`](https://github.com/AnthusAI/Limatus/commit/311f58be0dd2f0994486a71d1ac1c5f7c1358da2))
 
 LLM rewrite options that align with a later substring of the span excerpt are prepended with the
   unread prefix before normalization skip checks and apply, so wiki-janitor options succeed without
@@ -487,25 +574,25 @@ LLM rewrite options that align with a later substring of the span excerpt are pr
 ### Chores
 
 - **kanbus**: Article then title then subtitle (LIM-565ba8)
-  ([`c56dcba`](https://github.com/AnthusAI/Limatus/commit/c56dcbaf4a5d171c4b77e8fd85d40f09b0af27cb))
+  ([`020f5ec`](https://github.com/AnthusAI/Limatus/commit/020f5eccf31dbcfe80d1b0dbbd7bdfb6b8930ceb))
 
 - **kanbus**: Close LIM-54c503 after PR #16
-  ([`baab441`](https://github.com/AnthusAI/Limatus/commit/baab4414f312323430f9d501e6bc1ee6096a7baf))
+  ([`b4d528e`](https://github.com/AnthusAI/Limatus/commit/b4d528ea19b3084c6ce5f93dd60d8cc6ee18add9))
 
 - **kanbus**: Close LIM-af431b after PR #17
-  ([`0183df2`](https://github.com/AnthusAI/Limatus/commit/0183df2cb05eac2462184d6f807b1ef29773ef15))
+  ([`913af41`](https://github.com/AnthusAI/Limatus/commit/913af4180d079e77e95f6c659fec0eddb5e05662))
 
 - **kanbus**: Start headline, compare-CLI, and prefix-coalesce slices
-  ([`a14119a`](https://github.com/AnthusAI/Limatus/commit/a14119aa1df400fb9d86acafdd7d1c943d7abbaa))
+  ([`2eb0fa8`](https://github.com/AnthusAI/Limatus/commit/2eb0fa825ac443072b7155b80a58eee47c4cd40c))
 
 - **kanbus**: Title and standfirst after body HITL (LIM-565ba8)
-  ([`7b1671a`](https://github.com/AnthusAI/Limatus/commit/7b1671ad88167c970ac37ca1050ed81197df026d))
+  ([`7e30682`](https://github.com/AnthusAI/Limatus/commit/7e30682389484326770cc608010fce0237ca9d93))
 
 ### Features
 
 - **compare**: Wire default guideline alignment resolver (LIM-54c503)
   ([#16](https://github.com/AnthusAI/Limatus/pull/16),
-  [`4fa8fa4`](https://github.com/AnthusAI/Limatus/commit/4fa8fa43bc9d10f169abab182ca9fd2e0e1a0145))
+  [`b74e976`](https://github.com/AnthusAI/Limatus/commit/b74e97681f82113452b6c8b0914cf63560cda598))
 
 Add OpenAI-backed alignment resolution when OPENAI_API_KEY is set, and pass it through limatus
   compare CLI and SDK compare().
@@ -517,18 +604,18 @@ Add OpenAI-backed alignment resolution when OPENAI_API_KEY is set, and pass it t
 
 - **cli**: Publication editorialAim and profile compare constraints (LIM-edbde2)
   ([#15](https://github.com/AnthusAI/Limatus/pull/15),
-  [`dad38af`](https://github.com/AnthusAI/Limatus/commit/dad38af75801d185b2a9123e654cc24fbdbf5a21))
+  [`35b86fe`](https://github.com/AnthusAI/Limatus/commit/35b86fe48ded58af1bce32d2da46869bc004687f))
 
 ### Chores
 
 - **kanbus**: Close LIM-edbde2 after PR #15
-  ([`c5abc21`](https://github.com/AnthusAI/Limatus/commit/c5abc21a30f85f2cfc85bbdac5d2431a61bdb7d0))
+  ([`d28086c`](https://github.com/AnthusAI/Limatus/commit/d28086c3d12551334ff8051df3c68c7e303b57d2))
 
 - **kanbus**: File publication-owned editorialAim for compare
-  ([`3d1a902`](https://github.com/AnthusAI/Limatus/commit/3d1a90291d4c5484225bbb0dba48429e663c59e9))
+  ([`3b83310`](https://github.com/AnthusAI/Limatus/commit/3b8331069612685170b4e02d9b62492ef3e8c72c))
 
 - **kanbus**: Start LIM-edbde2 editorialAim compare layer
-  ([`382eb11`](https://github.com/AnthusAI/Limatus/commit/382eb11750b912035ffbf508db62e0acc70e2914))
+  ([`d642de6`](https://github.com/AnthusAI/Limatus/commit/d642de6784601e3aa1aaaf86f686ed630c94848c))
 
 
 ## v0.14.3 (2026-09-11)
@@ -537,7 +624,7 @@ Add OpenAI-backed alignment resolution when OPENAI_API_KEY is set, and pass it t
 
 - **cli**: Retry rewrite options after prefix-skip drops (LIM-f634c3)
   ([#14](https://github.com/AnthusAI/Limatus/pull/14),
-  [`7745d68`](https://github.com/AnthusAI/Limatus/commit/7745d688fbd9532e3bf7b0d770cb4081722b072c))
+  [`b2c55b5`](https://github.com/AnthusAI/Limatus/commit/b2c55b5865369a3d5aa361198e6130e09e62e855))
 
 When normalization filters prefix-skipping replacements below the two-option minimum, call the
   options resolver once more. The default LLM path adds an extra prompt instruction on retry;
@@ -545,21 +632,21 @@ When normalization filters prefix-skipping replacements below the two-option min
 
 - **cli**: Treat apostrophes as word characters in judge spans (LIM-ce41d9)
   ([#13](https://github.com/AnthusAI/Limatus/pull/13),
-  [`ba1e790`](https://github.com/AnthusAI/Limatus/commit/ba1e7902a1862e0e241248d9d9e90631de9ea0f2))
+  [`38e8c2c`](https://github.com/AnthusAI/Limatus/commit/38e8c2c88cb8463b9f8c2a37990e003a9e243515))
 
 ### Chores
 
 - **kanbus**: Close LIM-ce41d9 after PR #13
-  ([`36dc655`](https://github.com/AnthusAI/Limatus/commit/36dc655f70cda27d1bbf6064756a0ccc3e861187))
+  ([`dda809f`](https://github.com/AnthusAI/Limatus/commit/dda809fee8324c14d901f7bbff885f392041ea49))
 
 - **kanbus**: Close LIM-f634c3 after PR #14
-  ([`4f4317f`](https://github.com/AnthusAI/Limatus/commit/4f4317ffc731fc4d14d2a9b17e4c65fbcb11cb98))
+  ([`fc4067a`](https://github.com/AnthusAI/Limatus/commit/fc4067ad14140258d2ca091a36d6178cb93b86ba))
 
 - **kanbus**: Start LIM-ce41d9 apostrophe word-boundary
-  ([`2cc746d`](https://github.com/AnthusAI/Limatus/commit/2cc746dba3d9b0a3e157807266f6378b4d751c03))
+  ([`1eb1355`](https://github.com/AnthusAI/Limatus/commit/1eb1355026a035dc42455c3cf6cbdb296b1fa8cc))
 
 - **kanbus**: Start LIM-f634c3; file apostrophe span bug
-  ([`6810052`](https://github.com/AnthusAI/Limatus/commit/6810052dec1e9e5d2dea512257ede5c7d5fed30b))
+  ([`b035511`](https://github.com/AnthusAI/Limatus/commit/b03551103ac0fb569b816248974dd893ec66af6e))
 
 
 ## v0.14.2 (2026-09-10)
@@ -568,7 +655,7 @@ When normalization filters prefix-skipping replacements below the two-option min
 
 - **cli**: Reject replacements that skip the span prefix (LIM-073443)
   ([#12](https://github.com/AnthusAI/Limatus/pull/12),
-  [`546480c`](https://github.com/AnthusAI/Limatus/commit/546480c37b4a8b30ff4410f32b6006ecd07b0048))
+  [`32b1d2a`](https://github.com/AnthusAI/Limatus/commit/32b1d2a4c872ed57d12cb17f0821fe1e64304013))
 
 Fail closed on apply when a replacement aligns with a suffix of the span excerpt, and drop such
   options during rewrite normalization.
@@ -576,16 +663,16 @@ Fail closed on apply when a replacement aligns with a suffix of the span excerpt
 ### Chores
 
 - **kanbus**: Close LIM-073443 after PR #12
-  ([`1cb68ad`](https://github.com/AnthusAI/Limatus/commit/1cb68ad03e2e1416a33c96b1bcc85a4ce5da8380))
+  ([`a747b94`](https://github.com/AnthusAI/Limatus/commit/a747b94dedb3ad4c5a63209d5026d6b66079a99f))
 
 - **kanbus**: File apply span-prefix drop after wiki-janitor dogfood
-  ([`1d1a9df`](https://github.com/AnthusAI/Limatus/commit/1d1a9dfa66a7da361a3bbeee3a36f355ac562b7c))
+  ([`3a84a68`](https://github.com/AnthusAI/Limatus/commit/3a84a681a98e4c19c335806709619b57438ed7fe))
 
 - **kanbus**: File options retry after prefix-skip filter
-  ([`6111fff`](https://github.com/AnthusAI/Limatus/commit/6111fffc4170e384812faa1ef5476175802a4c8e))
+  ([`7c907c4`](https://github.com/AnthusAI/Limatus/commit/7c907c46fd62b73f943c52c39ccc992ae8bb2984))
 
 - **kanbus**: Start LIM-073443 span-prefix apply fail-closed
-  ([`e9b5bad`](https://github.com/AnthusAI/Limatus/commit/e9b5bad0f1061a87309e0303e844b15f6b8aef7c))
+  ([`2f8227c`](https://github.com/AnthusAI/Limatus/commit/2f8227cdd183fda4997fc6b64b709d6307cb9df6))
 
 
 ## v0.14.1 (2026-09-10)
@@ -594,7 +681,7 @@ Fail closed on apply when a replacement aligns with a suffix of the span excerpt
 
 - **cli**: Drop mid-word judge spans and upsert decisions
   ([#11](https://github.com/AnthusAI/Limatus/pull/11),
-  [`9c5ab9d`](https://github.com/AnthusAI/Limatus/commit/9c5ab9dd3ed8faac8ea40993a5dc495de53ac334))
+  [`7dedd1f`](https://github.com/AnthusAI/Limatus/commit/7dedd1f28d03944ae7f6c880545e33d116ebc93a))
 
 Skip OpenAI judge findings whose spans cut inside a word so apply anchors stay on token boundaries.
   Replace prior decision rows for the same finding_id instead of appending duplicates. Document SDK
@@ -603,15 +690,15 @@ Skip OpenAI judge findings whose spans cut inside a word so apply anchors stay o
 ### Chores
 
 - **kanbus**: Close LIM-2a1ca5; file LIM-906fc9 dogfood edges
-  ([`f444433`](https://github.com/AnthusAI/Limatus/commit/f4444339686bb3a3cc39cd949eace81b1b77f826))
+  ([`054f565`](https://github.com/AnthusAI/Limatus/commit/054f56537ad1156cb1e1c92de070f12b33375b85))
 
 CLI apply on wiki-janitor working copy garbled a mid-word judge span.
 
 - **kanbus**: Close LIM-906fc9 and LIM-c32c24 after PR #11
-  ([`593b004`](https://github.com/AnthusAI/Limatus/commit/593b0042640a55a5b1154000bc497f3ef12031b6))
+  ([`63eccec`](https://github.com/AnthusAI/Limatus/commit/63eccec966f68dbc6aded56853c87b101a3bbb30))
 
 - **kanbus**: Note LIM-2d43b1 remaining Papyrus adapter DoD
-  ([`7c2fae7`](https://github.com/AnthusAI/Limatus/commit/7c2fae70627ec0b3ffded062056e2518d9f920f5))
+  ([`d94c633`](https://github.com/AnthusAI/Limatus/commit/d94c633f2e9a8640abbf732a62709e9dc25ffa34))
 
 
 ## v0.14.0 (2026-09-10)
@@ -619,32 +706,32 @@ CLI apply on wiki-janitor working copy garbled a mid-word judge span.
 ### Chores
 
 - **kanbus**: Close LIM-0129cf after PR #10
-  ([`8682d94`](https://github.com/AnthusAI/Limatus/commit/8682d94b4e62a2b19a2fcd06749138e2bbc602a7))
+  ([`bc208e0`](https://github.com/AnthusAI/Limatus/commit/bc208e04fe1a134c0801bac0ef07cc1e24fcddf8))
 
 CLI scan → decide → apply/diff is on main.
 
 - **kanbus**: Close LIM-79c9b2 and LIM-447936
-  ([`478f49e`](https://github.com/AnthusAI/Limatus/commit/478f49e8941f08e2bdefbaf6405b2cb37f98a3f9))
+  ([`9203703`](https://github.com/AnthusAI/Limatus/commit/92037030f8f50fd5f43c54ae91a86660b128e2cf))
 
 Judge budget landed; scan packets include live Terra judge output.
 
 - **kanbus**: Lim-0129cf Grok plan for CLI loop
-  ([`38bcd46`](https://github.com/AnthusAI/Limatus/commit/38bcd46b6fdb9073d6f79b66d553878788650f65))
+  ([`b67c72a`](https://github.com/AnthusAI/Limatus/commit/b67c72a5bc528c69ef0da768bae8d812e997c571))
 
 Composer 2.5 implements decide, __main__, and CLI apply Behave.
 
 - **kanbus**: Lim-0129cf PR #10 opened
-  ([`ba4efc1`](https://github.com/AnthusAI/Limatus/commit/ba4efc1e7e4a2d7d864d796dee041d8924daa8d3))
+  ([`6527d07`](https://github.com/AnthusAI/Limatus/commit/6527d07f80603f02a9e9bb716902aaadc14c36c5))
 
 CLI loop review ACCEPT; merge waits on worktree acceptance.
 
 - **kanbus**: Lim-30ca2a blocked on Ryan option choice
-  ([`bedde01`](https://github.com/AnthusAI/Limatus/commit/bedde0109b92fff9c67ab8f4f363cb0c4c0ec5d9))
+  ([`ce5b319`](https://github.com/AnthusAI/Limatus/commit/ce5b319bc9aee9cad12c4e4934346d22357cd7bd))
 
 HITL packets ready; no apply until a chosen option id.
 
 - **kanbus**: Park HITL dogfood; start LIM-0129cf CLI
-  ([`ba23f97`](https://github.com/AnthusAI/Limatus/commit/ba23f97dab13e8c4e4cf791213b7bd2f3f0d5c38))
+  ([`4c8c999`](https://github.com/AnthusAI/Limatus/commit/4c8c999d5cc5d0f3a3aa6fd2648c2b8a065b3e58))
 
 Ryan will test after scan → decide → options → compare → apply works as a CLI.
 
@@ -652,7 +739,7 @@ Ryan will test after scan → decide → options → compare → apply works as 
 
 - **cli**: Python -m limatus entry, decide subcommand, and CLI loop tests
   ([#10](https://github.com/AnthusAI/Limatus/pull/10),
-  [`48675ad`](https://github.com/AnthusAI/Limatus/commit/48675ad8f3f2745e7bcb34bf46926816a81dd7d2))
+  [`b84a4e4`](https://github.com/AnthusAI/Limatus/commit/b84a4e4a591f22799ab1648f6b70e8099e537e1f))
 
 Add __main__ and limatus decide for offline steering decisions; route Behave apply/scan/compare
   steps through python -m limatus and document decide in README.
@@ -664,7 +751,7 @@ Add __main__ and limatus decide for offline steering decisions; route Behave app
 
 - **judge**: Bounded output token budget for rubric+findings (LIM-79c9b2)
   ([#9](https://github.com/AnthusAI/Limatus/pull/9),
-  [`68130ed`](https://github.com/AnthusAI/Limatus/commit/68130ed71505ce73fdbf6de8870a89167f026564))
+  [`6cbee5b`](https://github.com/AnthusAI/Limatus/commit/6cbee5bcfae6f54e5495a38bed55d196f49a8269))
 
 * fix(judge): raise bounded output token budget for rubric+findings
 
@@ -681,27 +768,27 @@ Short drafts with dense judge output still truncated at ~8.4k budget because out
 ### Chores
 
 - **kanbus**: Authorize LIM-79c9b2 judge output budget
-  ([`9243b47`](https://github.com/AnthusAI/Limatus/commit/9243b47b30a455948446f0e91fbd3cef6a729597))
+  ([`733648e`](https://github.com/AnthusAI/Limatus/commit/733648edf802791064ea5c7ffd04c1d1f172423b))
 
 Plan approved; implementer to use an isolated worktree off main.
 
 - **kanbus**: File LIM-79c9b2 judge output budget
-  ([`7ac10bc`](https://github.com/AnthusAI/Limatus/commit/7ac10bcd6460e0171fb013add369980a5f26ed7c))
+  ([`28d46d2`](https://github.com/AnthusAI/Limatus/commit/28d46d295de40a5cace32571f7a72170ff78ad24))
 
 Live --require-judge HITL truncated at 2400 output tokens.
 
 - **kanbus**: Lim-79c9b2 16k floor pushed, re-acceptance
-  ([`0355aa6`](https://github.com/AnthusAI/Limatus/commit/0355aa6b4c4198bab6b8a74ef5f7c18f8b2dc9f5))
+  ([`94a121b`](https://github.com/AnthusAI/Limatus/commit/94a121bc75dbe5d53e6e55f02deae11cf5ca2523))
 
 Confession article is the gate after the 8444 truncation reject.
 
 - **kanbus**: Lim-79c9b2 live acceptance reject
-  ([`eea3da2`](https://github.com/AnthusAI/Limatus/commit/eea3da22fcb66bc991cc593e8e37de211cb53ad1))
+  ([`18e7d67`](https://github.com/AnthusAI/Limatus/commit/18e7d67c3a4f954028c8f3951b8ade17bb45d227))
 
 Confession article still truncated; budget must not key off draft length.
 
 - **kanbus**: Lim-79c9b2 PR #9 opened, live acceptance
-  ([`d5bf59b`](https://github.com/AnthusAI/Limatus/commit/d5bf59b35b62f31f3744e4b987d0c023d7dcb707))
+  ([`90dc7ec`](https://github.com/AnthusAI/Limatus/commit/90dc7ec3380ad5a957fd77a4c893f54c2aac8141))
 
 Unit review passed; merge waits on --require-judge against published copy.
 
@@ -711,12 +798,12 @@ Unit review passed; merge waits on --require-judge against published copy.
 ### Chores
 
 - **kanbus**: Close LIM-0cd8bf after PR #8 merge
-  ([`eb01e90`](https://github.com/AnthusAI/Limatus/commit/eb01e909bb2b3e72d5ca2782367cea4874efba61))
+  ([`305f428`](https://github.com/AnthusAI/Limatus/commit/305f42843b2920426157177a4b419dc9c3758e7a))
 
 Judge prompt v2 landed on main; HITL re-scan can use house voice.
 
 - **kanbus**: Close LIM-6a6da3 after Papyrus PR #75
-  ([`a468483`](https://github.com/AnthusAI/Limatus/commit/a468483786d6902da99d62f7f5463ba4fa415ff8))
+  ([`5937dd6`](https://github.com/AnthusAI/Limatus/commit/5937dd6be804282e059c97359a65b606557fc3c0))
 
 Judge enabled on the Pilobolus style profile via develop merge.
 
@@ -724,7 +811,7 @@ Judge enabled on the Pilobolus style profile via develop merge.
 
 - **judge**: Send full voice config in judge prompt (v2)
   ([#8](https://github.com/AnthusAI/Limatus/pull/8),
-  [`3aa6441`](https://github.com/AnthusAI/Limatus/commit/3aa6441cd747bffaece624f08e9af16dbd90af98))
+  [`eaf54aa`](https://github.com/AnthusAI/Limatus/commit/eaf54aac9542d014b8fc0ca4f71cb11969d239a1))
 
 Extend build_judge_user_prompt with sentenceStyle, voicePatterns, structure, and 500-character
   reference excerpts. Bump JUDGE_PROMPT_VERSION and canary pin; add Behave and unit tests without
@@ -737,7 +824,7 @@ Extend build_judge_user_prompt with sentenceStyle, voicePatterns, structure, and
 
 - **judge**: Include rubric in OpenAI structured output required fields
   ([#7](https://github.com/AnthusAI/Limatus/pull/7),
-  [`57c5f6e`](https://github.com/AnthusAI/Limatus/commit/57c5f6ecfd8123fb72ad714e56c7b182ccfe6209))
+  [`684c5f3`](https://github.com/AnthusAI/Limatus/commit/684c5f34859f679d40df58d3b49b364edf112078))
 
 OpenAI Responses rejects schemas when properties keys are missing from required. Align root required
   with findings and rubric; add unit test.
@@ -745,28 +832,28 @@ OpenAI Responses rejects schemas when properties keys are missing from required.
 ### Chores
 
 - **kanbus**: Agent steers findings; human steers options and feel
-  ([`14b37d6`](https://github.com/AnthusAI/Limatus/commit/14b37d64af8e25d966435c9043544f03add2d7eb))
+  ([`0a50a06`](https://github.com/AnthusAI/Limatus/commit/0a50a0691a71e6a200180b0fd7eb727e6de13dba))
 
 - **kanbus**: Authorize judge schema fix and voice prompt
-  ([`7c3956c`](https://github.com/AnthusAI/Limatus/commit/7c3956c79acabf255efe7832d1581a0202e453b5))
+  ([`7b1fb27`](https://github.com/AnthusAI/Limatus/commit/7b1fb2775a3a7068df545bf3c31b154a423e6c36))
 
 - **kanbus**: Authorize Pilobolus judge profile implementation
-  ([`4763c2e`](https://github.com/AnthusAI/Limatus/commit/4763c2eac38cd517d8f0f73fa0036ec80e74272a))
+  ([`7d6361d`](https://github.com/AnthusAI/Limatus/commit/7d6361de690098a6d8ffb964a4c1d98c85217b30))
 
 - **kanbus**: Close LIM-c31ac3 after PR #7 merge
-  ([`45291a1`](https://github.com/AnthusAI/Limatus/commit/45291a18bc68c39cdbd99dd0cceda856c047351c))
+  ([`1d6ff93`](https://github.com/AnthusAI/Limatus/commit/1d6ff93253e81b39585084e3a2a69a9fc3c10dc4))
 
 - **kanbus**: File HITL dogfood for published Pilobolus
-  ([`b991354`](https://github.com/AnthusAI/Limatus/commit/b9913548c190406d65a1f82dbdc17b5fda6d5e3c))
+  ([`2766bf5`](https://github.com/AnthusAI/Limatus/commit/2766bf5288d64218d7b03679df1ebd2791f43369))
 
 - **kanbus**: Fill LIM-ed02c3 redundancy dogfood story
-  ([`2050998`](https://github.com/AnthusAI/Limatus/commit/20509986ed6335cca98882098be84b31096a5c11))
+  ([`8e3a28e`](https://github.com/AnthusAI/Limatus/commit/8e3a28e763398874c466cff13cd3ad5a7d478230))
 
 - **kanbus**: Lim-6a6da3 Papyrus PR #75 opened
-  ([`cdfb5a1`](https://github.com/AnthusAI/Limatus/commit/cdfb5a119964d37ab289e938a9ec1a6610987088))
+  ([`26fa22e`](https://github.com/AnthusAI/Limatus/commit/26fa22e0a876563ecd4b0bd6765c510270e6642d))
 
 - **kanbus**: Live OpenAI judge schema 400 on rubric
-  ([`d2b4295`](https://github.com/AnthusAI/Limatus/commit/d2b42954b816dc2a8e930fd57282b9a7e7fa8faa))
+  ([`b84c3df`](https://github.com/AnthusAI/Limatus/commit/b84c3dffda73c6f009b3953ffbedb60bda4da938))
 
 
 ## v0.12.0 (2026-09-10)
@@ -774,19 +861,19 @@ OpenAI Responses rejects schemas when properties keys are missing from required.
 ### Chores
 
 - **kanbus**: Authorize LIM-d895df canary implementation
-  ([`2adc561`](https://github.com/AnthusAI/Limatus/commit/2adc5611c7b04a251785f8336e1f5577ec56294e))
+  ([`f088427`](https://github.com/AnthusAI/Limatus/commit/f0884275a9aac7f216a1ff1ce4137e4881b640be))
 
 - **kanbus**: Close LIM-d895df and LIM-df9d58 after PR #6
-  ([`d4a4262`](https://github.com/AnthusAI/Limatus/commit/d4a4262877f6863ad193cc7bda8afc346304b886))
+  ([`fdf771e`](https://github.com/AnthusAI/Limatus/commit/fdf771e0c6591785aae9f6d6456710da93626e68))
 
 - **kanbus**: Lim-d895df PR #6 opened; acceptance in flight
-  ([`c91a4a0`](https://github.com/AnthusAI/Limatus/commit/c91a4a05a7f0f77425e6bdb761cfe02599fbaf9d))
+  ([`d01c0f1`](https://github.com/AnthusAI/Limatus/commit/d01c0f1b02e3d0cccc06bfd95ef1a6b1a87731f3))
 
 ### Features
 
 - **canary**: Add judge calibration fixture runner (LIM-ca93ca)
   ([#6](https://github.com/AnthusAI/Limatus/pull/6),
-  [`4a2634b`](https://github.com/AnthusAI/Limatus/commit/4a2634be3ac3bd73b7aac9411ac0cd31e2842810))
+  [`2f8e225`](https://github.com/AnthusAI/Limatus/commit/2f8e2257654be515a0406bfa8d6aaedfa283758d))
 
 Introduce limatus canary with a small checked-in manifest, fixture judge resolver, and calibration
   pins for JUDGE_PROMPT_VERSION and Terra default model. Complements the offline eval harness
@@ -798,19 +885,19 @@ Introduce limatus canary with a small checked-in manifest, fixture judge resolve
 ### Chores
 
 - **kanbus**: Authorize LIM-e9176a agent-loop implementation
-  ([`29d3bcb`](https://github.com/AnthusAI/Limatus/commit/29d3bcbe80f98214b4f90dfd2bd67cbb53347ba0))
+  ([`648fffa`](https://github.com/AnthusAI/Limatus/commit/648fffa7c8a7f0dbb5f4b97b1ad272f2ef6dc286))
 
 - **kanbus**: Close LIM-e9176a; start LIM-d895df canary plan
-  ([`59608f7`](https://github.com/AnthusAI/Limatus/commit/59608f7a052d7284658dbf353815908e6b4e43c9))
+  ([`03a6f6f`](https://github.com/AnthusAI/Limatus/commit/03a6f6fda537e613fc0a7722ec3b22b9e79c1a70))
 
 - **kanbus**: Lim-e9176a acceptance passed; PR pending
-  ([`0ac9904`](https://github.com/AnthusAI/Limatus/commit/0ac99042f7478a611151779ba18f757cb370b009))
+  ([`ab9a910`](https://github.com/AnthusAI/Limatus/commit/ab9a9107915033311251797b48d72c4ab9c0c2ed))
 
 ### Features
 
 - **editorial**: Agent copy-edit loop wiring (LIM-e9176a)
   ([#5](https://github.com/AnthusAI/Limatus/pull/5),
-  [`bd4aa1c`](https://github.com/AnthusAI/Limatus/commit/bd4aa1ceb8033326f4d6da4db14644bb7176376c))
+  [`f657e28`](https://github.com/AnthusAI/Limatus/commit/f657e286c8cef805fa0ecc34194df1aa56f9105b))
 
 Add read-only patch preview and compare candidate expansion, plus compose_loop_record for audit
   bundles. Ship Behave contracts for explicit finding decisions and agent shortlist before human
@@ -822,16 +909,16 @@ Add read-only patch preview and compare candidate expansion, plus compose_loop_r
 ### Chores
 
 - **kanbus**: Close LIM-0e3f4e; start LIM-e9176a loop plan
-  ([`c794cfb`](https://github.com/AnthusAI/Limatus/commit/c794cfbc6a1adac240e908fa4e885b7bb85d8934))
+  ([`08a602e`](https://github.com/AnthusAI/Limatus/commit/08a602e013273f78132d0ffd778b8a442db0d2d9))
 
 - **kanbus**: Lim-0e3f4e PR #4 opened; acceptance in flight
-  ([`3622298`](https://github.com/AnthusAI/Limatus/commit/3622298eb5573b92e09741296fe0cf53e0d87f0a))
+  ([`9f4f42b`](https://github.com/AnthusAI/Limatus/commit/9f4f42bbdb3ce714eca4b164174fc632a41547da))
 
 ### Features
 
 - **compare**: Rank candidates with always-lane deltas (LIM-0e3f4e)
   ([#4](https://github.com/AnthusAI/Limatus/pull/4),
-  [`c64d3fd`](https://github.com/AnthusAI/Limatus/commit/c64d3fd23cf5fc4949b37d03e730acbabc245bd5))
+  [`f3b2c15`](https://github.com/AnthusAI/Limatus/commit/f3b2c15ba459c197015cafb1e42f2a48da59a9a2))
 
 Add limatus compare for multi-candidate ranking and regression mode with inspectable finding-count
   deltas, hard constraints on unsupported-claim increases, and optional rubric deltas when judge
@@ -846,37 +933,37 @@ verify and sdk.verify remain compatibility aliases that run compare regression b
 ### Chores
 
 - **kanbus**: Authorize LIM-0e3f4e compare implementation
-  ([`9df08e4`](https://github.com/AnthusAI/Limatus/commit/9df08e489adefdb8ef1635fd488375c7e68adac3))
+  ([`43d25ea`](https://github.com/AnthusAI/Limatus/commit/43d25eabc1a579e4fade7e9e2123dc16385081cb))
 
 - **kanbus**: Authorize LIM-9440e9 always-lane implementation
-  ([`3af4932`](https://github.com/AnthusAI/Limatus/commit/3af49325b08a125dedf150321e867d5e85b5a9b6))
+  ([`313100e`](https://github.com/AnthusAI/Limatus/commit/313100ef79802dfd1d1970a71718b8b3f96fc23d))
 
 - **kanbus**: Authorize LIM-f233fb OpenAI judge implementation
-  ([`2901574`](https://github.com/AnthusAI/Limatus/commit/2901574e4326a1795250f291645900d286cd553b))
+  ([`f15234a`](https://github.com/AnthusAI/Limatus/commit/f15234a6a5348134f66fb1e4f88d05b7e1abcdab))
 
 - **kanbus**: Close LIM-9440e9 after PR #2 merge
-  ([`2a621b3`](https://github.com/AnthusAI/Limatus/commit/2a621b33af780a8cf83f010ac9d5a3dea5d7a92e))
+  ([`687283d`](https://github.com/AnthusAI/Limatus/commit/687283dd92c62778815aa1b49bce43d80c0163af))
 
 - **kanbus**: Close LIM-f233fb after PR #3 merge
-  ([`bd0b1bd`](https://github.com/AnthusAI/Limatus/commit/bd0b1bd46af4c18e8ebd50438a0a1e47368ce521))
+  ([`2f5057b`](https://github.com/AnthusAI/Limatus/commit/2f5057b3e9c57d35d5812ca0ea4e264085892367))
 
 - **kanbus**: Lim-9440e9 acceptance passed; PR blocked on project/ files
-  ([`526eab0`](https://github.com/AnthusAI/Limatus/commit/526eab0941feaff16b54f3068db710d7cff3077d))
+  ([`e657289`](https://github.com/AnthusAI/Limatus/commit/e6572890717ce6c885ffc64076c5908c701ad26b))
 
 - **kanbus**: Lim-f233fb acceptance rejected on missing Behave step
-  ([`da26e0d`](https://github.com/AnthusAI/Limatus/commit/da26e0d96ae3e10934b7bce7ce4c3e8debabe455))
+  ([`1e03d72`](https://github.com/AnthusAI/Limatus/commit/1e03d725f0fc6cb027cdc3fa14f47292dd4a20b1))
 
 - **kanbus**: Re-accept LIM-f233fb; start LIM-0e3f4e compare plan
-  ([`18fa3cd`](https://github.com/AnthusAI/Limatus/commit/18fa3cd434f0ee27b82c63c3820b52fae0f5bb95))
+  ([`feaf8b2`](https://github.com/AnthusAI/Limatus/commit/feaf8b2b18819b0fe64aafb24c83162f0f185938))
 
 - **kanbus**: Send LIM-9440e9 plan back for missing worktree
-  ([`290859d`](https://github.com/AnthusAI/Limatus/commit/290859df133e9460d330d426cb723ec6e02ea9f8))
+  ([`e51fd15`](https://github.com/AnthusAI/Limatus/commit/e51fd155b102528aacf93f01086c1075b1fdf275))
 
 ### Features
 
 - **judge**: Configured OpenAI judge lane (LIM-f233fb)
   ([#3](https://github.com/AnthusAI/Limatus/pull/3),
-  [`4870dc0`](https://github.com/AnthusAI/Limatus/commit/4870dc023cccf184c6981ec19a287ece70e17b3c))
+  [`07bd9a8`](https://github.com/AnthusAI/Limatus/commit/07bd9a86b8b1a4d3ba83b0cd978dc521ded591f9))
 
 * feat(judge): configured OpenAI judge lane (LIM-f233fb)
 
@@ -893,7 +980,7 @@ Restore `when` import so editorial_judge_steps loads, and bind "judge findings a
 
 - **editorial**: Behave always-lane voice-local and density scenarios
   ([#2](https://github.com/AnthusAI/Limatus/pull/2),
-  [`8001b5a`](https://github.com/AnthusAI/Limatus/commit/8001b5a0610e525e49d45e16619e97ca6cc497c1))
+  [`b0e9f01`](https://github.com/AnthusAI/Limatus/commit/b0e9f0147e0434a32bce942142b3422e184b25b5))
 
 Add Kanbus LIM-0fa50c and LIM-cebc08 Gherkin with fixtures that prove scan findings differ per
   profile bans and skip document-level density flags for house-voice and sub-minWords drafts.
@@ -904,33 +991,33 @@ Add Kanbus LIM-0fa50c and LIM-cebc08 Gherkin with fixtures that prove scan findi
 ### Chores
 
 - **kanbus**: Approve LIM-3e6cb0 plan; implementation authorized
-  ([`6aa5cd3`](https://github.com/AnthusAI/Limatus/commit/6aa5cd34a38f906cc986e0be0fdacff488ce5531))
+  ([`b639a9b`](https://github.com/AnthusAI/Limatus/commit/b639a9b8c6f39738dab299f478ac78ed8f8ee522))
 
 - **kanbus**: Close LIM-3e6cb0; start always-lane and judge epics
-  ([`fe0dbf7`](https://github.com/AnthusAI/Limatus/commit/fe0dbf7fa43e9bec43081a1ed4f3e7f49af69882))
+  ([`6deaec3`](https://github.com/AnthusAI/Limatus/commit/6deaec311735be7876903040a96ea35ca9e472a1))
 
 - **kanbus**: Commit board state (issues)
-  ([`5ac4b11`](https://github.com/AnthusAI/Limatus/commit/5ac4b1104dc47b3b8bf100b685973be216d0b282))
+  ([`3158f61`](https://github.com/AnthusAI/Limatus/commit/3158f61aaae908bc2f316228abf8a747ee195471))
 
 - **kanbus**: File LIM-df9d58 scan/judge/compare initiative
-  ([`e74c3f9`](https://github.com/AnthusAI/Limatus/commit/e74c3f9b96f78432cfdc345a889dfa8303ce59b3))
+  ([`b51206c`](https://github.com/AnthusAI/Limatus/commit/b51206c01752dfa071e9c67e502070f414a262b2))
 
 New initiative with six epics and behavioral stories for the agent-first copy-edit loop. Notes
   successor relationship to LIM-9d14e6.
 
 - **kanbus**: Include event log for board updates
-  ([`c600c77`](https://github.com/AnthusAI/Limatus/commit/c600c77b4a57369c28ff7c1a044e9bc34f677812))
+  ([`6755c31`](https://github.com/AnthusAI/Limatus/commit/6755c31ca0a885ff941f45451729d6c7057cb532))
 
 Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>
 
 - **kanbus**: Start LIM-3e6cb0 unified scan; planner dispatched
-  ([`85581a0`](https://github.com/AnthusAI/Limatus/commit/85581a0aa6f11e558ae1a456e8f2c0abd9af85c1))
+  ([`f692f67`](https://github.com/AnthusAI/Limatus/commit/f692f6744941f1ff0047e1781a2f8a7e7ec36bb4))
 
 ### Features
 
 - **scan**: Unified scan surface with finding provenance (LIM-3e6cb0)
   ([#1](https://github.com/AnthusAI/Limatus/pull/1),
-  [`53da7ca`](https://github.com/AnthusAI/Limatus/commit/53da7caaa958bb6824cb92d33f1195b36f5cdee5))
+  [`0efd3d6`](https://github.com/AnthusAI/Limatus/commit/0efd3d6db90b3104b5512f2ab0c050e745cd7d20))
 
 * feat(scan): unified scan surface with finding provenance (LIM-3e6cb0)
 
@@ -946,7 +1033,7 @@ Add limatus scan as the agent-facing entrypoint with diagnose as an alias, profi
 ### Features
 
 - Add uncontractedForms check for stated-but-unchecked contraction rules
-  ([`f3a62a3`](https://github.com/AnthusAI/Limatus/commit/f3a62a35ce347a5e05d1216d13692a04c4fda0d6))
+  ([`ebc3f9a`](https://github.com/AnthusAI/Limatus/commit/ebc3f9ad52568e1b503f0051161fb697063885b8))
 
 Caught dogfooding: "That is the same thrift family" shipped in an Anth.us post despite the profile's
   own sentenceStyle explicitly saying "Use contractions and active voice." A prose rule that isn't
@@ -971,7 +1058,7 @@ Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>
 ### Features
 
 - Add overusedWords check for crutch-word repetition
-  ([`b604708`](https://github.com/AnthusAI/Limatus/commit/b60470869473e9479d399bc8f933b57e59f31a1c))
+  ([`80dabed`](https://github.com/AnthusAI/Limatus/commit/80dabed4b65c9ab1d9bef197c048f84511aa273e))
 
 Caught dogfooding: the Anth.us article this session wrote about Limatus itself used "actually" seven
   times in under a thousand words, and diagnose didn't flag it, because "actually" isn't on anyone's
@@ -993,7 +1080,7 @@ Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>
 ### Bug Fixes
 
 - Verify() no longer treats frontmatter edits as factual changes
-  ([`ae2dc07`](https://github.com/AnthusAI/Limatus/commit/ae2dc07f3379dbe72e883ce9dee883ed4bd95f30))
+  ([`1894b0c`](https://github.com/AnthusAI/Limatus/commit/1894b0ce454f9c4eea2dede8095198c0feb69143))
 
 diagnose_draft masks a leading YAML frontmatter block before checking prose, but verify_revision
   never did the same for its own text-scanning helpers (_findings, _factual_change_risk,
@@ -1010,7 +1097,7 @@ Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>
 ### Features
 
 - Add check_rules for pattern-only checks on non-prose text
-  ([`6f7f407`](https://github.com/AnthusAI/Limatus/commit/6f7f407fc0c2a65f140e25d919f7485c1221293b))
+  ([`62a2049`](https://github.com/AnthusAI/Limatus/commit/62a2049417a0f17993f7a2a628ec07533ea183c0))
 
 diagnose() runs the full heuristic suite -- cadence, redundancy, vague claims, density -- which is
   right for articles but wrong for text that isn't prose at all: a raw .tsx component source, a
@@ -1032,15 +1119,15 @@ Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>
 ### Chores
 
 - **kanbus**: Commit board state (issues)
-  ([`42fdfb8`](https://github.com/AnthusAI/Limatus/commit/42fdfb8a0fe862889a52f2d4cc056736de278cbe))
+  ([`c3e3c68`](https://github.com/AnthusAI/Limatus/commit/c3e3c6853af0e34ee49076f9db399c54d9711074))
 
 - **kanbus**: Record live suggestion dogfood
-  ([`dbfbb4e`](https://github.com/AnthusAI/Limatus/commit/dbfbb4e591d7bfec1e9a85ee1f6658b22cfd783c))
+  ([`23d12e3`](https://github.com/AnthusAI/Limatus/commit/23d12e32f66e9c4772f6c476258e19c6dfb0fb68))
 
 ### Features
 
 - Add no-emoji ban, per-surface contrast caps, and standfirst checks
-  ([`be2d079`](https://github.com/AnthusAI/Limatus/commit/be2d079db6209c555ebe6be6195de2377f40aef4))
+  ([`3bfc969`](https://github.com/AnthusAI/Limatus/commit/3bfc969337997e4ff6c04976cdffa80929149109))
 
 Extends the style-profile schema so a single profile can cover what a hand-rolled per-site editorial
   checker was covering separately:
@@ -1069,18 +1156,18 @@ Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>
 ### Bug Fixes
 
 - Handle whole-document suggestion truncation
-  ([`6d8b330`](https://github.com/AnthusAI/Limatus/commit/6d8b3301251d58095403531564cef9cd981674c9))
+  ([`74afdf5`](https://github.com/AnthusAI/Limatus/commit/74afdf59e311e60d6b8ec478fdbb12476e03e656))
 
 - **kanbus**: Record safety filter false positive
-  ([`936fda1`](https://github.com/AnthusAI/Limatus/commit/936fda1bd6dfac230b839989016e284d0611e653))
+  ([`5304a89`](https://github.com/AnthusAI/Limatus/commit/5304a89e7bf2d113be629d4dc29345190cad338a))
 
 ### Chores
 
 - **kanbus**: Commit board state (issues)
-  ([`ff121d4`](https://github.com/AnthusAI/Limatus/commit/ff121d4dcfe63d00b87d1458a4ba1c0a41cef2a8))
+  ([`c5f17f2`](https://github.com/AnthusAI/Limatus/commit/c5f17f202e6986f39ec4e101b48ee65cdce7bf2d))
 
 - **kanbus**: Commit board state (issues)
-  ([`dcc03a5`](https://github.com/AnthusAI/Limatus/commit/dcc03a5111a061ea7b760d50182531d4b7f31382))
+  ([`f0ca108`](https://github.com/AnthusAI/Limatus/commit/f0ca108951bba24d9bb6ec18e1889a1cb22890d7))
 
 
 ## v0.3.1 (2026-09-08)
@@ -1088,48 +1175,48 @@ Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>
 ### Bug Fixes
 
 - **kanbus**: Record holistic suggestion truncation
-  ([`1f29906`](https://github.com/AnthusAI/Limatus/commit/1f299061d2c5841779e70af783ae541e5c0bab6b))
+  ([`ef04896`](https://github.com/AnthusAI/Limatus/commit/ef04896cf5839ea349ef482c6edc7bf93822b4f0))
 
 ### Chores
 
 - **kanbus**: Commit board state (issues)
-  ([`dceb53d`](https://github.com/AnthusAI/Limatus/commit/dceb53df6b561e4456d1023b3feb16d78e7252dd))
+  ([`9fa242c`](https://github.com/AnthusAI/Limatus/commit/9fa242c1544aa756e1dbd8be0d8b6b19e64c4b8c))
 
 - **kanbus**: Commit board state (issues)
-  ([`8b3475f`](https://github.com/AnthusAI/Limatus/commit/8b3475fa9616d75ec99cd3380ea9f1d27849fb51))
+  ([`7622752`](https://github.com/AnthusAI/Limatus/commit/7622752d1039cc45097394e07f214f933c6ac7ba))
 
 - **kanbus**: Commit board state (issues)
-  ([`7a09a83`](https://github.com/AnthusAI/Limatus/commit/7a09a83e20e6f37f3a9c8de438c0b22ef1636369))
+  ([`fc3864b`](https://github.com/AnthusAI/Limatus/commit/fc3864bf81268918af31dfb507e15c5319089e1e))
 
 - **kanbus**: Commit board state (issues)
-  ([`a9088c6`](https://github.com/AnthusAI/Limatus/commit/a9088c63eb4d2f71ad38941a51a0a7b1a07db361))
+  ([`65ebcee`](https://github.com/AnthusAI/Limatus/commit/65ebceeac4e93d05983c52e454625108102d14b0))
 
 - **kanbus**: Commit board state (issues)
-  ([`138fb15`](https://github.com/AnthusAI/Limatus/commit/138fb155e904c9eb326cc475ffced3585aef2458))
+  ([`e3ca50a`](https://github.com/AnthusAI/Limatus/commit/e3ca50aef3106f08ccc5692cfa14fc899b666133))
 
 - **kanbus**: Commit board state (issues)
-  ([`b2d3624`](https://github.com/AnthusAI/Limatus/commit/b2d3624fae13b9e87691c2cd9092fcd3d6ddfbc3))
+  ([`3610f56`](https://github.com/AnthusAI/Limatus/commit/3610f56910eff0085fb29634a276e25ca7cc52c6))
 
 - **kanbus**: Commit board state (issues)
-  ([`96b7b9b`](https://github.com/AnthusAI/Limatus/commit/96b7b9b50dd03828e0cb2afb8b4a3e83374b393a))
+  ([`baddef1`](https://github.com/AnthusAI/Limatus/commit/baddef128a9f65bd970cec92503f6947ee393ea8))
 
 - **kanbus**: Complete composable suggestions
-  ([`c1f2837`](https://github.com/AnthusAI/Limatus/commit/c1f28378932f8bf1db2efe3e11cedc2212da6813))
+  ([`4e22ff1`](https://github.com/AnthusAI/Limatus/commit/4e22ff1e7bdec0c7c1d6ba49bd2d195d033e9c43))
 
 - **kanbus**: Complete revision verifier
-  ([`e9044a3`](https://github.com/AnthusAI/Limatus/commit/e9044a36f3c035fc99eabc8fbd52cd36aac78a80))
+  ([`e189c10`](https://github.com/AnthusAI/Limatus/commit/e189c1080da78223b73c1498827527b2ffdc31b6))
 
 - **kanbus**: Make editorial suggestions composable
-  ([`19bbe6f`](https://github.com/AnthusAI/Limatus/commit/19bbe6f35f0f2943ed88a255338357162a38a5f5))
+  ([`16592d9`](https://github.com/AnthusAI/Limatus/commit/16592d90b83378f858c60d0c406e350d8f083016))
 
 - **kanbus**: Make holistic suggestions standard
-  ([`e70227c`](https://github.com/AnthusAI/Limatus/commit/e70227cae119711347688d8441a5d1b94ce375fb))
+  ([`3e2df23`](https://github.com/AnthusAI/Limatus/commit/3e2df23f90719a07d84acdc826e064f52d53f989))
 
 - **kanbus**: Record initial live-content dogfood
-  ([`42405cb`](https://github.com/AnthusAI/Limatus/commit/42405cbaf25b05581ec4f2b85646ed17fe692889))
+  ([`3a36556`](https://github.com/AnthusAI/Limatus/commit/3a36556a41990bf79e23a38c28df774f0ebbadac))
 
 - **kanbus**: Reframe holistic suggestions
-  ([`d343acc`](https://github.com/AnthusAI/Limatus/commit/d343acc3aa3e0630421da8873b0614c7bc64f9a5))
+  ([`0c6a811`](https://github.com/AnthusAI/Limatus/commit/0c6a811348c89ef07b01bfa916abc1ec80b605c2))
 
 
 ## v0.3.0 (2026-09-08)
@@ -1137,26 +1224,26 @@ Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>
 ### Chores
 
 - **kanbus**: Commit board state (issues)
-  ([`b4c438f`](https://github.com/AnthusAI/Limatus/commit/b4c438f71aedff39e3d8fed9ea27d8752af914cb))
+  ([`161b66f`](https://github.com/AnthusAI/Limatus/commit/161b66f31a704168bf41f863315799f164202866))
 
 - **kanbus**: Commit board state (issues)
-  ([`c85d09d`](https://github.com/AnthusAI/Limatus/commit/c85d09ddf4a8fe001a2d5545c3c629f7264e4c2e))
+  ([`1191cdb`](https://github.com/AnthusAI/Limatus/commit/1191cdb993ee35962e7d704a253717d9b0b9280d))
 
 - **kanbus**: Record completed Luna tasks
-  ([`345a101`](https://github.com/AnthusAI/Limatus/commit/345a101fb9a587d2ee14a9ce3f09fd60947a726a))
+  ([`d73b09e`](https://github.com/AnthusAI/Limatus/commit/d73b09e5524fcacabe72166d642a620a935ef403))
 
 - **kanbus**: Record task planning events
-  ([`a173553`](https://github.com/AnthusAI/Limatus/commit/a173553738e2b141a5deb2d4fa766823bac7ecea))
+  ([`0c0ad94`](https://github.com/AnthusAI/Limatus/commit/0c0ad943170bc5d6523ddfe22c69aa6381e25fca))
 
 ### Documentation
 
 - Document portable style profiles
-  ([`26532a8`](https://github.com/AnthusAI/Limatus/commit/26532a8b4ff7d8eb807c3fb7387372c2f5fadb34))
+  ([`183ca5b`](https://github.com/AnthusAI/Limatus/commit/183ca5b4b936f49696caca0cf10a2c279eeaf445))
 
 ### Features
 
 - Expose public Limatus Python SDK
-  ([`97681bc`](https://github.com/AnthusAI/Limatus/commit/97681bc64464c756447b6a33c731cc9d51d37cb6))
+  ([`3c8858f`](https://github.com/AnthusAI/Limatus/commit/3c8858ffef52bde0ba525709e3a3a220891aced1))
 
 
 ## v0.2.0 (2026-09-08)
@@ -1164,7 +1251,7 @@ Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>
 ### Features
 
 - Add --version/-V flag to the CLI
-  ([`0dd1a0c`](https://github.com/AnthusAI/Limatus/commit/0dd1a0cbf64eebf8abb3c362f62202da87879884))
+  ([`5676f91`](https://github.com/AnthusAI/Limatus/commit/5676f91d747517b9832f887cccc642dc185fcef7))
 
 Also serves as the first real conventional-commit release, to verify the python-semantic-release +
   PyPI trusted-publishing pipeline end to end now that the trusted publisher is registered on PyPI.
@@ -1177,7 +1264,7 @@ Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>
 ### Bug Fixes
 
 - Restore correct starting version after semantic-release misfire
-  ([`fbf098e`](https://github.com/AnthusAI/Limatus/commit/fbf098e8fcdeb966e2dd9e89e0f7773820d64480))
+  ([`160dac3`](https://github.com/AnthusAI/Limatus/commit/160dac300c3ed4d8ca5a09722b82dca0cd4f4f37))
 
 python-semantic-release computed its first release purely from conventional-commit history and found
   none, so it defaulted to 0.0.0 and overwrote the version already recorded in pyproject.toml and
@@ -1193,7 +1280,7 @@ Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>
 ### Chores
 
 - **kanbus**: Commit board state (issues)
-  ([`1c4550d`](https://github.com/AnthusAI/Limatus/commit/1c4550da86346fcd58853df6a5c232f7821922b9))
+  ([`fe51d99`](https://github.com/AnthusAI/Limatus/commit/fe51d9901fe55980f97a45338e62de26a265277d))
 
 - **kanbus**: Commit board state (issues)
-  ([`3931448`](https://github.com/AnthusAI/Limatus/commit/3931448d0b92a41c8ce68a3de93eb668d8f6d47c))
+  ([`d92775c`](https://github.com/AnthusAI/Limatus/commit/d92775c96f4a6b6e79126b3ab93453d6e847def9))
