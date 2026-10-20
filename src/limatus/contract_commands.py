@@ -7,6 +7,7 @@ import sys
 from pathlib import Path
 from typing import Any
 
+from .calibration import calibrate
 from .check import check
 from .contracts import CONTRACT_SCHEMAS, load_schema
 from .packs import builtin_pack, list_builtin_packs
@@ -62,6 +63,18 @@ def contract_draft_questions(flags: list[str]) -> int:
     parser.add_argument("--output", help="write the result here instead of stdout")
     args = parser.parse_args(flags)
     _emit(draft_questions(json.loads(Path(args.request).read_text(encoding="utf-8"))), args.output)
+    return 0
+
+
+def contract_calibrate(flags: list[str]) -> int:
+    parser = argparse.ArgumentParser(
+        prog="limatus calibrate",
+        description="Fit per-detector calibration from editor decisions (feedback-labels-v1 in, calibration-v1 out).",
+    )
+    parser.add_argument("--labels", required=True, help="feedback-labels-v1 JSON file")
+    parser.add_argument("--output", help="write the result here instead of stdout")
+    args = parser.parse_args(flags)
+    _emit(calibrate(json.loads(Path(args.labels).read_text(encoding="utf-8"))), args.output)
     return 0
 
 

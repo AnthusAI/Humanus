@@ -3,6 +3,7 @@
     limatus check --request <check-request.json> | --draft <file> --pack <policy-pack.yml> [--output FILE]
     limatus suggest --request <suggest-request.json>          (rewrite options; needs OPENAI_API_KEY)
     limatus draft-questions --request <draft-questions-request.json>
+    limatus calibrate --labels <feedback-labels.json>          (per-detector calibration from editor decisions)
     limatus schema policy-pack-v1|check-request-v1|check-result-v1|finding-v1|suggest-request-v1|suggest-result-v1
     limatus pack import --profile <style-profile.yml> [--version V] [--output FILE]
     limatus pack validate <policy-pack.yml>
@@ -48,6 +49,7 @@ from .editorial_commands import (
     editorial_verify,
 )
 from .contract_commands import (
+    contract_calibrate,
     contract_check,
     contract_draft_questions,
     contract_pack,
@@ -73,6 +75,7 @@ COMMANDS = {
     "check": contract_check,
     "suggest": contract_suggest,
     "draft-questions": contract_draft_questions,
+    "calibrate": contract_calibrate,
     "schema": contract_schema,
     "pack": contract_pack,
     "scan": editorial_scan,

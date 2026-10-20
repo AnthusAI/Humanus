@@ -46,6 +46,7 @@ class Hit:
     segment: Segment | None = None  # set when the lane judged a specific segment
     status: str = "violation"
     probability: float | None = None
+    raw_probability: float | None = None
 
 
 def run_rules_lane(document: SegmentedDocument, pack: PolicyPack) -> tuple[list[Hit], int]:

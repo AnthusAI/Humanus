@@ -182,8 +182,39 @@
           ]
         },
         "threshold": { "type": "number", "minimum": 0, "maximum": 1, "description": "Probability of violation at or above which a finding is a violation." },
-        "reviewAt": { "type": "number", "minimum": 0, "maximum": 1, "description": "Probability at or above which (and below threshold) a finding needs review." }
+        "reviewAt": { "type": "number", "minimum": 0, "maximum": 1, "description": "Probability at or above which (and below threshold) a finding needs review." },
+        "calibration": { "$ref": "#/$defs/calibration" }
       }
+    },
+    "calibration": {
+      "description": "Maps the model's raw probability to a calibrated one before thresholds apply. Produced by `limatus calibrate`.",
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["method", "points"],
+          "properties": {
+            "method": { "const": "isotonic" },
+            "points": {
+              "type": "array",
+              "minItems": 1,
+              "items": { "type": "array", "prefixItems": [{ "type": "number" }, { "type": "number", "minimum": 0, "maximum": 1 }], "minItems": 2, "maxItems": 2 }
+            },
+            "labels": { "type": "integer", "minimum": 0 }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["method", "a", "b"],
+          "properties": {
+            "method": { "const": "platt" },
+            "a": { "type": "number" },
+            "b": { "type": "number" },
+            "labels": { "type": "integer", "minimum": 0 }
+          }
+        }
+      ]
     },
     "question": {
       "type": "object",

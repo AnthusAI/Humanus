@@ -74,6 +74,7 @@ class ClassifierDetector:
     violation: Mapping[str, Any]
     threshold: float
     review_at: float | None = None
+    calibration: Mapping[str, Any] | None = None
     message: str | None = None
     blocks: tuple[str, ...] | None = None
     lane: str = field(default="classifier", init=False)
@@ -202,6 +203,7 @@ def _parse_detector(raw: Mapping[str, Any]) -> Detector:
             violation=dict(raw["violation"]),
             threshold=raw["threshold"],
             review_at=raw.get("reviewAt"),
+            calibration=raw.get("calibration"),
             **common,
         )
     if raw["kind"] == "regex":

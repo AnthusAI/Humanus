@@ -148,6 +148,27 @@ Two lanes find problems:
   decision model is configured the lane reports `unavailable` and rules
   findings are still returned.
 
+Generative help never finds problems; it only helps an editor fix them
+(OpenAI `gpt-6-luna` by default, via `OPENAI_API_KEY`):
+
+- `suggest` (`limatus suggest --request`) returns up to three rewrite options
+  for a finding — rewritten as its whole sentence — or for any span the editor
+  selects, with an optional editor note. Options that change nothing, aim at
+  evading AI detection, or still break the triggering rule are dropped and
+  reported.
+- `draft_questions` (`limatus draft-questions --request`) turns a policy written
+  in prose into proposed classifier detectors for an editor to review.
+
+Editors' decisions make the classifier better:
+
+- `calibrate` (`limatus calibrate --labels`) fits a per-detector calibration
+  from accepted/fixed (violates) and dismissed (does not) findings — Platt
+  scaling from 10 labels, isotonic from 50. Store it on the detector as
+  `calibration`; thresholds then apply to the calibrated probability and
+  findings also report `rawProbability` (use that one in new labels).
+- `options.classifier.examples` passes past decisions with their text; the most
+  similar ones travel with each question as few-shot examples.
+
 ## Portable style profiles
 
 A profile is a versioned YAML or JSON document. The profile below is complete:

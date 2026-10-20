@@ -5,11 +5,21 @@
   "description": "Check one document against a policy pack.",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schemaVersion", "content", "pack"],
+  "required": [
+    "schemaVersion",
+    "content",
+    "pack"
+  ],
   "properties": {
-    "schemaVersion": { "const": 1 },
-    "content": { "$ref": "#/$defs/content" },
-    "pack": { "$ref": "policy-pack-v1.json" },
+    "schemaVersion": {
+      "const": 1
+    },
+    "content": {
+      "$ref": "#/$defs/content"
+    },
+    "pack": {
+      "$ref": "policy-pack-v1.json"
+    },
     "options": {
       "type": "object",
       "additionalProperties": false,
@@ -18,17 +28,69 @@
           "type": "object",
           "additionalProperties": false,
           "properties": {
-            "rules": { "type": "boolean", "default": true },
-            "classifier": { "type": "boolean", "default": true }
+            "rules": {
+              "type": "boolean",
+              "default": true
+            },
+            "classifier": {
+              "type": "boolean",
+              "default": true
+            }
           }
         },
         "classifier": {
           "type": "object",
           "additionalProperties": false,
           "properties": {
-            "model": { "type": "string", "default": "jev-latest" },
-            "maxConcurrency": { "type": "integer", "minimum": 1, "default": 16 },
-            "maxInputTokens": { "type": "integer", "minimum": 1, "description": "Budget; the lane stops and reports when exceeded." }
+            "model": {
+              "type": "string",
+              "default": "jev-latest"
+            },
+            "maxConcurrency": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 16
+            },
+            "maxInputTokens": {
+              "type": "integer",
+              "minimum": 1,
+              "description": "Budget; the lane stops and reports when exceeded."
+            },
+            "examples": {
+              "type": "array",
+              "description": "Past editor decisions with their text; the most similar ones travel with each question as few-shot examples.",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "policyId",
+                  "detectorId",
+                  "text",
+                  "violates"
+                ],
+                "properties": {
+                  "policyId": {
+                    "type": "string"
+                  },
+                  "detectorId": {
+                    "type": "string"
+                  },
+                  "text": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "violates": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            },
+            "maxExamplesPerQuestion": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 32,
+              "default": 4
+            }
           }
         }
       }
@@ -38,10 +100,21 @@
     "content": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["format", "text"],
+      "required": [
+        "format",
+        "text"
+      ],
       "properties": {
-        "format": { "enum": ["markus", "markdown", "text"] },
-        "text": { "type": "string" }
+        "format": {
+          "enum": [
+            "markus",
+            "markdown",
+            "text"
+          ]
+        },
+        "text": {
+          "type": "string"
+        }
       }
     }
   }

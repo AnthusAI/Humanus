@@ -159,6 +159,8 @@ def _finding_payloads(document: SegmentedDocument, hits: list[Hit], to_utf16: "U
         }
         if hit.probability is not None:
             finding["probability"] = hit.probability
+        if hit.raw_probability is not None and hit.raw_probability != hit.probability:
+            finding["rawProbability"] = hit.raw_probability
         if hit.replacement is not None:
             finding["replacement"] = hit.replacement
         findings.append(finding)

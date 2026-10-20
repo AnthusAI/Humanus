@@ -27,6 +27,8 @@ CONTRACT_SCHEMAS = (
     "suggest-result-v1",
     "draft-questions-request-v1",
     "draft-questions-result-v1",
+    "feedback-labels-v1",
+    "calibration-v1",
 )
 
 

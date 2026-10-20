@@ -2,6 +2,7 @@
 
 __version__ = "0.29.0"
 
+from .calibration import apply_calibration, calibrate
 from .check import CheckRequestValidationError, check
 from .contracts import ContractValidationError, load_schema, validate_payload
 from .finding_ids import finding_id
@@ -41,6 +42,8 @@ __all__ = [
     "SegmentedDocument",
     "SuggestRequestValidationError",
     "SuggestUnavailableError",
+    "apply_calibration",
+    "calibrate",
     "check",
     "draft_questions",
     "suggest",

@@ -17,14 +17,16 @@ import os
 import re
 from collections import OrderedDict
 from dataclasses import dataclass, field
-from typing import Any, Mapping, Protocol
+from typing import Any, Iterable, Mapping, Protocol
 
+from .calibration import apply_calibration
 from .policy_pack import ClassifierDetector, Policy, PolicyPack
 from .rules_lane import Hit
 from .segmentation import Segment, SegmentedDocument
 
 DEFAULT_MODEL = "jev-latest"
 DEFAULT_MAX_CONCURRENCY = 16
+DEFAULT_MAX_EXAMPLES = 4
 
 SENTENCE_TASK = "Answer every question about `target` only. `context` is the paragraph around it, for reference."
 SEGMENT_TASK = "Answer every question about `target`."
@@ -183,12 +185,16 @@ async def _run_jobs(
     budget = options.get("maxInputTokens")
     semaphore = asyncio.Semaphore(options.get("maxConcurrency", DEFAULT_MAX_CONCURRENCY))
     meter = _BudgetMeter(budget)
+    library = _ExampleLibrary(options.get("examples", ()), options.get("maxExamplesPerQuestion", DEFAULT_MAX_EXAMPLES))
     failures: list[str] = []
     skipped = 0
 
     async def run(job: _Job) -> None:
         nonlocal skipped
-        questions = {name: _question_payload(policy, detector) for name, policy, detector in job.detectors}
+        questions = {
+            name: _question_payload(policy, detector, library.select(policy.id, detector.id, job.state["target"]))
+            for name, policy, detector in job.detectors
+        }
         key = _cache_key(model, questions, job.state)
         answers = cache.get(key)
         if answers is not None:
@@ -233,10 +239,12 @@ def _record(job: _Job, answers: Mapping[str, Mapping[str, Any]], outcome: Classi
         answer = answers.get(name)
         if answer is None:
             continue
-        probability = round(violation_probability(detector, answer), 4)
-        outcome.coverage.append(
-            {"segmentId": job.segment.id, "policyId": policy.id, "detectorId": detector.id, "probability": probability}
-        )
+        raw = round(violation_probability(detector, answer), 4)
+        probability = round(apply_calibration(detector.calibration, raw), 4)
+        entry = {"segmentId": job.segment.id, "policyId": policy.id, "detectorId": detector.id, "probability": probability}
+        if probability != raw:
+            entry["rawProbability"] = raw
+        outcome.coverage.append(entry)
         if probability >= detector.threshold:
             status = "violation"
         elif detector.review_at is not None and probability >= detector.review_at:
@@ -253,6 +261,7 @@ def _record(job: _Job, answers: Mapping[str, Mapping[str, Any]], outcome: Classi
                 segment=job.segment,
                 status=status,
                 probability=probability,
+                raw_probability=raw,
             )
         )
 
@@ -309,21 +318,48 @@ class _BudgetMeter:
             self._first_done.set()
 
 
+class _ExampleLibrary:
+    """Past editor decisions, retrieved per target by word overlap (Jaccard)."""
+
+    def __init__(self, examples: Iterable[Mapping[str, Any]], limit: int) -> None:
+        self._limit = limit
+        self._by_detector: dict[tuple[str, str], list[tuple[str, bool, frozenset[str]]]] = {}
+        for example in examples:
+            key = (example["policyId"], example["detectorId"])
+            self._by_detector.setdefault(key, []).append((example["text"], bool(example["violates"]), _words(example["text"])))
+
+    def select(self, policy_id: str, detector_id: str, target: str) -> list[tuple[str, bool]]:
+        candidates = self._by_detector.get((policy_id, detector_id))
+        if not candidates or self._limit <= 0:
+            return []
+        words = _words(target)
+        scored = sorted(
+            (c for c in candidates if c[0] != target),
+            key=lambda c: (-(len(words & c[2]) / len(words | c[2]) if words | c[2] else 0.0), c[0]),
+        )
+        return [(text, violates) for text, violates, _ in scored[: self._limit]]
+
+
+def _words(text: str) -> frozenset[str]:
+    return frozenset(re.findall(r"[a-z0-9']+", text.lower()))
+
+
 def _question_name(policy_id: str, detector_id: str) -> str:
     return re.sub(r"[^A-Za-z0-9_]", "_", f"{policy_id}__{detector_id}")
 
 
-def _question_payload(policy: Policy, detector: ClassifierDetector) -> dict[str, Any]:
+def _question_payload(
+    policy: Policy, detector: ClassifierDetector, retrieved: list[tuple[str, bool]] = ()
+) -> dict[str, Any]:
     question = detector.question
     instructions: Any = question.instructions
-    if policy.violating_examples or policy.complying_examples:
+    violating = list(policy.violating_examples) + [text for text, violates in retrieved if violates]
+    complying = list(policy.complying_examples) + [text for text, violates in retrieved if not violates]
+    if violating or complying:
         instructions = {
             "question": question.instructions,
             "policy": policy.guidance,
-            "examples": {
-                "violates the policy": list(policy.violating_examples),
-                "complies with the policy": list(policy.complying_examples),
-            },
+            "examples": {"violates the policy": violating, "complies with the policy": complying},
         }
     payload: dict[str, Any] = {"type": question.type, "instructions": instructions}
     if question.criteria is not None:
