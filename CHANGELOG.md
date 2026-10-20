@@ -1,6 +1,41 @@
 # CHANGELOG
 
 
+## v0.32.0 (2026-10-20)
+
+### Chores
+
+- **kanbus**: Commit board state
+  ([`c16fe37`](https://github.com/AnthusAI/Limatus/commit/c16fe37f98028573beef9ec6977a37742f6cfbc4))
+
+- **kanbus**: Commit board state
+  ([`38aa9ce`](https://github.com/AnthusAI/Limatus/commit/38aa9ce541146e586e401f257e0a17ec6c69f569))
+
+- **kanbus**: File audit bugs 2026-10-20 ([#48](https://github.com/AnthusAI/Limatus/pull/48),
+  [`c9f70c2`](https://github.com/AnthusAI/Limatus/commit/c9f70c2166f9f4297174b140a2e045abd8f7ceeb))
+
+Co-authored-by: Claude Opus 5.5 <noreply@anthropic.com>
+
+### Features
+
+- Asd-ste100 and Federal Plain Language starter packs
+  ([#49](https://github.com/AnthusAI/Limatus/pull/49),
+  [`ab9b972`](https://github.com/AnthusAI/Limatus/commit/ab9b9720eccc800f7fa2d8a4d2b0fd0ef2b83874))
+
+Add eleven built-in checks for published writing standards: sentence_length (with
+  procedure/description topics), average_sentence_length, paragraph_length, reading_grade_level
+  (Flesch-Kincaid), double_negative, undefined_acronym, multiple_instructions, imperative_steps,
+  ing_form, missing_article and one_meaning. Phrase detectors take exceptions (technical names),
+  passive_voice catches irregular participles, and the rules lane keeps one hit per policy and span,
+  preferring the one with a replacement.
+
+Ship two starter packs on them: asd-ste100 (ports PR #45 onto policy packs, with its gold drafts as
+  regression tests) and plain-language (Federal Plain Language Guidelines, with Jev questions for
+  audience, main point first and jargon).
+
+Co-authored-by: Claude Opus 5.5 <noreply@anthropic.com>
+
+
 ## v0.31.0 (2026-10-20)
 
 ### Refactoring

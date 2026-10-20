@@ -7,7 +7,7 @@ selection, ``draft_questions`` helps write classifier detectors, and
 ``limatus/schemas`` are the contract (``load_schema``).
 """
 
-__version__ = "0.31.0"
+__version__ = "0.32.0"
 
 from .calibration import apply_calibration, calibrate
 from .check import CheckRequestValidationError, check

@@ -1,6 +1,6 @@
 [project]
 name = "limatus"
-version = "0.31.0"
+version = "0.32.0"
 description = "A diagnose-and-steer quality loop for AI-generated content."
 readme = "README.md"
 license = { text = "MIT" }
