@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "event_id": "492b28cc-20fa-43d5-ba1e-25f31bc8570b",
+  "issue_id": "LIM-6a093462-df84-442b-8401-23cbf7998c99",
+  "event_type": "issue_created",
+  "occurred_at": "2026-10-20T02:01:45.462Z",
+  "actor_id": "home",
+  "payload": {
+    "title": "Learn from editor decisions",
+    "description": "As a publication whose editors accept, fix or dismiss classifier findings, I want those decisions to correct the model's confidence and teach it by example, so that \"violation\" means what our editors mean, and dismissals stop recurring.\n\nSpecification: `features/calibration.feature`\n\n```gherkin\n@editorial @contracts @calibration\nFeature: Learn from editor decisions\n  As a publication whose editors accept, fix or dismiss classifier findings\n  I want those decisions to correct the model's confidence and teach it by example\n  So that \"violation\" means what our editors mean, and dismissals stop recurring\n\n  Scenario: Calibration reduces calibration error on held-out decisions\n    Given 3000 editor decisions on an overconfident detector\n    When I calibrate the detector on the first 2000 decisions\n    Then the calibration method is \"isotonic\"\n    And the calibration is valid inside a policy pack\n    And the expected calibration error on the last 1000 decisions drops by at least half\n\n  Scenario Outline: The calibration method depends on how many decisions there are\n    Given <count> editor decisions on an overconfident detector\n    When I calibrate the detector on all of them\n    Then the calibration result is \"<result>\"\n\n    Examples:\n      | count | result            |\n      | 5     | not enough labels |\n      | 20    | platt             |\n      | 120   | isotonic          |\n\n  Scenario: Thresholds apply to the calibrated probability\n    Given a sentence detector with threshold 0.8 and review from 0.5 whose model says 0.95\n    And its calibration maps 0.95 down to 0.6\n    When the sentence is checked\n    Then the finding has status \"review\" with probability 0.6 and raw probability 0.95\n\n  Scenario: Past decisions most like the target travel with the question as examples\n    Given past decisions for detector \"vague\" with texts:\n      | text                                              | violates |\n      | Our platform is incredibly fast.                  | yes      |\n      | Our platform answers in 40 milliseconds.          | no       |\n      | The weather in Paris was mild last spring.        | no       |\n      | Our service is extremely reliable.                | yes      |\n    And at most 2 examples per question\n    When the sentence \"Our platform is extremely fast.\" is checked with those examples\n    Then the question for detector \"vague\" carried 2 examples\n    And the examples were \"Our platform is incredibly fast.\" and \"Our service is extremely reliable.\"\n```",
+    "issue_type": "story",
+    "status": "open",
+    "priority": 2,
+    "assignee": null,
+    "parent": "LIM-9ba0bfe5-a32b-44d7-9d49-98010b0073a5",
+    "labels": [
+      "editorial"
+    ],
+    "agent": {
+      "platform": "claude-code",
+      "model": "claude-opus-5-5",
+      "name": "Claude"
+    }
+  }
+}
