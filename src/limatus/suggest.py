@@ -14,8 +14,7 @@ from typing import Any, Mapping, Protocol
 
 from .check import Utf16Offsets
 from .contracts import ContractValidationError, validate_payload
-from .editorial_llm import call_structured_responses_api
-from .editorial_rewrite_options import _EVASION_INSTRUCTION_PATTERNS
+from .openai_responses import call_structured_responses_api
 from .policy_pack import Policy, PolicyPack, PolicyPackValidationError, load_policy_pack
 from .rules_lane import run_rules_lane
 from .segmentation import SegmentedDocument, normalize_text, segment_document
@@ -60,6 +59,25 @@ class OpenAIGenerator:
 def default_generator() -> Generator | None:
     return OpenAIGenerator() if os.environ.get("OPENAI_API_KEY", "").strip() else None
 
+
+# Rationales or rewrites that recommend adding slang, fake experience or
+# imperfections, or that aim at an AI detector, are refused. The words
+# themselves are fine in prose; recommending them as a disguise is not.
+EVASION_INSTRUCTIONS = tuple(
+    re.compile(pattern, re.IGNORECASE | re.DOTALL)
+    for pattern in (
+        r"\b(?:add|use|include|insert|inject|sprinkle|introduce)\b.{0,80}\b"
+        r"(?:slang|colloquialisms?|informal language|fake typos?|mistakes?|imperfections?)\b",
+        r"\b(?:add|use|invent|fabricate|claim|say|pretend|make up|manufacture)\b.{0,100}\b"
+        r"(?:fake\s+)?(?:experience|anecdote|story|personal detail|memory)\b",
+        r"\b(?:to|in order to|so (?:it|the text|this))\b.{0,30}\b"
+        r"(?:evade|avoid|bypass|beat|game|fool|lower)\b.{0,80}\b"
+        r"(?:ai\s*)?detect(?:or|ion|ability)\b",
+        r"\b(?:optimize|target|get below|beat|game|evade|bypass)\b.{0,50}\b"
+        r"(?:ai\s*)?detector(?: score|s)?\b",
+        r"\bmake\b.{0,50}\b(?:look|sound)\b.{0,30}\b(?:human|less ai)\b",
+    )
+)
 
 _DEFAULT = object()
 _UNAVAILABLE = "No rewrite model is configured: set OPENAI_API_KEY (model defaults to gpt-6-luna)."
@@ -278,7 +296,7 @@ def _rejection(
         return "identical to the original"
     if normalize_text(replacement) in seen:
         return "duplicate of another option"
-    if any(pattern.search(rationale) or pattern.search(replacement) for pattern in _EVASION_INSTRUCTION_PATTERNS):
+    if any(pattern.search(rationale) or pattern.search(replacement) for pattern in EVASION_INSTRUCTIONS):
         return "aims at evading AI detection or adding fake imperfections"
     if policy is not None and finding is not None and finding.get("lane") == "rules":
         if _still_breaks(document, start, end, replacement, policy, finding["detectorId"]):

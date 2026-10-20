@@ -37,6 +37,7 @@ class Segment:
     text: str  # plain prose with inline markup removed
     block: str | None = None  # paragraph | heading | listItem
     parent_id: str | None = None
+    container: str | None = None  # innermost container directive (e.g. "pull-quote"), if any
 
     @property
     def text_hash(self) -> str:
@@ -70,15 +71,16 @@ class SegmentedDocument:
 
 def segment_document(text: str, format: str = "markus") -> SegmentedDocument:
     """Segment ``text`` written in ``format`` (``markus``, ``markdown`` or ``text``)."""
+    containers: list[tuple[str, int, int]] = []
     if format == "text":
         protected: list[ProtectedRegion] = []
         blocks = [(m.start(), m.end(), "paragraph") for m in re.finditer(r"\S(?:.*\S)?(?:\n[ \t]*\S.*)*", text)]
         prose = [_trim_span(text, start, end) + (block,) for start, end, block in blocks]
     elif format in {"markus", "markdown"}:
-        prose, protected = _markdown_blocks(text)
+        prose, protected, containers = _markdown_blocks(text)
     else:
         raise ValueError(f"Unsupported content format '{format}'")
-    return _build(text, prose, protected)
+    return _build(text, prose, protected, containers)
 
 
 def normalize_text(text: str) -> str:
@@ -96,7 +98,12 @@ def plain_text(source: str) -> str:
 # --- building segments --------------------------------------------------------
 
 
-def _build(text: str, prose: list[tuple[int, int, str]], protected: list[ProtectedRegion]) -> SegmentedDocument:
+def _build(
+    text: str,
+    prose: list[tuple[int, int, str]],
+    protected: list[ProtectedRegion],
+    containers: list[tuple[str, int, int]],
+) -> SegmentedDocument:
     segments = [Segment(DOCUMENT_SEGMENT_ID, "document", 0, len(text), text, plain_text(text))]
     ids = _IdAllocator()
     for start, end, block in sorted(prose):
@@ -104,8 +111,10 @@ def _build(text: str, prose: list[tuple[int, int, str]], protected: list[Protect
         paragraph_text = plain_text(source)
         if not paragraph_text:
             continue
+        enclosing = [c for c in containers if c[1] <= start and end <= c[2]]
+        container = min(enclosing, key=lambda c: c[2] - c[1])[0] if enclosing else None
         paragraph_id = ids.allocate("p", paragraph_text)
-        segments.append(Segment(paragraph_id, "paragraph", start, end, source, paragraph_text, block, DOCUMENT_SEGMENT_ID))
+        segments.append(Segment(paragraph_id, "paragraph", start, end, source, paragraph_text, block, DOCUMENT_SEGMENT_ID, container))
         for s_start, s_end in split_sentences(source):
             sentence_source = source[s_start:s_end]
             sentence_text = plain_text(sentence_source)
@@ -121,6 +130,7 @@ def _build(text: str, prose: list[tuple[int, int, str]], protected: list[Protect
                     sentence_text,
                     block,
                     paragraph_id,
+                    container,
                 )
             )
     return SegmentedDocument(text, tuple(segments), tuple(sorted(protected, key=lambda r: (r.start, r.end))))
@@ -162,7 +172,7 @@ def _parser() -> MarkdownIt:
     return MarkdownIt("commonmark").enable("table")
 
 
-def _markdown_blocks(text: str) -> tuple[list[tuple[int, int, str]], list[ProtectedRegion]]:
+def _markdown_blocks(text: str) -> tuple[list[tuple[int, int, str]], list[ProtectedRegion], list[tuple[str, int, int]]]:
     lines = text.split("\n")
     line_starts = [0]
     for line in lines[:-1]:
@@ -172,7 +182,7 @@ def _markdown_blocks(text: str) -> tuple[list[tuple[int, int, str]], list[Protec
         """Character span of lines first..last inclusive, without the final newline."""
         return line_starts[first], line_starts[last] + len(lines[last].rstrip("\r"))
 
-    masked, protected = _mask_markus_lines(lines, line_span)
+    masked, protected, containers = _mask_markus_lines(lines, line_span)
     tokens = _parser().parse("\n".join(masked))
 
     prose: list[tuple[int, int, str]] = []
@@ -200,13 +210,18 @@ def _markdown_blocks(text: str) -> tuple[list[tuple[int, int, str]], list[Protec
             span = _inline_source_span(token.content, lines, line_starts, token.map[0])
             if span is not None:
                 prose.append((*span, block))
-    return prose, protected
+    return prose, protected, containers
 
 
-def _mask_markus_lines(lines: list[str], line_span) -> tuple[list[str], list[ProtectedRegion]]:
-    """Blank out front matter and Markus directive syntax, keeping line numbers."""
+def _mask_markus_lines(lines: list[str], line_span) -> tuple[list[str], list[ProtectedRegion], list[tuple[str, int, int]]]:
+    """Blank out front matter and Markus directive syntax, keeping line numbers.
+
+    Also returns each container directive as (name, start, end) character offsets.
+    """
     masked = list(lines)
     protected: list[ProtectedRegion] = []
+    containers: list[tuple[str, int, int]] = []
+    open_containers: list[tuple[str, int]] = []
 
     def blank(first: int, last: int, kind: str) -> None:
         for number in range(first, last + 1):
@@ -230,7 +245,13 @@ def _mask_markus_lines(lines: list[str], line_span) -> tuple[list[str], list[Pro
                 fence = None
         elif fence_match:
             fence = fence_match.group(1)
-        elif _CONTAINER_OPEN.match(line) or _CONTAINER_CLOSE.match(line):
+        elif _CONTAINER_OPEN.match(line):
+            open_containers.append((re.match(r"\s*:+([A-Za-z][\w-]*)", line).group(1), number))
+            blank(number, number, "directive")
+        elif _CONTAINER_CLOSE.match(line):
+            if open_containers:
+                name, opened = open_containers.pop()
+                containers.append((name, line_span(opened, number)[0], line_span(opened, number)[1]))
             blank(number, number, "directive")
         elif _LEAF_DIRECTIVE.match(line):
             last = number
@@ -240,7 +261,7 @@ def _mask_markus_lines(lines: list[str], line_span) -> tuple[list[str], list[Pro
             blank(number, last, "directive")
             number = last
         number += 1
-    return masked, protected
+    return masked, protected, containers
 
 
 def _inline_source_span(content: str, lines: list[str], line_starts: list[int], first_line: int) -> tuple[int, int] | None:
