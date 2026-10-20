@@ -19,10 +19,17 @@
       "text": "Papyrus integration PR: https://github.com/AnthusAI/Papyrus/pull/378 (needs Limatus 0.30 from https://github.com/AnthusAI/Limatus/pull/46). Added on #46: plain text on segments and findings so findings can be placed on the rendered preview.",
       "created_at": "2026-10-20T02:58:40.043275Z",
       "comment_type": "default"
+    },
+    {
+      "id": "b8e15633-6453-4be2-80a5-dcdfa4ff7352",
+      "author": "home",
+      "text": "All Limatus epics done and released (0.30.0, 0.31.0). Papyrus integration: AnthusAI/Papyrus#378, open for review.",
+      "created_at": "2026-10-20T03:31:33.243326Z",
+      "comment_type": "default"
     }
   ],
   "created_at": "2026-10-19T22:37:48.454948Z",
-  "updated_at": "2026-10-20T02:58:40.043290Z",
+  "updated_at": "2026-10-20T03:31:33.243340Z",
   "closed_at": null,
   "right_now_summary": null,
   "right_now_updated_at": null,
