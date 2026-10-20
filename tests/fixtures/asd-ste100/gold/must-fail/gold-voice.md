@@ -1,0 +1,1 @@
+The filter is replaced by the operator. Inserting the filter requires care. Filter housing is plastic.

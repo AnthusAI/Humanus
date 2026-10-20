@@ -13,6 +13,7 @@ from typing import Callable, Iterable
 
 from .emoji import EMOJI_PATTERN
 from .segmentation import Segment, SegmentedDocument, mask_inline, normalize_text
+from .standard_checks import STANDARD_CHECKS
 
 Match = tuple[int, int, "str | None", "str | None"]
 BuiltinCheck = Callable[[SegmentedDocument, list[Segment], list[Segment], dict], Iterable[Match]]
@@ -61,7 +62,16 @@ CLEARLY_ASSERTIVE = re.compile('\\bclearly\\s+(shows|demonstrates|proves|will|is
 CITATION = re.compile('(https?://|\\[[0-9]+\\]|according to|\\([12][0-9]{3}\\)|\\b20[0-9]{2}\\b)', re.IGNORECASE)
 LIST_SHAPED = re.compile('\\bFirst,\\s+.+\\bSecond,\\s+.+\\bThird,\\s+', re.IGNORECASE)
 INTENSIFIER_VAGUE = re.compile('\\b(very|significantly|dramatically|truly|really)\\b.+\\b(transform|revolutionize|leverage)\\b', re.IGNORECASE)
-PASSIVE = re.compile('\\b(is|are|was|were|been|being)\\s+\\w+ed\\b', re.IGNORECASE)
+IRREGULAR_PARTICIPLES = (
+    'made', 'done', 'given', 'taken', 'held', 'kept', 'put', 'set', 'sent', 'shown', 'known', 'seen', 'written',
+    'built', 'found', 'paid', 'told', 'brought', 'bought', 'caught', 'taught', 'thought', 'lost', 'begun', 'chosen',
+    'driven', 'eaten', 'forgotten', 'gotten', 'hidden', 'broken', 'spoken', 'stolen', 'worn', 'torn', 'drawn',
+    'grown', 'thrown', 'sold', 'shut', 'led', 'fed', 'laid', 'said', 'heard', 'meant', 'understood', 'struck',
+    'hung', 'won', 'spent', 'bound',
+)
+PASSIVE = re.compile(
+    rf"\b(is|are|was|were|be|been|being)\s+(\w+ed|{'|'.join(IRREGULAR_PARTICIPLES)})\b", re.IGNORECASE
+)
 STAT_PERCENT = re.compile('\\d+(?:\\.\\d+)?%')
 STAT_MULTIPLIER = re.compile('\\d+\\s*[×x]\\b|\\d+\\s+times\\b', re.IGNORECASE)
 STAT_COUNT_UNIT = re.compile('\\b\\d{3,}\\s+(users|ms|seconds|minutes|hours|days|requests|tokens)\\b', re.IGNORECASE)
@@ -289,4 +299,5 @@ BUILTIN_CHECKS: dict[str, BuiltinCheck] = {
     "uncontracted_forms": _uncontracted_forms,
     "contrast_cap": _contrast_cap,
     "no_emojis": _no_emojis,
+    **STANDARD_CHECKS,
 }

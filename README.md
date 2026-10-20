@@ -32,6 +32,10 @@ available as an MIT-licensed Python package.
 define, whoever wrote it. The starter pack of AI-writing tells is a set of
 editable policies like any other.
 
+**Can it enforce a published standard?** Yes. Starter packs implement ASD-STE100
+Simplified Technical English (`asd-ste100`) and the Federal Plain Language
+Guidelines (`plain-language`); copy one and adjust its limits and word lists.
+
 **Does it rewrite my content?** Only when asked, and never by itself: `suggest`
 returns options for a finding or a selection, and a person chooses.
 
@@ -94,10 +98,24 @@ finding ids derive from text, so they survive edits elsewhere.
 - **Rules** (deterministic): phrase and regex detectors run on prose only;
   built-in checks cover empty lead-ins, unsupported certainty, missing
   attribution, passive voice, redundancy, uniform cadence, information density,
-  overused words, uncontracted forms, contrast caps and emoji. `limatus pack
-  builtin ai-writing-tells` prints 24 starter policies adapted from
-  [avoid-ai-writing](https://github.com/conorbronsdon/avoid-ai-writing) (MIT; see
-  `limatus/packs/NOTICE.md`).
+  overused words, uncontracted forms, contrast caps and emoji. Checks for writing
+  standards cover sentence length (by procedure or description), average
+  sentence length, paragraph length, Flesch-Kincaid grade, double negatives,
+  undefined acronyms, one instruction per step, imperative steps, -ing forms,
+  missing articles and one meaning per word. Phrase detectors take `exceptions`,
+  such as technical names, inside which a match is not a finding.
+- **Starter packs** (`limatus pack builtin <name>`):
+  - `ai-writing-tells`: 24 policies adapted from
+    [avoid-ai-writing](https://github.com/conorbronsdon/avoid-ai-writing) (MIT).
+  - `asd-ste100`: ASD-STE100 Simplified Technical English. The official
+    dictionary is licensed by ASD, so the pack ships a small seed of
+    unapproved words, nouns and one-meaning words; extend them with yours.
+  - `plain-language`: the Federal Plain Language Guidelines (public domain),
+    with simple-word and excess-word replacements, "must" for "shall", hidden
+    verbs, length and readability limits, and Jev questions for addressing the
+    reader as "you", putting the main point first and avoiding jargon.
+
+  See `limatus/packs/NOTICE.md` for sources and licenses.
 - **Classifier** (TypeSafe Jev, zero-shot): one request per segment carries
   every question that applies to it; sentences are judged with their paragraph
   as context. Answers are cached by content, so a rescan only asks about changed

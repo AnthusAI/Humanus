@@ -34,3 +34,23 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ```
+
+## asd-ste100.yml
+
+The `asd-ste100` pack implements the writing rules of ASD-STE100 Simplified
+Technical English as Limatus checks. ASD-STE100 is a specification of the
+AeroSpace, Security and Defence Industries Association of Europe (ASD); its
+dictionary of approved words and its examples are licensed by ASD and are not
+included. The word lists in the pack are a small synthetic seed written for
+Limatus. Organizations that license the specification should replace them with
+the official dictionary.
+
+## plain-language.yml
+
+The `plain-language` pack is based on the Federal Plain Language Guidelines
+(revision 1, May 2011), published by the Plain Language Action and Information
+Network (PLAIN) at plainlanguage.gov and now maintained at
+https://digital.gov/guides/plain-language. The guidelines are a work of the
+U.S. government and are in the public domain. The word substitutions are drawn
+from the guidelines' list of simple words and phrases; the policy guidance and
+questions were written for Limatus.

@@ -24,7 +24,7 @@ Use this skill when an agent (or a human with agent help) copy-edits prose again
 4. **check again**: findings ids are stable for unchanged sentences, so dismissals carry over.
 5. **learn** (CMS side): record accepted / fixed / dismissed decisions; `limatus calibrate --labels labels.json` fits per-detector calibration to store on the pack's detectors.
 
-Policy authoring: `limatus draft-questions --request draft-questions-request.json` proposes classifier detectors for a policy written in prose; review them before adding them to the pack. `limatus pack builtin ai-writing-tells` prints a starter pack of AI-writing tells.
+Policy authoring: `limatus draft-questions --request draft-questions-request.json` proposes classifier detectors for a policy written in prose; review them before adding them to the pack. `limatus pack builtin <name>` prints a starter pack: `ai-writing-tells`, `asd-ste100` (Simplified Technical English) or `plain-language` (Federal Plain Language Guidelines).
 
 ## HTML usability
 

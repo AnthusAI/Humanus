@@ -93,6 +93,11 @@
         "kind": { "const": "phrase" },
         "phrases": { "type": "array", "items": { "type": "string", "minLength": 1 }, "minItems": 1 },
         "caseSensitive": { "type": "boolean", "default": false },
+        "exceptions": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "description": "Phrases, such as technical names, inside which a match is not a finding."
+        },
         "replacement": { "type": "string", "description": "Preferred wording, offered as a deterministic suggestion." }
       }
     },
@@ -117,7 +122,18 @@
             "overused_words",
             "uncontracted_forms",
             "contrast_cap",
-            "no_emojis"
+            "no_emojis",
+            "sentence_length",
+            "average_sentence_length",
+            "paragraph_length",
+            "reading_grade_level",
+            "double_negative",
+            "undefined_acronym",
+            "multiple_instructions",
+            "imperative_steps",
+            "ing_form",
+            "missing_article",
+            "one_meaning"
           ]
         },
         "params": { "type": "object" }
@@ -146,9 +162,163 @@
               }
             }
           }
+        },
+        {
+          "if": { "properties": { "check": { "const": "sentence_length" } } },
+          "then": {
+            "required": ["params"],
+            "properties": {
+              "params": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["maxWords"],
+                "properties": {
+                  "maxWords": { "type": "integer", "minimum": 1 },
+                  "topic": { "$ref": "#/$defs/topic" },
+                  "imperativeVerbs": { "$ref": "#/$defs/wordList" }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": { "properties": { "check": { "const": "average_sentence_length" } } },
+          "then": {
+            "required": ["params"],
+            "properties": {
+              "params": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["maxWords"],
+                "properties": {
+                  "maxWords": { "type": "number", "minimum": 1 },
+                  "minSentences": { "type": "integer", "minimum": 1, "description": "Skip documents with fewer sentences. Default 1." }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": { "properties": { "check": { "const": "paragraph_length" } } },
+          "then": {
+            "required": ["params"],
+            "properties": {
+              "params": {
+                "type": "object",
+                "additionalProperties": false,
+                "minProperties": 1,
+                "properties": {
+                  "maxSentences": { "type": "integer", "minimum": 1 },
+                  "maxWords": { "type": "integer", "minimum": 1 }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": { "properties": { "check": { "const": "reading_grade_level" } } },
+          "then": {
+            "required": ["params"],
+            "properties": {
+              "params": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["maxGrade"],
+                "properties": {
+                  "maxGrade": { "type": "number", "minimum": 0, "description": "Highest acceptable Flesch-Kincaid grade level." },
+                  "minWords": { "type": "integer", "minimum": 1, "description": "Skip documents shorter than this. Default 100." }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": { "properties": { "check": { "const": "undefined_acronym" } } },
+          "then": {
+            "properties": {
+              "params": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": { "allow": { "$ref": "#/$defs/wordList", "description": "Acronyms readers know without a definition." } }
+              }
+            }
+          }
+        },
+        {
+          "if": { "properties": { "check": { "enum": ["multiple_instructions", "imperative_steps"] } } },
+          "then": {
+            "properties": {
+              "params": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "imperativeVerbs": { "$ref": "#/$defs/wordList" },
+                  "wholeDocument": { "type": "boolean", "description": "Treat every paragraph as a procedure step, for documents that are only procedures." }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": { "properties": { "check": { "const": "ing_form" } } },
+          "then": {
+            "properties": {
+              "params": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": { "allow": { "$ref": "#/$defs/wordList", "description": "-ing words that are allowed, such as technical nouns." } }
+              }
+            }
+          }
+        },
+        {
+          "if": { "properties": { "check": { "const": "missing_article" } } },
+          "then": {
+            "required": ["params"],
+            "properties": {
+              "params": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["nouns"],
+                "properties": { "nouns": { "$ref": "#/$defs/wordList", "description": "Singular nouns that need an article." } }
+              }
+            }
+          }
+        },
+        {
+          "if": { "properties": { "check": { "const": "one_meaning" } } },
+          "then": {
+            "required": ["params"],
+            "properties": {
+              "params": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["words"],
+                "properties": {
+                  "words": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "required": ["word", "meaning"],
+                      "properties": {
+                        "word": { "type": "string", "minLength": 1 },
+                        "meaning": { "enum": ["noun", "verb"], "description": "The one part of speech the word may be used as." }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
         }
       ]
     },
+    "topic": {
+      "enum": ["any", "procedure", "description"],
+      "description": "Which sentences a check applies to. Procedure sentences are list items and paragraphs that start with an imperative verb."
+    },
+    "wordList": { "type": "array", "items": { "type": "string", "minLength": 1 } },
     "classifierDetector": {
       "allOf": [{ "$ref": "#/$defs/detectorBase" }],
       "type": "object",

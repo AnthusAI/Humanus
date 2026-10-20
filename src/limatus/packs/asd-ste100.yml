@@ -1,0 +1,179 @@
+# Rules modeled on ASD-STE100 Simplified Technical English. The official
+# ASD-STE100 dictionary and its examples are licensed by ASD and are not
+# bundled; the word lists below are a small starter seed. Replace or extend
+# them with the dictionary your organization licenses.
+schemaVersion: 1
+packId: asd-ste100
+version: "1.0.0"
+title: ASD-STE100 Simplified Technical English
+language: en
+guidance: >-
+  Write technical procedures and descriptions in Simplified Technical English.
+  Use approved words with their one approved meaning, keep sentences short,
+  write one instruction per step in the imperative, and use the active voice.
+  Technical names, such as part names written as the equipment shows them,
+  are allowed as written.
+policies:
+
+  - id: ste-approved-words
+    version: 1
+    title: Approved words only
+    severity: warn
+    tags: [vocabulary, ste]
+    guidance: >-
+      Use the approved word instead of its unapproved synonym. Technical names
+      and technical verbs are allowed even when they are not in the
+      dictionary.
+    detectors:
+      - { id: utilize, lane: rules, kind: phrase, phrases: [utilize], replacement: use }
+      - { id: commence, lane: rules, kind: phrase, phrases: [commence], replacement: start }
+      - { id: terminate, lane: rules, kind: phrase, phrases: [terminate], replacement: stop }
+      - { id: purchase, lane: rules, kind: phrase, phrases: [purchase], replacement: buy }
+      - { id: assist, lane: rules, kind: phrase, phrases: [assist], replacement: help }
+      - { id: demonstrate, lane: rules, kind: phrase, phrases: [demonstrate], replacement: show }
+      - { id: prior, lane: rules, kind: phrase, phrases: [prior to], replacement: before }
+      - { id: sufficient, lane: rules, kind: phrase, phrases: [sufficient], replacement: enough }
+      - id: inflected-unapproved
+        lane: rules
+        kind: phrase
+        message: This is a form of an unapproved word. Use the approved word.
+        phrases:
+          - utilizes
+          - utilized
+          - utilizing
+          - commences
+          - commenced
+          - commencing
+          - terminates
+          - terminated
+          - terminating
+          - purchases
+          - purchased
+          - purchasing
+          - assists
+          - assisted
+          - assisting
+          - demonstrates
+          - demonstrated
+          - demonstrating
+
+  - id: ste-sentence-length
+    version: 1
+    title: Short sentences
+    severity: warn
+    tags: [length, ste]
+    guidance: >-
+      Keep procedural sentences to 20 words or fewer and descriptive sentences
+      to 25 words or fewer. Split a long sentence at its conjunctions or move
+      detail into a separate sentence.
+    detectors:
+      - id: procedure
+        lane: rules
+        kind: builtin
+        check: sentence_length
+        params: { maxWords: 20, topic: procedure }
+      - id: description
+        lane: rules
+        kind: builtin
+        check: sentence_length
+        params: { maxWords: 25, topic: description }
+
+  - id: ste-paragraph-length
+    version: 1
+    title: Short paragraphs
+    severity: info
+    tags: [length, ste]
+    guidance: Keep each descriptive paragraph to one topic and no more than six sentences.
+    detectors:
+      - id: sentences
+        lane: rules
+        kind: builtin
+        check: paragraph_length
+        blocks: [paragraph]
+        params: { maxSentences: 6 }
+
+  - id: ste-one-instruction
+    version: 1
+    title: One instruction per step
+    severity: warn
+    tags: [procedure, ste]
+    guidance: >-
+      Write one instruction per sentence. When two actions must happen at the
+      same time, you may join them in one sentence; otherwise make each action
+      its own step.
+    detectors:
+      - { id: multiple-instructions, lane: rules, kind: builtin, check: multiple_instructions }
+
+  - id: ste-imperative
+    version: 1
+    title: Instructions in the imperative
+    severity: warn
+    tags: [procedure, ste]
+    guidance: Start each procedure step with a verb in the imperative ("Remove the cover"), not with a subject.
+    detectors:
+      - { id: imperative-steps, lane: rules, kind: builtin, check: imperative_steps }
+
+  - id: ste-active-voice
+    version: 1
+    title: Active voice
+    severity: warn
+    tags: [voice, ste]
+    guidance: >-
+      Use the active voice in procedures and as much as possible in
+      descriptions. Say who or what does the action.
+    detectors:
+      - { id: passive-voice, lane: rules, kind: builtin, check: passive_voice }
+
+  - id: ste-no-ing
+    version: 1
+    title: No -ing verb forms
+    severity: warn
+    tags: [grammar, ste]
+    guidance: >-
+      Do not use -ing forms of verbs as modifiers or nouns. Use a simple verb
+      form or rewrite the sentence. Technical names that end in -ing, such as
+      "housing", are allowed.
+    detectors:
+      - id: ing-form
+        lane: rules
+        kind: builtin
+        check: ing_form
+        params:
+          allow: [casing, housing, fitting, opening, warning, reading, bearing, coupling, wiring, ceiling, during]
+
+  - id: ste-articles
+    version: 1
+    title: Use articles
+    severity: info
+    tags: [grammar, ste]
+    guidance: Put an article ("the", "a", "an") or another determiner before a singular noun.
+    detectors:
+      - id: missing-article
+        lane: rules
+        kind: builtin
+        check: missing_article
+        blocks: [paragraph, listItem]
+        params:
+          nouns: [filter, cover, indicator, button, tray, frame, latch, handle, panel, surface, cable, lamp, housing, enclosure, unit, valve, switch, pump]
+
+  - id: ste-one-meaning
+    version: 1
+    title: One word, one meaning
+    severity: warn
+    tags: [vocabulary, ste]
+    guidance: >-
+      Use each approved word only with its approved meaning and part of
+      speech. For example, "check" is a verb ("Check the oil"), so do not
+      write "do a check"; "power" is a noun, so do not write "power the unit".
+    detectors:
+      - id: one-meaning
+        lane: rules
+        kind: builtin
+        check: one_meaning
+        params:
+          words:
+            - { word: check, meaning: verb }
+            - { word: follow, meaning: verb }
+            - { word: power, meaning: noun }
+            - { word: filter, meaning: noun }
+            - { word: handle, meaning: noun }
