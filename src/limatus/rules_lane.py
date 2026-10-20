@@ -51,9 +51,13 @@ def _run_detector(document: SegmentedDocument, detector: Detector) -> Iterable[M
     paragraphs = [p for p in document.paragraphs if _applies(detector, p)]
     if isinstance(detector, PhraseDetector):
         pattern = _phrase_pattern(detector.phrases, detector.case_sensitive)
+        exceptions = _phrase_pattern(detector.exceptions, detector.case_sensitive) if detector.exceptions else None
         for paragraph in paragraphs:
-            for match in pattern.finditer(mask_inline(paragraph.source)):
-                yield paragraph.start + match.start(), paragraph.start + match.end(), None, detector.replacement
+            masked = mask_inline(paragraph.source)
+            excepted = [m.span() for m in exceptions.finditer(masked)] if exceptions else []
+            for match in pattern.finditer(masked):
+                if not any(a <= match.start() and match.end() <= b for a, b in excepted):
+                    yield paragraph.start + match.start(), paragraph.start + match.end(), None, detector.replacement
     elif isinstance(detector, RegexDetector):
         flags = re.IGNORECASE if detector.ignore_case else 0
         pattern = re.compile(detector.pattern, flags)
@@ -79,11 +83,10 @@ def _phrase_pattern(phrases: tuple[str, ...], case_sensitive: bool) -> re.Patter
 
 
 def _dedupe(hits: list[Hit]) -> list[Hit]:
-    seen: set[tuple[str, str, int, int]] = set()
-    unique: list[Hit] = []
+    """One hit per policy and span; a hit that offers a replacement wins over one that does not."""
+    unique: dict[tuple[str, int, int], Hit] = {}
     for hit in hits:
-        key = (hit.policy.id, hit.detector.id, hit.start, hit.end)
-        if key not in seen:
-            seen.add(key)
-            unique.append(hit)
-    return unique
+        key = (hit.policy.id, hit.start, hit.end)
+        if key not in unique or (unique[key].replacement is None and hit.replacement is not None):
+            unique[key] = hit
+    return list(unique.values())

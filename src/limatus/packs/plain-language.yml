@@ -1,0 +1,322 @@
+# Rules drawn from the Federal Plain Language Guidelines (plainlanguage.gov,
+# now maintained at digital.gov/guides/plain-language). The guidelines are a
+# work of the U.S. government and in the public domain. See NOTICE.md.
+schemaVersion: 1
+packId: plain-language
+version: "1.0.0"
+title: Federal Plain Language Guidelines
+language: en
+guidance: >-
+  Write so your readers can find what they need, understand what they find,
+  and use it to meet their needs. Put the main point first, speak to the
+  reader as "you", use short sentences and paragraphs, choose common everyday
+  words, prefer the active voice, and use "must" for requirements. Define
+  every abbreviation you cannot avoid.
+policies:
+
+  - id: pl-simple-words
+    version: 1
+    title: Use simple words and phrases
+    severity: info
+    tags: [words, plain-language]
+    guidance: >-
+      Choose the short, familiar word over the long or formal one. Keep a
+      technical term only when your readers know it and no common word has
+      the same meaning.
+    examples:
+      violates:
+        - "Utilize the form to request reimbursement prior to the deadline."
+      complies:
+        - "Use the form to ask for your money back before the deadline."
+    detectors:
+      - { id: accompany, lane: rules, kind: phrase, phrases: [accompany], replacement: go with }
+      - { id: accomplish, lane: rules, kind: phrase, phrases: [accomplish], replacement: do }
+      - { id: accordingly, lane: rules, kind: phrase, phrases: [accordingly], replacement: so }
+      - { id: additional, lane: rules, kind: phrase, phrases: [additional], replacement: more }
+      - { id: adjacent-to, lane: rules, kind: phrase, phrases: [adjacent to], replacement: next to }
+      - { id: advantageous, lane: rules, kind: phrase, phrases: [advantageous], replacement: helpful }
+      - { id: anticipate, lane: rules, kind: phrase, phrases: [anticipate], replacement: expect }
+      - { id: approximately, lane: rules, kind: phrase, phrases: [approximately], replacement: about }
+      - { id: ascertain, lane: rules, kind: phrase, phrases: [ascertain], replacement: find out }
+      - { id: assistance, lane: rules, kind: phrase, phrases: [assistance], replacement: help }
+      - { id: attempt, lane: rules, kind: phrase, phrases: [attempt], replacement: try }
+      - { id: at-the-present-time, lane: rules, kind: phrase, phrases: [at the present time, at this point in time], replacement: now }
+      - { id: by-means-of, lane: rules, kind: phrase, phrases: [by means of], replacement: by }
+      - { id: commence, lane: rules, kind: phrase, phrases: [commence], replacement: start }
+      - { id: comply-with, lane: rules, kind: phrase, phrases: [comply with], replacement: follow }
+      - { id: concerning, lane: rules, kind: phrase, phrases: [concerning, with reference to, in regard to, with regard to, pertaining to], replacement: about }
+      - { id: consequently, lane: rules, kind: phrase, phrases: [consequently], replacement: so }
+      - { id: deem, lane: rules, kind: phrase, phrases: [deem], replacement: consider }
+      - { id: disseminate, lane: rules, kind: phrase, phrases: [disseminate], replacement: send }
+      - { id: due-to-the-fact-that, lane: rules, kind: phrase, phrases: [due to the fact that, in view of the fact that, inasmuch as], replacement: because }
+      - { id: endeavor, lane: rules, kind: phrase, phrases: [endeavor], replacement: try }
+      - { id: expedite, lane: rules, kind: phrase, phrases: [expedite], replacement: speed up }
+      - { id: facilitate, lane: rules, kind: phrase, phrases: [facilitate], replacement: help }
+      - { id: finalize, lane: rules, kind: phrase, phrases: [finalize], replacement: finish }
+      - { id: for-the-purpose-of, lane: rules, kind: phrase, phrases: [for the purpose of, in order to, in an effort to], replacement: to }
+      - { id: furnish, lane: rules, kind: phrase, phrases: [furnish], replacement: give }
+      - { id: heretofore, lane: rules, kind: phrase, phrases: [heretofore], replacement: until now }
+      - { id: in-accordance-with, lane: rules, kind: phrase, phrases: [in accordance with, pursuant to], replacement: under }
+      - { id: in-lieu-of, lane: rules, kind: phrase, phrases: [in lieu of], replacement: instead of }
+      - { id: in-the-event-that, lane: rules, kind: phrase, phrases: [in the event that, in the event of], replacement: if }
+      - { id: in-the-near-future, lane: rules, kind: phrase, phrases: [in the near future], replacement: soon }
+      - { id: incumbent-upon, lane: rules, kind: phrase, phrases: [it is incumbent upon, it is essential that], replacement: must }
+      - { id: initiate, lane: rules, kind: phrase, phrases: [initiate], replacement: start }
+      - { id: notwithstanding, lane: rules, kind: phrase, phrases: [notwithstanding], replacement: despite }
+      - { id: numerous, lane: rules, kind: phrase, phrases: [numerous], replacement: many }
+      - { id: prior-to, lane: rules, kind: phrase, phrases: [prior to], replacement: before }
+      - { id: procure, lane: rules, kind: phrase, phrases: [procure], replacement: get }
+      - { id: promulgate, lane: rules, kind: phrase, phrases: [promulgate], replacement: issue }
+      - { id: purchase, lane: rules, kind: phrase, phrases: [purchase], replacement: buy }
+      - { id: remuneration, lane: rules, kind: phrase, phrases: [remuneration], replacement: pay }
+      - { id: subsequent, lane: rules, kind: phrase, phrases: [subsequent], replacement: later }
+      - { id: sufficient, lane: rules, kind: phrase, phrases: [sufficient], replacement: enough }
+      - { id: terminate, lane: rules, kind: phrase, phrases: [terminate], replacement: end }
+      - { id: until-such-time-as, lane: rules, kind: phrase, phrases: [until such time as], replacement: until }
+      - { id: utilize, lane: rules, kind: phrase, phrases: [utilize, utilization], replacement: use }
+      - { id: with-the-exception-of, lane: rules, kind: phrase, phrases: [with the exception of], replacement: except for }
+
+  - id: pl-must-not-shall
+    version: 1
+    title: Use "must" for requirements
+    severity: warn
+    tags: [words, plain-language]
+    guidance: >-
+      "Shall" is ambiguous: it can mean an obligation, a prediction or a
+      permission. Use "must" for an obligation, "must not" for a prohibition,
+      and "may" for a choice.
+    examples:
+      violates:
+        - "The applicant shall submit two forms of identification."
+      complies:
+        - "You must send us two forms of identification."
+    detectors:
+      - { id: shall-not, lane: rules, kind: phrase, phrases: [shall not], replacement: must not }
+      - { id: shall, lane: rules, kind: phrase, phrases: [shall], replacement: must }
+
+  - id: pl-hidden-verbs
+    version: 1
+    title: Avoid hidden verbs
+    severity: info
+    tags: [words, plain-language]
+    guidance: >-
+      A hidden verb is an action turned into a noun and propped up by a weak
+      verb: "make a decision", "conduct an analysis". Use the action itself:
+      "decide", "analyze".
+    examples:
+      violates:
+        - "The agency will conduct an analysis of the comments."
+      complies:
+        - "The agency will analyze the comments."
+    detectors:
+      - id: weak-verb-plus-noun
+        lane: rules
+        kind: regex
+        ignoreCase: true
+        pattern: '\b(?:make|makes|made|making|conduct|conducts|conducted|conducting|perform|performs|performed|performing|give|gives|gave|given|giving|provide|provides|provided|providing|reach|reaches|reached|undertake|undertakes|undertook|effect|effects|effected)\s+(?:a|an|the)\s+(?:\w+\s+)?\w+(?:tion|sion|ment|ance|ence|sis)\b'
+      - { id: give-consideration, lane: rules, kind: phrase, phrases: [give consideration to, take into consideration], replacement: consider }
+      - { id: make-a-decision, lane: rules, kind: phrase, phrases: [make a decision], replacement: decide }
+      - { id: is-in-compliance-with, lane: rules, kind: phrase, phrases: [is in compliance with], replacement: complies with }
+      - { id: have-a-need-for, lane: rules, kind: phrase, phrases: [have a need for, has a requirement for], replacement: need }
+
+  - id: pl-omit-excess-words
+    version: 1
+    title: Omit excess words
+    severity: info
+    tags: [words, plain-language]
+    guidance: Cut redundant pairs and modifiers that repeat what the main word already says.
+    detectors:
+      - { id: absolutely-essential, lane: rules, kind: phrase, phrases: [absolutely essential], replacement: essential }
+      - { id: any-and-all, lane: rules, kind: phrase, phrases: [any and all], replacement: all }
+      - { id: basic-fundamentals, lane: rules, kind: phrase, phrases: [basic fundamentals], replacement: fundamentals }
+      - { id: close-proximity, lane: rules, kind: phrase, phrases: [in close proximity to, close proximity], replacement: near }
+      - { id: each-and-every, lane: rules, kind: phrase, phrases: [each and every], replacement: each }
+      - { id: end-result, lane: rules, kind: phrase, phrases: [end result, final outcome], replacement: result }
+      - { id: first-and-foremost, lane: rules, kind: phrase, phrases: [first and foremost], replacement: first }
+      - { id: full-and-complete, lane: rules, kind: phrase, phrases: [full and complete], replacement: complete }
+      - { id: future-plans, lane: rules, kind: phrase, phrases: [future plans], replacement: plans }
+      - { id: if-and-when, lane: rules, kind: phrase, phrases: [if and when], replacement: if }
+      - { id: null-and-void, lane: rules, kind: phrase, phrases: [null and void], replacement: void }
+      - { id: past-history, lane: rules, kind: phrase, phrases: [past history], replacement: history }
+      - { id: period-of-time, lane: rules, kind: phrase, phrases: [period of time, time period], replacement: period }
+      - { id: true-facts, lane: rules, kind: phrase, phrases: [true facts], replacement: facts }
+      - { id: unless-and-until, lane: rules, kind: phrase, phrases: [unless and until], replacement: until }
+
+  - id: pl-short-sentences
+    version: 1
+    title: Write short sentences
+    severity: info
+    tags: [sentences, plain-language]
+    guidance: >-
+      Express only one idea in each sentence. Aim for an average of 20 words
+      or fewer, and break up any sentence that runs much longer.
+    detectors:
+      - id: average
+        lane: rules
+        kind: builtin
+        check: average_sentence_length
+        params: { maxWords: 20, minSentences: 3 }
+      - id: long-sentence
+        lane: rules
+        kind: builtin
+        check: sentence_length
+        params: { maxWords: 35 }
+
+  - id: pl-short-paragraphs
+    version: 1
+    title: Write short paragraphs
+    severity: info
+    tags: [paragraphs, plain-language]
+    guidance: Cover one topic per paragraph, open with a topic sentence, and keep paragraphs to about seven sentences or 150 words.
+    detectors:
+      - id: length
+        lane: rules
+        kind: builtin
+        check: paragraph_length
+        blocks: [paragraph]
+        params: { maxSentences: 7, maxWords: 150 }
+
+  - id: pl-active-voice
+    version: 1
+    title: Use the active voice
+    severity: info
+    tags: [sentences, plain-language]
+    guidance: >-
+      Make clear who does what: "We will review your application", not "Your
+      application will be reviewed". The passive is fine when the actor is
+      unknown or does not matter, or for a law that applies to everyone.
+    detectors:
+      - { id: passive-voice, lane: rules, kind: builtin, check: passive_voice }
+
+  - id: pl-no-double-negatives
+    version: 1
+    title: Avoid double negatives
+    severity: warn
+    tags: [sentences, plain-language]
+    guidance: State requirements and facts positively. "Not uncommon" means "common"; say that.
+    detectors:
+      - { id: double-negative, lane: rules, kind: builtin, check: double_negative }
+
+  - id: pl-define-abbreviations
+    version: 1
+    title: Minimize and define abbreviations
+    severity: info
+    tags: [words, plain-language]
+    guidance: >-
+      Use an abbreviation only when readers know it better than the full
+      term, or when you use it often. Spell it out the first time, with the
+      abbreviation in parentheses.
+    detectors:
+      - { id: undefined-acronym, lane: rules, kind: builtin, check: undefined_acronym }
+
+  - id: pl-no-slashes
+    version: 1
+    title: Don't use slashes
+    severity: info
+    tags: [words, plain-language]
+    guidance: '"And/or" and "he/she" leave the reader to decide what you mean. Say "A, B, or both", or rewrite to address the reader as "you".'
+    detectors:
+      - id: slash-constructions
+        lane: rules
+        kind: regex
+        ignoreCase: true
+        pattern: '\b(?:and/or|he/she|s/he|his/her|him/her)\b'
+
+  - id: pl-reading-level
+    version: 1
+    title: Readable by a general audience
+    severity: info
+    tags: [readability, plain-language]
+    guidance: >-
+      The guidelines do not set a grade level; readability formulas are only
+      a rough signal. This pack targets grade 8, a common goal for public
+      documents. Change maxGrade to suit your audience.
+    detectors:
+      - id: flesch-kincaid
+        lane: rules
+        kind: builtin
+        check: reading_grade_level
+        params: { maxGrade: 8, minWords: 100 }
+
+  - id: pl-address-the-reader
+    version: 1
+    title: Address the reader as "you"
+    severity: info
+    tags: [audience, plain-language]
+    guidance: >-
+      Speak directly to readers with "you", and refer to your organization as
+      "we". Readers then see themselves in the text and know what applies to
+      them.
+    examples:
+      violates:
+        - "Applicants are required to submit their forms within 30 days."
+      complies:
+        - "You must send us your form within 30 days."
+    detectors:
+      - id: third-person-reader
+        lane: classifier
+        scope: paragraph
+        question:
+          type: noul
+          instructions: >-
+            Does this paragraph tell the reader what to do, or what applies to
+            them, while referring to the reader in the third person (for
+            example "the applicant", "users", "the taxpayer") instead of
+            addressing them as "you"?
+          criteria:
+            "true": It gives instructions or obligations to the reader but refers to the reader in the third person.
+            "false": It addresses the reader as "you", or it gives no instructions or obligations to the reader.
+        violation: { answer: "yes" }
+        threshold: 0.8
+        reviewAt: 0.6
+
+  - id: pl-main-point-first
+    version: 1
+    title: Put the main point first
+    severity: info
+    tags: [organization, plain-language]
+    guidance: >-
+      Open with what the reader most needs: the conclusion, the decision, or
+      the action to take. Put background and exceptions after it.
+    detectors:
+      - id: buried-lede
+        lane: classifier
+        scope: document
+        question:
+          type: noul
+          instructions: >-
+            Does the opening of this document state its main point, or the
+            main action the reader must take, before giving background,
+            history or exceptions?
+          criteria:
+            "true": The first paragraph states the main point or the action the reader must take.
+            "false": The main point or action comes only after background, history or exceptions.
+        violation: { answer: "no" }
+        threshold: 0.8
+        reviewAt: 0.6
+
+  - id: pl-avoid-jargon
+    version: 1
+    title: Avoid jargon
+    severity: info
+    tags: [words, plain-language]
+    guidance: >-
+      Replace legal, technical and bureaucratic terms with words a general
+      reader knows. When you must use a term of art, explain it the first
+      time.
+    detectors:
+      - id: unexplained-jargon
+        lane: classifier
+        scope: paragraph
+        question:
+          type: noul
+          instructions: >-
+            Does this paragraph use legal, technical or bureaucratic jargon
+            that a general adult reader would not understand, without
+            explaining it?
+          criteria:
+            "true": It uses unexplained jargon a general reader would not know.
+            "false": Its terms are familiar to a general reader, or it explains them.
+        violation: { answer: "yes" }
+        threshold: 0.8
+        reviewAt: 0.6

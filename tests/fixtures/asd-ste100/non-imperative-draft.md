@@ -1,0 +1,1 @@
+The operator should press the power button.

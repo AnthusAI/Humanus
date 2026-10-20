@@ -1,0 +1,1 @@
+The indicator lamp is a small lamp and the oil level is the level of oil inside the filter housing of the plastic tray enclosure.

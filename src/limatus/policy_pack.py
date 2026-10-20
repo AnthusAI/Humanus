@@ -41,6 +41,7 @@ class PhraseDetector:
     phrases: tuple[str, ...]
     case_sensitive: bool = False
     replacement: str | None = None
+    exceptions: tuple[str, ...] = ()
     message: str | None = None
     blocks: tuple[str, ...] | None = None
     lane: str = field(default="rules", init=False)
@@ -218,6 +219,7 @@ def _parse_detector(raw: Mapping[str, Any]) -> Detector:
             phrases=tuple(raw["phrases"]),
             case_sensitive=raw.get("caseSensitive", False),
             replacement=raw.get("replacement"),
+            exceptions=tuple(raw.get("exceptions", ())),
             **common,
         )
     return BuiltinDetector(check=raw["check"], params=dict(raw.get("params", {})), **common)

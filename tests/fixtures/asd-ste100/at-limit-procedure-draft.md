@@ -1,0 +1,1 @@
+1. Insert the new filter into the filter housing of the tray enclosure of the plastic panel surface of the unit

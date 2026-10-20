@@ -6,7 +6,7 @@
     limatus calibrate --labels <feedback-labels.json>          (per-detector calibration from editor decisions)
     limatus pack import --profile <style-profile.yml> [--version V] [--output FILE]
     limatus pack validate <policy-pack.yml>
-    limatus pack builtin [name]   (list or print starter packs, e.g. ai-writing-tells)
+    limatus pack builtin [name]   (list or print starter packs, e.g. ai-writing-tells, asd-ste100, plain-language)
     limatus schema <name>         (print a contract JSON Schema)
     limatus usability scan --page FILE.html --profile FILE.yml [--output findings.json]
     limatus skill                 (print the packaged Agent Skill for agents)

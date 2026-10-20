@@ -32,7 +32,7 @@ flowchart LR
   cms[Papyrus CMS] -- "check(content, pack)" --> check
   subgraph Limatus
     check[check] --> seg[Markus segmenter]
-    seg --> rules[Rules lane: regex, phrase, builtin, AI-tells pack]
+    seg --> rules[Rules lane: regex, phrase, builtin; starter packs: AI tells, ASD-STE100, plain language]
     seg --> jev[Classifier lane: Jev zero-shot per sentence / paragraph / document]
     rules --> result[Standoff annotation]
     jev --> result

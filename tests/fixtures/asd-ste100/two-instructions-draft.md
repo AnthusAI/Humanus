@@ -1,0 +1,1 @@
+Press the power button and wait for the indicator.

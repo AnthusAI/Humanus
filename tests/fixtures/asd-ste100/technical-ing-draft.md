@@ -1,0 +1,1 @@
+The fitting is inside the housing.

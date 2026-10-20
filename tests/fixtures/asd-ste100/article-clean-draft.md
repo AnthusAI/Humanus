@@ -1,0 +1,1 @@
+The filter housing is plastic.
