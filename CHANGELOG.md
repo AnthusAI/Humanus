@@ -1,6 +1,20 @@
 # CHANGELOG
 
 
+## v0.33.1 (2026-10-20)
+
+### Bug Fixes
+
+- **release**: Build the limatus shim after reclaiming dist/
+  ([#53](https://github.com/AnthusAI/Humanus/pull/53),
+  [`6bce6fd`](https://github.com/AnthusAI/Humanus/commit/6bce6fd7807e40e836aca2c36adb0be994d14b90))
+
+The semantic-release action builds as root, so dist/ was not writable and the shim build failed
+  before anything was published.
+
+Co-authored-by: Claude Opus 5.5 <noreply@anthropic.com>
+
+
 ## v0.33.0 (2026-10-20)
 
 ### Chores

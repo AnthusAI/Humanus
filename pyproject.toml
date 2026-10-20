@@ -1,6 +1,6 @@
 [project]
 name = "humanus"
-version = "0.33.0"
+version = "0.33.1"
 description = "Configurable editorial compliance checks: policy packs, deterministic rules, zero-shot decision models and rewrite suggestions."
 readme = "README.md"
 license = { text = "MIT" }

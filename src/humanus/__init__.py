@@ -7,7 +7,7 @@ selection, ``draft_questions`` helps write classifier detectors, and
 ``humanus/schemas`` are the contract (``load_schema``).
 """
 
-__version__ = "0.33.0"
+__version__ = "0.33.1"
 
 from .calibration import apply_calibration, calibrate
 from .check import CheckRequestValidationError, check
