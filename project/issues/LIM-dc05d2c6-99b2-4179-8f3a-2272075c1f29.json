@@ -3,7 +3,7 @@
   "title": "Rules lane on policies + AI-writing tells pack",
   "description": "Rebuild the deterministic lane on policies.\n\n## Scope\n- Detector kinds: `regex`, `lexicon`, `phrase`, `builtin:<check>` (wrap current always-lane checks: empty_leadin, vague_claim, uniform_cadence, redundancy, unsupported_certainty, density, etc.).\n- Normalization pre-pass: zero-width removal, Cyrillic/Greek homoglyph folding.\n- Built-in \"AI-writing tells\" policy pack ported from avoid-ai-writing (MIT; keep attribution and NOTICE): significance inflation, vague attribution, \"not X, it's Y\", generic conclusions, chatbot artifacts, tiered word table.\n- \"Candidate → finding\" gate: per-detector context exceptions before a match becomes a finding.\n- Optional `nlp` extra (e.g. spaCy) for passive voice and similar checks.\n\n## Done when\n- All existing editorial fixtures pass through the policy path.\n- AI-tells pack has a regression corpus with false-positive cases.",
   "type": "epic",
-  "status": "open",
+  "status": "closed",
   "priority": 1,
   "assignee": null,
   "creator": null,
@@ -17,10 +17,18 @@
       "type": "blocked-by"
     }
   ],
-  "comments": [],
+  "comments": [
+    {
+      "id": "e4de54fa-09bd-4034-8111-313e59e0f322",
+      "author": "home",
+      "text": "Done on feat/policy-pack-contracts: rules lane + ai-writing-tells starter pack (24 policies/108 detectors, all examples verified).",
+      "created_at": "2026-10-20T01:55:22.029104Z",
+      "comment_type": "default"
+    }
+  ],
   "created_at": "2026-10-19T22:38:13.143595Z",
-  "updated_at": "2026-10-19T22:38:28.486213Z",
-  "closed_at": null,
+  "updated_at": "2026-10-20T01:55:22.051171Z",
+  "closed_at": "2026-10-20T01:55:22.051138Z",
   "agent": {
     "platform": "claude-code",
     "model": "claude-opus-5-5",

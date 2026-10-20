@@ -3,7 +3,7 @@
   "title": "Policy-pack contracts and Markus-aware segmenter",
   "description": "Define the contracts everything else builds on, and replace regex segmentation.\n\n## Scope\n- JSON Schemas in `src/limatus/schemas/`: `policy-pack-v1`, `check-request-v1`, `check-result-v1`, `suggest-request-v1`, `suggest-result-v1`. Policy and detector shapes as in the initiative.\n- Policy-pack loader from dict/JSON payload (no file paths; reference samples optional/inline).\n- Importer: existing `style-profile.yml` → policy pack.\n- Markus-aware segmenter (markdown-it-py with source maps): paragraph + sentence segments with stable ids and offsets; protected regions (code, directives, quotes, front matter) masked.\n- UTF-16 offset conversion at the output boundary.\n- Stable finding ids: hash(policyId, normalized segment text, relative span).\n- `check()` skeleton returning the result shape with no lanes wired.\n\n## Done when\n- Schemas validate fixtures; round-trip tests for UTF-16 offsets with emoji/astral text.\n- Segmenter handles repeated paragraphs correctly (no `str.find`).\n- A published schema version Papyrus can code against.",
   "type": "epic",
-  "status": "in_progress",
+  "status": "closed",
   "priority": 1,
   "assignee": null,
   "creator": null,
@@ -22,8 +22,8 @@
     }
   ],
   "created_at": "2026-10-19T22:38:03.249402Z",
-  "updated_at": "2026-10-20T01:29:48.559053Z",
-  "closed_at": null,
+  "updated_at": "2026-10-20T01:55:22.211640Z",
+  "closed_at": "2026-10-20T01:55:22.211611Z",
   "agent": {
     "platform": "claude-code",
     "model": "claude-opus-5-5",
