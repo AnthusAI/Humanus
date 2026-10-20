@@ -1,17 +1,21 @@
-# Limatus
+# Humanus
 
-Limatus is a configurable editorial compliance engine. A publication sends its
-own editorial policies with each request; Limatus marks every place a draft
+Humanus is a configurable editorial compliance engine. A publication sends its
+own editorial policies with each request; Humanus marks every place a draft
 breaks them, says how sure it is, and offers rewrites when an editor asks.
+
+Humanus was called Limatus until version 0.33. `pip install limatus` still
+works: it installs Humanus and keeps `import limatus` and the `limatus` command
+working with a deprecation warning.
 
 ## Press Release
 
-**Anthus AI Solutions introduces Limatus, an open-source engine that checks writing against a publication's own editorial policies — and only rewrites when an editor asks**
+**Anthus AI Solutions introduces Humanus, an open-source engine that checks writing against a publication's own editorial policies — and only rewrites when an editor asks**
 
 Every publication has rules: words it avoids, claims it will not make without a
-source, a voice it keeps. Most are enforced by an editor's memory. Limatus makes
+source, a voice it keeps. Most are enforced by an editor's memory. Humanus makes
 them executable. A CMS sends a draft and a *policy pack* — the publication's
-policies, each written in plain words and backed by detectors — and Limatus
+policies, each written in plain words and backed by detectors — and Humanus
 returns the draft annotated with every finding, down to the exact words.
 
 Two kinds of detector do the finding. Rules catch what a pattern can: banned
@@ -22,13 +26,13 @@ Rewrites come from a generative model only when an editor asks for them, for a
 flagged passage or any passage they select, and they never add facts.
 
 "We wanted editorial policy to be something you can read, test and change, not
-something one editor carries in their head," said the Limatus team at Anthus AI
-Solutions. Limatus runs inside Papyrus, Anthus's newsroom system, and is
+something one editor carries in their head," said the Humanus team at Anthus AI
+Solutions. Humanus runs inside Papyrus, Anthus's newsroom system, and is
 available as an MIT-licensed Python package.
 
 ## FAQ
 
-**Is Limatus an AI-content detector?** No. It checks text against policies you
+**Is Humanus an AI-content detector?** No. It checks text against policies you
 define, whoever wrote it. The starter pack of AI-writing tells is a set of
 editable policies like any other.
 
@@ -39,14 +43,14 @@ Guidelines (`plain-language`); copy one and adjust its limits and word lists.
 **Does it rewrite my content?** Only when asked, and never by itself: `suggest`
 returns options for a finding or a selection, and a person chooses.
 
-**Where do policies live?** In the caller. Limatus is stateless; the CMS stores
+**Where do policies live?** In the caller. Humanus is stateless; the CMS stores
 policies, settings and editors' decisions and sends a pack with every request.
 
 ## Installation
 
 ```bash
-pip install limatus          # rules lane, contracts, suggest
-pip install "limatus[jev]"   # adds the TypeSafe Jev classifier lane
+pip install humanus          # rules lane, contracts, suggest
+pip install "humanus[jev]"   # adds the TypeSafe Jev classifier lane
 ```
 
 Set `TYPESAFE_API_KEY` for the classifier lane and `OPENAI_API_KEY` for
@@ -55,17 +59,17 @@ rewrite suggestions and drafted questions (`gpt-6-luna` by default).
 ## Usage
 
 ```bash
-limatus pack builtin ai-writing-tells > pack.json      # a starter pack to edit
-limatus pack import --profile style-profile.yml > pack.json   # or convert a legacy style profile
-limatus check --draft draft.md --pack pack.json        # findings, segments, lanes (check-result-v1)
-limatus suggest --request suggest-request.json         # rewrite options for a finding or selection
-limatus draft-questions --request draft-request.json   # classifier detectors for a prose policy
-limatus calibrate --labels labels.json                 # calibration from editors' decisions
-limatus schema policy-pack-v1                          # print any contract schema
+humanus pack builtin ai-writing-tells > pack.json      # a starter pack to edit
+humanus pack import --profile style-profile.yml > pack.json   # or convert a legacy style profile
+humanus check --draft draft.md --pack pack.json        # findings, segments, lanes (check-result-v1)
+humanus suggest --request suggest-request.json         # rewrite options for a finding or selection
+humanus draft-questions --request draft-request.json   # classifier detectors for a prose policy
+humanus calibrate --labels labels.json                 # calibration from editors' decisions
+humanus schema policy-pack-v1                          # print any contract schema
 ```
 
 ```python
-from limatus import check, suggest
+from humanus import check, suggest
 
 result = check({"schemaVersion": 1, "content": {"format": "markus", "text": text}, "pack": pack})
 for finding in result["findings"]:
@@ -74,7 +78,7 @@ for finding in result["findings"]:
 
 ## Contracts
 
-The payloads are JSON Schemas packaged with Limatus (`limatus schema <name>`);
+The payloads are JSON Schemas packaged with Humanus (`humanus schema <name>`);
 callers in any language validate against the same files.
 
 | Schema | Purpose |
@@ -104,7 +108,7 @@ finding ids derive from text, so they survive edits elsewhere.
   undefined acronyms, one instruction per step, imperative steps, -ing forms,
   missing articles and one meaning per word. Phrase detectors take `exceptions`,
   such as technical names, inside which a match is not a finding.
-- **Starter packs** (`limatus pack builtin <name>`):
+- **Starter packs** (`humanus pack builtin <name>`):
   - `ai-writing-tells`: 24 policies adapted from
     [avoid-ai-writing](https://github.com/conorbronsdon/avoid-ai-writing) (MIT).
   - `asd-ste100`: ASD-STE100 Simplified Technical English. The official
@@ -115,7 +119,7 @@ finding ids derive from text, so they survive edits elsewhere.
     verbs, length and readability limits, and Jev questions for addressing the
     reader as "you", putting the main point first and avoiding jargon.
 
-  See `limatus/packs/NOTICE.md` for sources and licenses.
+  See `humanus/packs/NOTICE.md` for sources and licenses.
 - **Classifier** (TypeSafe Jev, zero-shot): one request per segment carries
   every question that applies to it; sentences are judged with their paragraph
   as context. Answers are cached by content, so a rescan only asks about changed
@@ -134,12 +138,12 @@ A separate, read-only scan for rendered HTML pages (contrast, tap targets, focus
 visibility, alt text, generic AI-page patterns):
 
 ```bash
-limatus usability scan --page page.html --profile usability-profile.yml
+humanus usability scan --page page.html --profile usability-profile.yml
 ```
 
 ## For agents
 
-`limatus skill` prints an Agent Skill describing the check → suggest → choose
+`humanus skill` prints an Agent Skill describing the check → suggest → choose
 workflow.
 
 ## Testing

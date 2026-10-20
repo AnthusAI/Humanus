@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://limatus.anth.us/schemas/suggest-result-v1.json",
+  "$id": "https://humanus.anth.us/schemas/suggest-result-v1.json",
   "title": "SuggestResult",
   "description": "Rewrite options for one target: the sentence containing a finding, or the editor's selection. Each option replaces the target span.",
   "type": "object",
@@ -82,7 +82,7 @@
     },
     "dropped": {
       "type": "array",
-      "description": "Options the model proposed that Limatus rejected, and why.",
+      "description": "Options the model proposed that Humanus rejected, and why.",
       "items": {
         "type": "object",
         "additionalProperties": false,

@@ -11,10 +11,10 @@ SRC_ROOT = REPO_ROOT / "src"
 if str(SRC_ROOT) not in sys.path:
     sys.path.insert(0, str(SRC_ROOT))
 
-from limatus.calibration import apply_calibration, calibrate, expected_calibration_error  # noqa: E402
-from limatus.check import check  # noqa: E402
-from limatus.classifier_lane import DecisionAnswers, InMemoryClassifierCache  # noqa: E402
-from limatus.policy_pack import load_policy_pack  # noqa: E402
+from humanus.calibration import apply_calibration, calibrate, expected_calibration_error  # noqa: E402
+from humanus.check import check  # noqa: E402
+from humanus.classifier_lane import DecisionAnswers, InMemoryClassifierCache  # noqa: E402
+from humanus.policy_pack import load_policy_pack  # noqa: E402
 
 
 def _labels(count: int) -> list[dict]:

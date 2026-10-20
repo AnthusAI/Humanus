@@ -6,7 +6,7 @@ Feature: Check a document against a policy pack
 
   Scenario: Return an annotated document in UTF-16 offsets
     Given a check request for a Markus document with an emoji before its prose
-    When Limatus checks the request
+    When Humanus checks the request
     Then the check result is a valid "check-result-v1" document
     And the check result reports offsets in "utf16" code units
     And every result segment's UTF-16 span selects its text as JavaScript would
@@ -16,13 +16,13 @@ Feature: Check a document against a policy pack
 
   Scenario: Reject an invalid check request
     Given a check request without content
-    When Limatus checks the request
+    When Humanus checks the request
     Then checking fails with a check request validation error
     And the check request error names the location "content"
 
   Scenario: Check from the command line
     Given a check request file for a Markus document
-    When I run the limatus command "check --request" with the request file
+    When I run the humanus command "check --request" with the request file
     Then the command succeeds
     And the command prints a valid "check-result-v1" document
 
@@ -46,6 +46,6 @@ Feature: Check a document against a policy pack
       """
       This **release** is *game-changing* for [teams](https://example.com) [@smith2020].
       """
-    When Limatus checks the request
+    When Humanus checks the request
     Then the paragraph and sentence segments carry the plain text "This release is game-changing for teams."
     And the finding's excerpt text is "game-changing"

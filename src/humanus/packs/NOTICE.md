@@ -6,8 +6,8 @@ The patterns in the `ai-writing-tells` policy pack are adapted from
 [avoid-ai-writing](https://github.com/conorbronsdon/avoid-ai-writing) by Conor
 Bronsdon, specifically its pattern catalog (`references/patterns.md`) and the
 regular expressions in its detector (`detector/patterns.js`). The regexes were
-ported to Python `re` syntax and regrouped into Limatus policies. The policy
-guidance, rewrite guidance, and examples in the pack were written for Limatus.
+ported to Python `re` syntax and regrouped into Humanus policies. The policy
+guidance, rewrite guidance, and examples in the pack were written for Humanus.
 
 avoid-ai-writing is distributed under the MIT License:
 
@@ -38,11 +38,11 @@ SOFTWARE.
 ## asd-ste100.yml
 
 The `asd-ste100` pack implements the writing rules of ASD-STE100 Simplified
-Technical English as Limatus checks. ASD-STE100 is a specification of the
+Technical English as Humanus checks. ASD-STE100 is a specification of the
 AeroSpace, Security and Defence Industries Association of Europe (ASD); its
 dictionary of approved words and its examples are licensed by ASD and are not
 included. The word lists in the pack are a small synthetic seed written for
-Limatus. Organizations that license the specification should replace them with
+Humanus. Organizations that license the specification should replace them with
 the official dictionary.
 
 ## plain-language.yml
@@ -53,4 +53,4 @@ Network (PLAIN) at plainlanguage.gov and now maintained at
 https://digital.gov/guides/plain-language. The guidelines are a work of the
 U.S. government and are in the public domain. The word substitutions are drawn
 from the guidelines' list of simple words and phrases; the policy guidance and
-questions were written for Limatus.
+questions were written for Humanus.

@@ -16,6 +16,6 @@ Feature: Import a style profile as a policy pack
     And the reference samples are embedded with their text
 
   Scenario: Import from the command line
-    When I run the limatus command "pack import --profile features/fixtures/policy-pack/style-profile.yml"
+    When I run the humanus command "pack import --profile features/fixtures/policy-pack/style-profile.yml"
     Then the command succeeds
     And the command prints a valid "policy-pack-v1" document

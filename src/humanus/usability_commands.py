@@ -10,7 +10,7 @@ from .usability_scan import scan_html_page
 
 
 def usability_scan(flags: list[str]) -> None:
-    parser = argparse.ArgumentParser(prog="limatus usability scan")
+    parser = argparse.ArgumentParser(prog="humanus usability scan")
     parser.add_argument("--page", required=True, help="Path to the HTML page (read-only).")
     parser.add_argument("--profile", required=True, help="Path to the usability profile YAML.")
     parser.add_argument("--output", default="", help="Optional path to write findings JSON.")
@@ -31,7 +31,7 @@ def usability_scan(flags: list[str]) -> None:
 
 def editorial_usability(flags: list[str]) -> None:
     if not flags or flags[0] in {"-h", "--help"}:
-        print("limatus usability scan --page FILE.html --profile FILE.yml [--output findings.json]")
+        print("humanus usability scan --page FILE.html --profile FILE.yml [--output findings.json]")
         return
     if flags[0] != "scan":
         raise ValueError(f"Unknown usability subcommand '{flags[0]}'. Supported: scan")

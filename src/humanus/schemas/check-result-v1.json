@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://limatus.anth.us/schemas/check-result-v1.json",
+  "$id": "https://humanus.anth.us/schemas/check-result-v1.json",
   "title": "CheckResult",
   "description": "Standoff annotation of a document: segments, protected regions and findings, with offsets into the submitted text.",
   "type": "object",

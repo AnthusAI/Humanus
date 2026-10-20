@@ -1,7 +1,7 @@
 [project]
-name = "limatus"
+name = "humanus"
 version = "0.32.0"
-description = "A diagnose-and-steer quality loop for AI-generated content."
+description = "Configurable editorial compliance checks: policy packs, deterministic rules, zero-shot decision models and rewrite suggestions."
 readme = "README.md"
 license = { text = "MIT" }
 requires-python = ">=3.10"
@@ -24,11 +24,11 @@ dev = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/AnthusAI/Limatus"
-Repository = "https://github.com/AnthusAI/Limatus"
+Homepage = "https://github.com/AnthusAI/Humanus"
+Repository = "https://github.com/AnthusAI/Humanus"
 
 [project.scripts]
-limatus = "limatus.cli:main"
+humanus = "humanus.cli:main"
 
 [build-system]
 requires = ["setuptools>=68", "wheel"]
@@ -38,11 +38,11 @@ build-backend = "setuptools.build_meta"
 where = ["src"]
 
 [tool.setuptools.package-data]
-limatus = ["data/SKILL.md", "schemas/*.json", "packs/*.yml", "packs/*.md"]
+humanus = ["data/SKILL.md", "schemas/*.json", "packs/*.yml", "packs/*.md"]
 
 [tool.semantic_release]
 version_toml = ["pyproject.toml:project.version"]
-version_variables = ["src/limatus/__init__.py:__version__"]
+version_variables = ["src/humanus/__init__.py:__version__"]
 build_command = "python -m pip install build && python -m build"
 commit_parser = "conventional"
 major_on_zero = false

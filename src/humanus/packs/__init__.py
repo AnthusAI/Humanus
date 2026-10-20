@@ -1,7 +1,7 @@
-"""Starter policy packs shipped with Limatus.
+"""Starter policy packs shipped with Humanus.
 
 A CMS copies a starter pack's policies into its own store, where editors can
-change them; Limatus itself never merges packs at check time.
+change them; Humanus itself never merges packs at check time.
 """
 from __future__ import annotations
 

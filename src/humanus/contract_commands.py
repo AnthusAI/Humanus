@@ -18,7 +18,7 @@ from .suggest import draft_questions, suggest
 
 def contract_check(flags: list[str]) -> int:
     parser = argparse.ArgumentParser(
-        prog="limatus check",
+        prog="humanus check",
         description="Check a document against a policy pack and print a check-result-v1 document.",
     )
     parser.add_argument("--request", help="check-request-v1 JSON file")
@@ -44,7 +44,7 @@ def contract_check(flags: list[str]) -> int:
 
 def contract_suggest(flags: list[str]) -> int:
     parser = argparse.ArgumentParser(
-        prog="limatus suggest",
+        prog="humanus suggest",
         description="Rewrite options for a finding or selection (suggest-request-v1 in, suggest-result-v1 out). Needs OPENAI_API_KEY.",
     )
     parser.add_argument("--request", required=True, help="suggest-request-v1 JSON file")
@@ -56,7 +56,7 @@ def contract_suggest(flags: list[str]) -> int:
 
 def contract_draft_questions(flags: list[str]) -> int:
     parser = argparse.ArgumentParser(
-        prog="limatus draft-questions",
+        prog="humanus draft-questions",
         description="Draft classifier detectors for a prose policy (draft-questions-request-v1 in). Needs OPENAI_API_KEY.",
     )
     parser.add_argument("--request", required=True, help="draft-questions-request-v1 JSON file")
@@ -68,7 +68,7 @@ def contract_draft_questions(flags: list[str]) -> int:
 
 def contract_calibrate(flags: list[str]) -> int:
     parser = argparse.ArgumentParser(
-        prog="limatus calibrate",
+        prog="humanus calibrate",
         description="Fit per-detector calibration from editor decisions (feedback-labels-v1 in, calibration-v1 out).",
     )
     parser.add_argument("--labels", required=True, help="feedback-labels-v1 JSON file")
@@ -79,7 +79,7 @@ def contract_calibrate(flags: list[str]) -> int:
 
 
 def contract_schema(flags: list[str]) -> int:
-    parser = argparse.ArgumentParser(prog="limatus schema", description="Print a published contract JSON Schema.")
+    parser = argparse.ArgumentParser(prog="humanus schema", description="Print a published contract JSON Schema.")
     parser.add_argument("name", choices=CONTRACT_SCHEMAS)
     args = parser.parse_args(flags)
     _emit(load_schema(args.name), None)
@@ -87,7 +87,7 @@ def contract_schema(flags: list[str]) -> int:
 
 
 def contract_pack(flags: list[str]) -> int:
-    parser = argparse.ArgumentParser(prog="limatus pack", description="Work with policy packs.")
+    parser = argparse.ArgumentParser(prog="humanus pack", description="Work with policy packs.")
     commands = parser.add_subparsers(dest="command", required=True)
     importer = commands.add_parser("import", help="convert a style profile into a policy pack")
     importer.add_argument("--profile", required=True, help="style profile YAML/JSON")

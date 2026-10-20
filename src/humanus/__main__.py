@@ -1,4 +1,4 @@
-"""Run ``python -m limatus`` the same way as the ``limatus`` console script."""
+"""Run ``python -m humanus`` the same way as the ``humanus`` console script."""
 
 from __future__ import annotations
 

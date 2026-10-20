@@ -4,9 +4,9 @@ import copy
 
 import pytest
 
-from limatus.check import CheckRequestValidationError, Utf16Offsets, check
-from limatus.policy_pack import PolicyPackValidationError, load_policy_pack
-from limatus.segmentation import segment_document, split_sentences
+from humanus.check import CheckRequestValidationError, Utf16Offsets, check
+from humanus.policy_pack import PolicyPackValidationError, load_policy_pack
+from humanus.segmentation import segment_document, split_sentences
 
 PACK = {
     "schemaVersion": 1,

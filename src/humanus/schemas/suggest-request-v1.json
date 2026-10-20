@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://limatus.anth.us/schemas/suggest-request-v1.json",
+  "$id": "https://humanus.anth.us/schemas/suggest-request-v1.json",
   "title": "SuggestRequest",
   "description": "Ask for rewrite options for one finding or for any span the editor selected. The only operation besides draft-questions that calls a generative model.",
   "type": "object",

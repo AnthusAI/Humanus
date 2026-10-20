@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://limatus.anth.us/schemas/draft-questions-result-v1.json",
+  "$id": "https://humanus.anth.us/schemas/draft-questions-result-v1.json",
   "title": "DraftQuestionsResult",
   "type": "object",
   "additionalProperties": false,
@@ -27,7 +27,7 @@
       "items": {
         "type": "string"
       },
-      "description": "Why each detector was proposed, and anything Limatus rejected."
+      "description": "Why each detector was proposed, and anything Humanus rejected."
     }
   }
 }

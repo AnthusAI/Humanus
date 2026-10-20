@@ -1,4 +1,4 @@
-"""Policy packs: the caller-supplied editorial policies Limatus enforces.
+"""Policy packs: the caller-supplied editorial policies Humanus enforces.
 
 A pack arrives as a payload (dict, JSON or YAML) with every request. It is
 validated against ``policy-pack-v1`` and then against the rules a schema

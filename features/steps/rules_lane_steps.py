@@ -11,9 +11,9 @@ SRC_ROOT = REPO_ROOT / "src"
 if str(SRC_ROOT) not in sys.path:
     sys.path.insert(0, str(SRC_ROOT))
 
-from limatus.check import check  # noqa: E402
-from limatus.packs import builtin_pack  # noqa: E402
-from limatus.policy_pack import load_policy_pack  # noqa: E402
+from humanus.check import check  # noqa: E402
+from humanus.packs import builtin_pack  # noqa: E402
+from humanus.policy_pack import load_policy_pack  # noqa: E402
 
 
 def _detector(row) -> dict:

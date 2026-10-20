@@ -16,12 +16,12 @@ IMPORT_PROFILE = REPO_ROOT / "features" / "fixtures" / "policy-pack" / "style-pr
 if str(SRC_ROOT) not in sys.path:
     sys.path.insert(0, str(SRC_ROOT))
 
-from limatus.check import CheckRequestValidationError, check  # noqa: E402
-from limatus.contracts import validate_payload  # noqa: E402
-from limatus.finding_ids import finding_id  # noqa: E402
-from limatus.policy_pack import PolicyPackValidationError, load_policy_pack  # noqa: E402
-from limatus.segmentation import segment_document  # noqa: E402
-from limatus.style_profile_import import policy_pack_from_style_profile  # noqa: E402
+from humanus.check import CheckRequestValidationError, check  # noqa: E402
+from humanus.contracts import validate_payload  # noqa: E402
+from humanus.finding_ids import finding_id  # noqa: E402
+from humanus.policy_pack import PolicyPackValidationError, load_policy_pack  # noqa: E402
+from humanus.segmentation import segment_document  # noqa: E402
+from humanus.style_profile_import import policy_pack_from_style_profile  # noqa: E402
 
 
 def _base_pack() -> dict:
@@ -72,13 +72,13 @@ def _base_pack() -> dict:
     }
 
 
-def _run_limatus(*args: str) -> subprocess.CompletedProcess[str]:
+def _run_humanus(*args: str) -> subprocess.CompletedProcess[str]:
     env = os.environ.copy()
     env["PYTHONPATH"] = f"{SRC_ROOT}:{REPO_ROOT}"
     env.pop("OPENAI_API_KEY", None)
     env.pop("TYPESAFE_API_KEY", None)
     return subprocess.run(
-        [sys.executable, "-m", "limatus", *args],
+        [sys.executable, "-m", "humanus", *args],
         cwd=REPO_ROOT,
         env=env,
         text=True,
@@ -194,9 +194,9 @@ def step_pack_error_mentions(context, text):
 # --- CLI --------------------------------------------------------------------
 
 
-@when('I run the limatus command "{command}"')
-def step_run_limatus_command(context, command):
-    context.cli = _run_limatus(*command.split())
+@when('I run the humanus command "{command}"')
+def step_run_humanus_command(context, command):
+    context.cli = _run_humanus(*command.split())
 
 
 @then("the command succeeds")
@@ -411,7 +411,7 @@ def step_check_request_no_content(context):
     context.check_request = request
 
 
-@when("Limatus checks the request")
+@when("Humanus checks the request")
 def step_run_check(context):
     context.check_error = None
     context.check_result = None
@@ -481,9 +481,9 @@ def step_check_request_file(context):
     context.check_request_path = handle.name
 
 
-@when('I run the limatus command "check --request" with the request file')
+@when('I run the humanus command "check --request" with the request file')
 def step_run_check_cli(context):
-    context.cli = _run_limatus("check", "--request", context.check_request_path)
+    context.cli = _run_humanus("check", "--request", context.check_request_path)
 
 
 # --- finding ids --------------------------------------------------------------------

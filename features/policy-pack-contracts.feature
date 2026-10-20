@@ -1,8 +1,8 @@
 @editorial @contracts
 Feature: Policy packs are the editorial contract
-  As a CMS integrating Limatus
+  As a CMS integrating Humanus
   I want to send my editorial policies as a validated policy pack
-  So that Limatus enforces our guidelines without reading files from disk
+  So that Humanus enforces our guidelines without reading files from disk
 
   Scenario: Load a policy pack from a payload
     Given a policy pack payload with a rules policy and a classifier policy
@@ -36,7 +36,7 @@ Feature: Policy packs are the editorial contract
     And the policy pack error mentions "does not compile"
 
   Scenario Outline: Publish each contract schema
-    When I run the limatus command "schema <name>"
+    When I run the humanus command "schema <name>"
     Then the command succeeds
     And the command prints a JSON Schema whose id ends with "<name>.json"
 

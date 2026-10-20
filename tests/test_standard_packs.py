@@ -9,9 +9,9 @@ from pathlib import Path
 
 import pytest
 
-from limatus.check import check
-from limatus.packs import builtin_pack
-from limatus.policy_pack import load_policy_pack
+from humanus.check import check
+from humanus.packs import builtin_pack
+from humanus.policy_pack import load_policy_pack
 
 STE = Path(__file__).parent / "fixtures" / "asd-ste100"
 

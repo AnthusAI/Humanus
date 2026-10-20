@@ -141,7 +141,7 @@ def run_classifier_lane(
     if decision_model is None:
         outcome.status = {
             "status": "unavailable",
-            "reason": "no decision model is configured (set TYPESAFE_API_KEY and install limatus[jev])",
+            "reason": "no decision model is configured (set TYPESAFE_API_KEY and install humanus[jev])",
             "detectors": 0,
         }
         return outcome

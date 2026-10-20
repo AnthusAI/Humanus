@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://limatus.anth.us/schemas/policy-pack-v1.json",
+  "$id": "https://humanus.anth.us/schemas/policy-pack-v1.json",
   "title": "PolicyPack",
-  "description": "A versioned set of editorial policies supplied by the caller with each request. Limatus stores no policies of its own.",
+  "description": "A versioned set of editorial policies supplied by the caller with each request. Humanus stores no policies of its own.",
   "type": "object",
   "additionalProperties": false,
   "required": ["schemaVersion", "packId", "version", "policies"],
@@ -357,7 +357,7 @@
       }
     },
     "calibration": {
-      "description": "Maps the model's raw probability to a calibrated one before thresholds apply. Produced by `limatus calibrate`.",
+      "description": "Maps the model's raw probability to a calibrated one before thresholds apply. Produced by `humanus calibrate`.",
       "oneOf": [
         {
           "type": "object",

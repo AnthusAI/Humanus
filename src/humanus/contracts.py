@@ -1,8 +1,8 @@
 """Published JSON Schema contracts for policy packs, check and suggest.
 
-The schema files under ``limatus/schemas`` are the single source of truth for
-the payloads a caller (for example a CMS) exchanges with Limatus. Callers in
-other languages validate against the same files; ``limatus schema <name>``
+The schema files under ``humanus/schemas`` are the single source of truth for
+the payloads a caller (for example a CMS) exchanges with Humanus. Callers in
+other languages validate against the same files; ``humanus schema <name>``
 prints them.
 """
 from __future__ import annotations
@@ -16,7 +16,7 @@ from jsonschema import Draft202012Validator
 from jsonschema.exceptions import best_match
 from referencing import Registry, Resource
 
-SCHEMA_BASE_URI = "https://limatus.anth.us/schemas/"
+SCHEMA_BASE_URI = "https://humanus.anth.us/schemas/"
 
 CONTRACT_SCHEMAS = (
     "policy-pack-v1",
@@ -67,7 +67,7 @@ def validate_payload(
 
 @lru_cache(maxsize=None)
 def _schema_text(name: str) -> str:
-    return resources.files("limatus").joinpath("schemas", f"{name}.json").read_text(encoding="utf-8")
+    return resources.files("humanus").joinpath("schemas", f"{name}.json").read_text(encoding="utf-8")
 
 
 @lru_cache(maxsize=None)

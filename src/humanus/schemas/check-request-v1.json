@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://limatus.anth.us/schemas/check-request-v1.json",
+  "$id": "https://humanus.anth.us/schemas/check-request-v1.json",
   "title": "CheckRequest",
   "description": "Check one document against a policy pack.",
   "type": "object",

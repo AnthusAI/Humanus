@@ -6,7 +6,7 @@ from importlib.resources import files
 
 
 def load_skill_bytes() -> bytes:
-    return files("limatus.data").joinpath("SKILL.md").read_bytes()
+    return files("humanus.data").joinpath("SKILL.md").read_bytes()
 
 
 def load_skill_text() -> str:

@@ -1,10 +1,10 @@
-"""Limatus: a configurable editorial compliance engine.
+"""Humanus: a configurable editorial compliance engine.
 
 A caller sends content and a policy pack; ``check`` returns where the content
 breaks the pack's policies, ``suggest`` offers rewrites for a finding or any
 selection, ``draft_questions`` helps write classifier detectors, and
 ``calibrate`` learns from editors' decisions. The JSON Schemas under
-``limatus/schemas`` are the contract (``load_schema``).
+``humanus/schemas`` are the contract (``load_schema``).
 """
 
 __version__ = "0.32.0"

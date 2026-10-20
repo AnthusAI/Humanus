@@ -1,6 +1,6 @@
 @editorial @contracts @rules
 Feature: Deterministic rules lane
-  As an editor using a CMS that sends our policy pack to Limatus
+  As an editor using a CMS that sends our policy pack to Humanus
   I want every phrase, pattern and built-in house rule checked on the prose I wrote
   So that rule-based problems are marked exactly where they occur, never in code or quotes
 
@@ -106,6 +106,6 @@ Feature: Deterministic rules lane
     And no policy's complying examples produce any finding
 
   Scenario: List the built-in starter packs from the command line
-    When I run the limatus command "pack builtin"
+    When I run the humanus command "pack builtin"
     Then the command succeeds
     And the command output lists "ai-writing-tells"
