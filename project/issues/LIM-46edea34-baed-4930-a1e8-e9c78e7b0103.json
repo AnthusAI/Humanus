@@ -1,0 +1,27 @@
+{
+  "id": "LIM-46edea34-baed-4930-a1e8-e9c78e7b0103",
+  "title": "Standard rule sets: ASD-STE100 and Plain Language",
+  "description": "Ship two standard editorial rule sets as Limatus starter policy packs, beside ai-writing-tells, so a CMS can copy and edit them: ASD-STE100 Simplified Technical English (ports PR #45 / LIM-501c5c from the retired diagnose engine onto policy packs) and the US Federal Plain Language Guidelines (plainlanguage.gov, archived; now digital.gov/guides/plain-language). Shared built-in checks (sentence and paragraph length, reading grade, double negatives, undefined acronyms, procedure-step rules, -ing forms, articles, one word one meaning) live in builtin_checks and serve both packs. The real ASD-STE100 dictionary is licensed and is not bundled; the pack carries #45's synthetic seed.",
+  "type": "initiative",
+  "status": "open",
+  "priority": 1,
+  "assignee": null,
+  "creator": null,
+  "parent": null,
+  "labels": [
+    "editorial"
+  ],
+  "dependencies": [],
+  "comments": [],
+  "created_at": "2026-10-20T13:23:08.878379Z",
+  "updated_at": "2026-10-20T13:23:08.878430Z",
+  "closed_at": null,
+  "agent": {
+    "platform": "claude-code",
+    "model": "claude-opus-5-5",
+    "name": "Claude"
+  },
+  "right_now_summary": null,
+  "right_now_updated_at": null,
+  "custom": {}
+}

@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "event_id": "353ce614-71a2-41bf-951f-161d6ab5a70a",
+  "issue_id": "LIM-6fa40244-2e10-4b98-98f5-42c81a83e928",
+  "event_type": "issue_created",
+  "occurred_at": "2026-10-20T13:23:09.905Z",
+  "actor_id": "home",
+  "payload": {
+    "title": "Plain Language starter pack (Federal Plain Language Guidelines)",
+    "description": "",
+    "issue_type": "epic",
+    "status": "open",
+    "priority": 1,
+    "assignee": null,
+    "parent": "LIM-46edea34-baed-4930-a1e8-e9c78e7b0103",
+    "labels": [
+      "editorial"
+    ],
+    "agent": {
+      "platform": "claude-code",
+      "model": "claude-opus-5-5",
+      "name": "Claude"
+    }
+  }
+}

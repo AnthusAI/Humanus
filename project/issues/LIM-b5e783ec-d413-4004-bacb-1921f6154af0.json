@@ -1,0 +1,32 @@
+{
+  "id": "LIM-b5e783ec-d413-4004-bacb-1921f6154af0",
+  "title": "Rename Limatus to Humanus",
+  "description": "Rename the project from Limatus to Humanus everywhere.\n\nScope:\n- GitHub: rename AnthusAI/Limatus to AnthusAI/Humanus (GitHub keeps redirects from the old URL).\n- Python package: rename the import package limatus to humanus, the CLI entry point limatus to humanus, and the distribution to humanus. PyPI cannot rename a project, so publish humanus as a new project (free as of 2026-10-20) and ship a final limatus release that depends on humanus and re-exports it, with a deprecation notice. Re-point the PyPI trusted publisher at the renamed repo.\n- npm: Limatus is not published on npm, so nothing to rename there.\n- Docs, README, SKILL.md, schema $id URLs, wiki, semantic-release config, .kanbus.yml project key if it is name-derived.\n- Downstream: Papyrus (pyproject pin, editorial-checks Lambda requirements, imports in papyrus_content, docs), Threat-Intelligence and any other AnthusAI project that references limatus.\n\nSequencing: start after the standard rule sets work (feat/standard-rule-sets) merges, because the rename touches every module.\n\nDone when: pip install humanus works, humanus check runs, Papyrus develop installs humanus and its specs pass, and no AnthusAI repo still imports limatus.",
+  "type": "epic",
+  "status": "open",
+  "priority": 2,
+  "assignee": null,
+  "creator": null,
+  "parent": null,
+  "labels": [],
+  "dependencies": [],
+  "comments": [
+    {
+      "id": "d5e253df-8592-4d4f-b270-646e2c14549f",
+      "author": "home",
+      "text": "Scope addition (requested 2026-10-20): change the Kanbus project key from LIM to HUM. Existing issues need re-keying (LIM-xxxx to HUM-xxxx) or the board needs to resolve both prefixes, so do this together with the repo rename. Also update references to LIM- ids in docs, wiki and memory notes, and the linked Papyrus issues that point at LIM ids.",
+      "created_at": "2026-10-20T13:54:04.287553Z",
+      "comment_type": "default"
+    }
+  ],
+  "created_at": "2026-10-20T13:25:53.178047Z",
+  "updated_at": "2026-10-20T13:54:04.287570Z",
+  "closed_at": null,
+  "agent": {
+    "platform": "claude-code",
+    "model": "claude-opus-5-5"
+  },
+  "right_now_summary": null,
+  "right_now_updated_at": null,
+  "custom": {}
+}

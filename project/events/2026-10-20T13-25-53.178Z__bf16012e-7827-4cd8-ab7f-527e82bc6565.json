@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "event_id": "bf16012e-7827-4cd8-ab7f-527e82bc6565",
+  "issue_id": "LIM-b5e783ec-d413-4004-bacb-1921f6154af0",
+  "event_type": "issue_created",
+  "occurred_at": "2026-10-20T13:25:53.178Z",
+  "actor_id": "home",
+  "payload": {
+    "title": "Rename Limatus to Humanus",
+    "description": "Rename the project from Limatus to Humanus everywhere.\n\nScope:\n- GitHub: rename AnthusAI/Limatus to AnthusAI/Humanus (GitHub keeps redirects from the old URL).\n- Python package: rename the import package limatus to humanus, the CLI entry point limatus to humanus, and the distribution to humanus. PyPI cannot rename a project, so publish humanus as a new project (free as of 2026-10-20) and ship a final limatus release that depends on humanus and re-exports it, with a deprecation notice. Re-point the PyPI trusted publisher at the renamed repo.\n- npm: Limatus is not published on npm, so nothing to rename there.\n- Docs, README, SKILL.md, schema $id URLs, wiki, semantic-release config, .kanbus.yml project key if it is name-derived.\n- Downstream: Papyrus (pyproject pin, editorial-checks Lambda requirements, imports in papyrus_content, docs), Threat-Intelligence and any other AnthusAI project that references limatus.\n\nSequencing: start after the standard rule sets work (feat/standard-rule-sets) merges, because the rename touches every module.\n\nDone when: pip install humanus works, humanus check runs, Papyrus develop installs humanus and its specs pass, and no AnthusAI repo still imports limatus.",
+    "issue_type": "epic",
+    "status": "open",
+    "priority": 2,
+    "assignee": null,
+    "parent": null,
+    "labels": [],
+    "agent": {
+      "platform": "claude-code",
+      "model": "claude-opus-5-5"
+    }
+  }
+}
