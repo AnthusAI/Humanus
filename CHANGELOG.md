@@ -1,6 +1,22 @@
 # CHANGELOG
 
 
+## v0.31.0 (2026-10-20)
+
+### Refactoring
+
+- Retire the legacy scan/judge loop ([#47](https://github.com/AnthusAI/Limatus/pull/47),
+  [`8747329`](https://github.com/AnthusAI/Limatus/commit/874732917b018610e886086e0714ba6b1c14692a))
+
+BREAKING CHANGE: the legacy scan/judge loop, its commands, modules and limatus.sdk are removed. Use
+  limatus check / suggest with a policy pack; convert style profiles with limatus pack import.
+
+### Breaking Changes
+
+- The legacy scan/judge loop, its commands, modules and limatus.sdk are removed. Use limatus check /
+  suggest with a policy pack; convert style profiles with limatus pack import.
+
+
 ## v0.30.0 (2026-10-20)
 
 ### Features
