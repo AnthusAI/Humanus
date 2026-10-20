@@ -1,5 +1,9 @@
 """Limatus CLI entry point.
 
+    limatus check --request <check-request.json> | --draft <file> --pack <policy-pack.yml> [--output FILE]
+    limatus schema policy-pack-v1|check-request-v1|check-result-v1|finding-v1|suggest-request-v1|suggest-result-v1
+    limatus pack import --profile <style-profile.yml> [--version V] [--output FILE]
+    limatus pack validate <policy-pack.yml>
     limatus scan --draft <file> --profile <style-profile.yml> [--require-judge] [...]
     limatus decide --finding-id finding-<hex> --decision skip|rewrite|delete|keep|add \\
                    [--note TEXT] --decisions <decisions.json>
@@ -40,6 +44,7 @@ from .editorial_commands import (
     editorial_standfirst,
     editorial_verify,
 )
+from .contract_commands import contract_check, contract_pack, contract_schema
 from .editorial_canary import main as editorial_canary
 from .editorial_eval import main as editorial_eval
 from .skill import load_skill_bytes
@@ -55,6 +60,9 @@ def editorial_skill(flags: list[str]) -> None:
 
 
 COMMANDS = {
+    "check": contract_check,
+    "schema": contract_schema,
+    "pack": contract_pack,
     "scan": editorial_scan,
     "diagnose": editorial_diagnose,
     "decide": editorial_decide,

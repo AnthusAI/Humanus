@@ -1,0 +1,191 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://limatus.anth.us/schemas/policy-pack-v1.json",
+  "title": "PolicyPack",
+  "description": "A versioned set of editorial policies supplied by the caller with each request. Limatus stores no policies of its own.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "packId", "version", "policies"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "packId": { "$ref": "#/$defs/slug" },
+    "version": { "type": "string", "minLength": 1, "description": "Caller-assigned pack version, echoed in every result." },
+    "title": { "type": "string" },
+    "guidance": { "type": "string", "description": "Publication-wide editorial aim, given to rewrite suggestions." },
+    "language": { "type": "string", "default": "en" },
+    "policies": { "type": "array", "items": { "$ref": "#/$defs/policy" } },
+    "referenceSamples": { "type": "array", "items": { "$ref": "#/$defs/referenceSample" } }
+  },
+  "$defs": {
+    "slug": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._-]*$", "maxLength": 128 },
+    "severity": { "enum": ["info", "warn", "error"] },
+    "policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "version", "title", "guidance", "severity", "detectors"],
+      "properties": {
+        "id": { "$ref": "#/$defs/slug" },
+        "version": { "type": "integer", "minimum": 1 },
+        "title": { "type": "string", "minLength": 1 },
+        "guidance": { "type": "string", "minLength": 1, "description": "The policy in prose, for editors and for rewrite suggestions." },
+        "severity": { "$ref": "#/$defs/severity" },
+        "enabled": { "type": "boolean", "default": true },
+        "tags": { "type": "array", "items": { "type": "string" } },
+        "detectors": {
+          "type": "array",
+          "description": "How the policy is detected. A guidance-only policy has none and produces no findings.",
+          "items": { "$ref": "#/$defs/detector" }
+        },
+        "examples": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "violates": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+            "complies": { "type": "array", "items": { "type": "string", "minLength": 1 } }
+          }
+        },
+        "rewriteGuidance": { "type": "string" }
+      }
+    },
+    "detector": {
+      "oneOf": [
+        { "$ref": "#/$defs/regexDetector" },
+        { "$ref": "#/$defs/phraseDetector" },
+        { "$ref": "#/$defs/builtinDetector" },
+        { "$ref": "#/$defs/classifierDetector" }
+      ]
+    },
+    "detectorBase": {
+      "type": "object",
+      "required": ["id", "lane"],
+      "properties": {
+        "id": { "$ref": "#/$defs/slug" },
+        "message": { "type": "string", "description": "Shown on each finding from this detector." },
+        "blocks": {
+          "type": "array",
+          "description": "Prose blocks the detector applies to. Defaults to all.",
+          "items": { "$ref": "#/$defs/block" },
+          "minItems": 1
+        }
+      }
+    },
+    "block": { "enum": ["paragraph", "heading", "listItem"] },
+    "regexDetector": {
+      "allOf": [{ "$ref": "#/$defs/detectorBase" }],
+      "type": "object",
+      "unevaluatedProperties": false,
+      "required": ["lane", "kind", "pattern"],
+      "properties": {
+        "lane": { "const": "rules" },
+        "kind": { "const": "regex" },
+        "pattern": { "type": "string", "minLength": 1, "description": "Python regular expression." },
+        "ignoreCase": { "type": "boolean", "default": false },
+        "exceptions": { "type": "array", "items": { "type": "string" }, "description": "Regexes; a match inside an exception match is not a finding." }
+      }
+    },
+    "phraseDetector": {
+      "allOf": [{ "$ref": "#/$defs/detectorBase" }],
+      "type": "object",
+      "unevaluatedProperties": false,
+      "required": ["lane", "kind", "phrases"],
+      "properties": {
+        "lane": { "const": "rules" },
+        "kind": { "const": "phrase" },
+        "phrases": { "type": "array", "items": { "type": "string", "minLength": 1 }, "minItems": 1 },
+        "caseSensitive": { "type": "boolean", "default": false },
+        "replacement": { "type": "string", "description": "Preferred wording, offered as a deterministic suggestion." }
+      }
+    },
+    "builtinDetector": {
+      "allOf": [{ "$ref": "#/$defs/detectorBase" }],
+      "type": "object",
+      "unevaluatedProperties": false,
+      "required": ["lane", "kind", "check"],
+      "properties": {
+        "lane": { "const": "rules" },
+        "kind": { "const": "builtin" },
+        "check": {
+          "enum": [
+            "empty_leadin",
+            "list_shaped_prose",
+            "vague_claim",
+            "unsupported_certainty",
+            "uniform_cadence",
+            "redundancy",
+            "voice_mismatch",
+            "missing_attribution",
+            "information_density",
+            "overused_words",
+            "uncontracted_forms",
+            "contrast_cap",
+            "no_emojis"
+          ]
+        },
+        "params": { "type": "object" }
+      }
+    },
+    "classifierDetector": {
+      "allOf": [{ "$ref": "#/$defs/detectorBase" }],
+      "type": "object",
+      "unevaluatedProperties": false,
+      "required": ["lane", "scope", "question", "violation", "threshold"],
+      "properties": {
+        "lane": { "const": "classifier" },
+        "scope": { "enum": ["sentence", "paragraph", "document"] },
+        "question": { "$ref": "#/$defs/question" },
+        "violation": {
+          "description": "Which answer means the segment violates the policy.",
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["answer"],
+              "properties": { "answer": { "enum": ["yes", "no"] } }
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["labels"],
+              "properties": { "labels": { "type": "array", "items": { "type": "string" }, "minItems": 1 } }
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["scoreBelow"],
+              "properties": { "scoreBelow": { "type": "number" } }
+            }
+          ]
+        },
+        "threshold": { "type": "number", "minimum": 0, "maximum": 1, "description": "Probability of violation at or above which a finding is a violation." },
+        "reviewAt": { "type": "number", "minimum": 0, "maximum": 1, "description": "Probability at or above which (and below threshold) a finding needs review." }
+      }
+    },
+    "question": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "instructions"],
+      "properties": {
+        "type": { "enum": ["noul", "choice", "score"] },
+        "instructions": { "type": "string", "minLength": 1 },
+        "criteria": {
+          "type": "object",
+          "description": "Answer label to description (or null). Required for choice and score questions.",
+          "additionalProperties": { "type": ["string", "null"] }
+        }
+      },
+      "if": { "properties": { "type": { "enum": ["choice", "score"] } } },
+      "then": { "required": ["criteria"] }
+    },
+    "referenceSample": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "text"],
+      "properties": {
+        "id": { "$ref": "#/$defs/slug" },
+        "title": { "type": "string" },
+        "url": { "type": "string" },
+        "text": { "type": "string", "minLength": 1 }
+      }
+    }
+  }
+}

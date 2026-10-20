@@ -31,3 +31,6 @@ jobs:
 
       - name: Behave editorial eval smoke
         run: behave features/editorial-eval.feature
+
+      - name: Behave policy-pack contracts
+        run: behave --tags=@contracts

@@ -1,0 +1,42 @@
+schemaVersion: 1
+publicationKey: import-example
+voice:
+  name: Practical engineering voice
+audience: Engineers evaluating tools and operational risk.
+editorialAim: Prefer ordinary-language clarity over citation density.
+tone:
+  - Conversational but precise.
+sentenceStyle:
+  - Prefer active voice and concrete nouns.
+voicePatterns:
+  - Lead with the practical stake.
+structure:
+  - State the claim, then its evidence and limits.
+lexicon:
+  prefer: [inspect, verify]
+  avoid: [game-changing, leverage synergies]
+evidenceRules:
+  - Cite primary sources and label uncertainty.
+referenceSamples:
+  - {id: sample-one, title: Sample One, url: https://anth.us/blog/sample-one/, path: ../editorial-diagnosis/reference-samples/sample-one.md}
+  - {id: sample-two, title: Sample Two, url: https://anth.us/blog/sample-two/, path: ../editorial-diagnosis/reference-samples/sample-two.md}
+  - {id: sample-three, title: Sample Three, url: https://anth.us/blog/sample-three/, path: ../editorial-diagnosis/reference-samples/sample-three.md}
+  - {id: sample-four, title: Sample Four, url: https://anth.us/blog/sample-four/, path: ../editorial-diagnosis/reference-samples/sample-four.md}
+  - {id: sample-five, title: Sample Five, url: https://anth.us/blog/sample-five/, path: ../editorial-diagnosis/reference-samples/sample-five.md}
+checks:
+  uniformCadence: false
+  uncontractedForms: false
+rules:
+  bannedPhrases: [at the end of the day]
+  bannedIntensifiers: [very]
+  bannedPatterns:
+    - pattern: "\\bseamless(ly)?\\b"
+      message: Prefer a concrete description of the integration.
+  preferredPhrasing:
+    - {from: utilize, to: use}
+  contrastCap: 2
+  noEmojis: true
+density:
+  minWords: 300
+  minLexicalDensity: 0.4
+  maxGzipRatio: 0.4

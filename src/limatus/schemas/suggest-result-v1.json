@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://limatus.anth.us/schemas/suggest-result-v1.json",
+  "title": "SuggestResult",
+  "description": "Rewrite options for one finding. Each option replaces one span of the submitted text.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "offsetUnit", "findingId", "options", "model"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "offsetUnit": { "const": "utf16" },
+    "findingId": { "type": "string" },
+    "model": { "type": "string" },
+    "options": {
+      "type": "array",
+      "maxItems": 3,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "span", "replacement", "rationale", "factVerificationRequired", "unresolvedQuestions"],
+        "properties": {
+          "id": { "type": "string" },
+          "span": { "$ref": "finding-v1.json#/properties/span" },
+          "replacement": { "type": "string" },
+          "rationale": { "type": "string" },
+          "factVerificationRequired": { "type": "boolean" },
+          "unresolvedQuestions": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    }
+  }
+}

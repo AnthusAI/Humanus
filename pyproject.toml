@@ -10,6 +10,8 @@ authors = [
 ]
 dependencies = [
     "PyYAML>=6.0.2,<7.0.0",
+    "jsonschema>=4.18,<5",
+    "markdown-it-py>=3.0,<5",
 ]
 
 [project.optional-dependencies]
@@ -33,7 +35,7 @@ build-backend = "setuptools.build_meta"
 where = ["src"]
 
 [tool.setuptools.package-data]
-limatus = ["data/SKILL.md"]
+limatus = ["data/SKILL.md", "schemas/*.json", "schemas/*.xml"]
 
 [tool.semantic_release]
 version_toml = ["pyproject.toml:project.version"]

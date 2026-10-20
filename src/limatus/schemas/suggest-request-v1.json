@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://limatus.anth.us/schemas/suggest-request-v1.json",
+  "title": "SuggestRequest",
+  "description": "Ask for rewrite options for one finding. The only operation that calls a generative model.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "content", "pack", "finding"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "content": { "$ref": "check-request-v1.json#/$defs/content" },
+    "pack": { "$ref": "policy-pack-v1.json" },
+    "finding": { "$ref": "finding-v1.json" },
+    "options": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "model": { "type": "string", "default": "gpt-6-luna" },
+        "count": { "type": "integer", "minimum": 1, "maximum": 3, "default": 3 },
+        "instructions": { "type": "string", "description": "Optional editor note, e.g. 'shorter'." }
+      }
+    }
+  }
+}
