@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "event_id": "8e1bf8ab-76a8-4eaa-b086-c80029458716",
+  "issue_id": "LIM-6c38051d-c826-4775-9d26-4a6ee9561244",
+  "event_type": "issue_created",
+  "occurred_at": "2026-10-20T04:30:46.913Z",
+  "actor_id": "home",
+  "payload": {
+    "title": "CHANGELOG.md contains Claude-Session URLs and 101 internal LIM- ticket IDs",
+    "description": "**Problem**\nThe public changelog leaks internal tooling detail: agent session URLs and internal ticket IDs that mean nothing to readers.\n\n**Evidence**\n- CHANGELOG.md:428, :471 and :527 each contain `Claude-Session: https://claude.ai/code/session_...`\n- `grep -c 'LIM-' CHANGELOG.md` returns 101 (internal Kanbus ticket IDs).\n\n**Fix**\nStrip those lines and IDs from CHANGELOG.md, and fix the semantic-release changelog template/commit parsing so trailers and ticket IDs are not copied into future entries.\n\n**How to verify**\n`grep -c 'Claude-Session' CHANGELOG.md` returns 0 and `grep -c 'LIM-' CHANGELOG.md` returns 0, and the next generated release entry has neither.\n\nSource: Anthus repo audit, 2026-10-20.",
+    "issue_type": "bug",
+    "status": "open",
+    "priority": 2,
+    "assignee": null,
+    "parent": null,
+    "labels": [],
+    "agent": {
+      "platform": "claude-code",
+      "model": "claude-sonnet-5-5",
+      "name": "audit-filing"
+    }
+  }
+}
