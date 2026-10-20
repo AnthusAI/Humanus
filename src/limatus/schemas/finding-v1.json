@@ -96,6 +96,10 @@
       "minimum": 0,
       "maximum": 1,
       "description": "The model's probability before calibration; report this one in feedback labels."
+    },
+    "excerptText": {
+      "type": "string",
+      "description": "The excerpt as a reader sees it, inline markup removed; locates the finding in a rendered preview."
     }
   }
 }

@@ -207,6 +207,10 @@
         "textHash": {
           "type": "string",
           "description": "Hash of the segment's normalized plain text; equal hashes mean equal prose."
+        },
+        "text": {
+          "type": "string",
+          "description": "Plain prose with inline markup removed, as a reader sees it (paragraph and sentence segments). Lets a rendered preview find the segment."
         }
       }
     },

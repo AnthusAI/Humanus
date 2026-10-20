@@ -16,7 +16,7 @@ from .classifier_lane import ClassifierCache, DecisionModel, default_decision_mo
 from .finding_ids import finding_id
 from .policy_pack import PolicyPack, PolicyPackValidationError, load_policy_pack
 from .rules_lane import Hit, run_rules_lane
-from .segmentation import ProtectedRegion, Segment, SegmentedDocument, normalize_text, segment_document
+from .segmentation import ProtectedRegion, Segment, SegmentedDocument, normalize_text, plain_text, segment_document
 
 REQUEST_SCHEMA = "check-request-v1"
 
@@ -120,6 +120,8 @@ def _segment_payload(segment: Segment, to_utf16: "Utf16Offsets") -> dict[str, An
         "end": to_utf16(segment.end),
         "textHash": segment.text_hash[:16],
     }
+    if segment.kind != "document":
+        payload["text"] = segment.text
     if segment.block is not None:
         payload["block"] = segment.block
     if segment.parent_id is not None:
@@ -155,6 +157,7 @@ def _finding_payloads(document: SegmentedDocument, hits: list[Hit], to_utf16: "U
             "segmentId": segment.id,
             "span": {"start": to_utf16(hit.start), "end": to_utf16(hit.end)},
             "excerpt": excerpt,
+            "excerptText": plain_text(excerpt) if excerpt else "",
             "message": hit.message,
         }
         if hit.probability is not None:

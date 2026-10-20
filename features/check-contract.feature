@@ -40,3 +40,12 @@ Feature: Check a document against a policy pack
     Given a finding for policy "no-hype" on "game-changing" in the sentence "This is game-changing work."
     When the sentence becomes "This is game-changing research." and the finding is identified again
     Then the finding id changes
+
+  Scenario: Segments and findings carry plain text for rendered previews
+    Given a check request whose pack flags "game-changing" in:
+      """
+      This **release** is *game-changing* for [teams](https://example.com) [@smith2020].
+      """
+    When Limatus checks the request
+    Then the paragraph and sentence segments carry the plain text "This release is game-changing for teams."
+    And the finding's excerpt text is "game-changing"

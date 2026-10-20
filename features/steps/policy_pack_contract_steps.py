@@ -525,3 +525,21 @@ def step_id_changes(context):
 @then("the two finding ids differ")
 def step_ids_differ(context):
     assert context.first_id != context.second_id
+
+
+@given('a check request whose pack flags "{phrase}" in:')
+def step_request_flagging(context, phrase):
+    pack = _base_pack()
+    pack["policies"][0]["detectors"][0]["phrases"] = [phrase]
+    context.check_request = {"schemaVersion": 1, "content": {"format": "markus", "text": context.text}, "pack": pack}
+
+
+@then('the paragraph and sentence segments carry the plain text "{text}"')
+def step_segments_plain(context, text):
+    prose = [s for s in context.check_result["segments"] if s["kind"] in {"paragraph", "sentence"}]
+    assert prose and all(s.get("text") == text for s in prose), prose
+
+
+@then('the finding\'s excerpt text is "{text}"')
+def step_excerpt_text(context, text):
+    assert [f.get("excerptText") for f in context.check_result["findings"]] == [text], context.check_result["findings"]
