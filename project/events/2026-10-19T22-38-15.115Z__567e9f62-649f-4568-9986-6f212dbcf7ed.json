@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "event_id": "567e9f62-649f-4568-9986-6f212dbcf7ed",
+  "issue_id": "LIM-9ba0bfe5-a32b-44d7-9d49-98010b0073a5",
+  "event_type": "issue_created",
+  "occurred_at": "2026-10-19T22:38:15.115Z",
+  "actor_id": "home",
+  "payload": {
+    "title": "Editor feedback labels and calibration",
+    "description": "Turn editor decisions into better detection.\n\n## Scope\n- Label schema: `{policyId, policyVersion, segmentHash, lane, probability, decision: accepted|dismissed|fixed, reason?}` (no raw text required).\n- `calibrate(labels)` → per-detector isotonic map (fallback Platt below a minimum count); applied in `check` when supplied in the pack.\n- Few-shot retrieval: caller may supply past labeled examples; Limatus selects the most similar per target.\n- Offline steering hook compatible with Jev-Flywheel (propose new questions from dismiss reasons).\n\n## Done when\n- Calibration measurably reduces ECE on a held-out fixture set.",
+    "issue_type": "epic",
+    "status": "open",
+    "priority": 1,
+    "assignee": null,
+    "parent": "LIM-a5828a06-513e-47f7-b1dc-884cde9e27de",
+    "labels": [
+      "editorial"
+    ],
+    "agent": {
+      "platform": "claude-code",
+      "model": "claude-opus-5-5",
+      "name": "Claude"
+    }
+  }
+}

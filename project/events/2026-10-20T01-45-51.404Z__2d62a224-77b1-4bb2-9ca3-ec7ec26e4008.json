@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "event_id": "2d62a224-77b1-4bb2-9ca3-ec7ec26e4008",
+  "issue_id": "LIM-7906a51d-a3d9-406b-a124-9e9882ef289b",
+  "event_type": "field_updated",
+  "occurred_at": "2026-10-20T01:45:51.404Z",
+  "actor_id": "home",
+  "payload": {
+    "changes": {
+      "title": {
+        "from": "Luna rewrite suggestions and authoring assist; remove judge lane",
+        "to": "Luna suggestions (findings and selections), authoring assist; remove judge"
+      },
+      "description": {
+        "from": "LLM is for rewrites only.\n\n## Scope\n- `suggest(request)`: one finding + policy (guidance, rewriteGuidance) + surrounding paragraph → 2–3 options with patch spans, `factVerificationRequired`, `unresolvedQuestions`. No decisions file required.\n- Model `gpt-6-luna` by default (configurable); send `max_completion_tokens`, omit `temperature`.\n- Delete the OpenAI judge lane, canary and judge-dependent `compare` paths; redesign or drop `decide`/`options`/`apply`/`verify` CLI commands around `check` + `suggest` (no compatibility constraint).\n- Policy-authoring assist: `draft_questions(guideline)` uses Luna to propose classifier detectors for editor approval; never called from `check`.\n- Keep the no-fabrication and evasion guards from `editorial_rewrite_options`.\n\n## Done when\n- `suggest` passes fixture tests with a fake resolver; `check` makes no LLM calls.",
+        "to": "LLM is for rewrites only.\n\n## Scope\n- **Selection rewrites:** `suggest` accepts either a finding or an editor `selection` span (any sentence or paragraph) plus an optional editor note (\"shorter\", \"less formal\"); a selection is treated as an ad-hoc finding with no policy.\n- `suggest(request)`: one finding + policy (guidance, rewriteGuidance) + surrounding paragraph → 2–3 options with patch spans, `factVerificationRequired`, `unresolvedQuestions`. No decisions file required.\n- Model `gpt-6-luna` by default (configurable); send `max_completion_tokens`, omit `temperature`.\n- Delete the OpenAI judge lane, canary and judge-dependent `compare` paths; redesign or drop `decide`/`options`/`apply`/`verify` CLI commands around `check` + `suggest` (no compatibility constraint).\n- Policy-authoring assist: `draft_questions(guideline)` uses Luna to propose classifier detectors for editor approval; never called from `check`.\n- Keep the no-fabrication and evasion guards from `editorial_rewrite_options`.\n\n## Done when\n- `suggest` passes fixture tests with a fake resolver; `check` makes no LLM calls."
+      }
+    }
+  }
+}

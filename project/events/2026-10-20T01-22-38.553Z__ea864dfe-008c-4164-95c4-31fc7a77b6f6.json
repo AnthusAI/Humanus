@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "event_id": "ea864dfe-008c-4164-95c4-31fc7a77b6f6",
+  "issue_id": "LIM-83d117a8-921c-4f83-a764-a0285a97d6ff",
+  "event_type": "issue_created",
+  "occurred_at": "2026-10-20T01:22:38.553Z",
+  "actor_id": "home",
+  "payload": {
+    "title": "Import a style profile as a policy pack",
+    "description": "As a publication moving from style profiles to policy packs, I want my existing style profile converted into an equivalent policy pack, so that I keep my house rules without rewriting them by hand.\n\nSpecification: `features/style-profile-import.feature`\n\n```gherkin\n@editorial @contracts\nFeature: Import a style profile as a policy pack\n  As a publication moving from style profiles to policy packs\n  I want my existing style profile converted into an equivalent policy pack\n  So that I keep my house rules without rewriting them by hand\n\n  Scenario: Convert every profile control into policies\n    Given the portable style profile fixture\n    When the style profile is imported as a policy pack\n    Then the imported pack is a valid \"policy-pack-v1\" document\n    And the imported pack id is the profile's publication key\n    And the avoid lexicon becomes a policy with a \"phrase\" detector\n    And each banned pattern becomes a \"regex\" detector that keeps its message\n    And each enabled check becomes a \"builtin\" detector\n    And tone, sentence style and evidence rules become guidance-only policies\n    And the reference samples are embedded with their text\n\n  Scenario: Import from the command line\n    When I run the limatus command \"pack import --profile features/fixtures/editorial-style-profile/portable-profile.json\"\n    Then the command succeeds\n    And the command prints a valid \"policy-pack-v1\" document\n```",
+    "issue_type": "story",
+    "status": "open",
+    "priority": 1,
+    "assignee": null,
+    "parent": "LIM-6a84bebb-e5eb-4c99-89b3-a73986797fa7",
+    "labels": [
+      "editorial"
+    ],
+    "agent": {
+      "platform": "claude-code",
+      "model": "claude-opus-5-5",
+      "name": "Claude"
+    }
+  }
+}
