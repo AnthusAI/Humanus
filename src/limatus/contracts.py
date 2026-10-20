@@ -25,6 +25,8 @@ CONTRACT_SCHEMAS = (
     "finding-v1",
     "suggest-request-v1",
     "suggest-result-v1",
+    "draft-questions-request-v1",
+    "draft-questions-result-v1",
 )
 
 

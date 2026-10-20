@@ -12,6 +12,7 @@ from .contracts import CONTRACT_SCHEMAS, load_schema
 from .packs import builtin_pack, list_builtin_packs
 from .policy_pack import load_policy_pack
 from .style_profile_import import policy_pack_from_style_profile
+from .suggest import draft_questions, suggest
 
 
 def contract_check(flags: list[str]) -> int:
@@ -37,6 +38,30 @@ def contract_check(flags: list[str]) -> int:
     else:
         parser.error("give --request, or --draft with --pack")
     _emit(check(request), args.output)
+    return 0
+
+
+def contract_suggest(flags: list[str]) -> int:
+    parser = argparse.ArgumentParser(
+        prog="limatus suggest",
+        description="Rewrite options for a finding or selection (suggest-request-v1 in, suggest-result-v1 out). Needs OPENAI_API_KEY.",
+    )
+    parser.add_argument("--request", required=True, help="suggest-request-v1 JSON file")
+    parser.add_argument("--output", help="write the result here instead of stdout")
+    args = parser.parse_args(flags)
+    _emit(suggest(json.loads(Path(args.request).read_text(encoding="utf-8"))), args.output)
+    return 0
+
+
+def contract_draft_questions(flags: list[str]) -> int:
+    parser = argparse.ArgumentParser(
+        prog="limatus draft-questions",
+        description="Draft classifier detectors for a prose policy (draft-questions-request-v1 in). Needs OPENAI_API_KEY.",
+    )
+    parser.add_argument("--request", required=True, help="draft-questions-request-v1 JSON file")
+    parser.add_argument("--output", help="write the result here instead of stdout")
+    args = parser.parse_args(flags)
+    _emit(draft_questions(json.loads(Path(args.request).read_text(encoding="utf-8"))), args.output)
     return 0
 
 

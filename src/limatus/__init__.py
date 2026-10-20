@@ -8,6 +8,7 @@ from .finding_ids import finding_id
 from .policy_pack import PolicyPack, PolicyPackValidationError, load_policy_pack
 from .segmentation import SegmentedDocument, segment_document
 from .style_profile_import import policy_pack_from_style_profile
+from .suggest import SuggestRequestValidationError, SuggestUnavailableError, draft_questions, suggest
 from .sdk import (
     AnnotationFormatError,
     EditorialDiagnosisValidationError,
@@ -38,7 +39,11 @@ __all__ = [
     "PolicyPack",
     "PolicyPackValidationError",
     "SegmentedDocument",
+    "SuggestRequestValidationError",
+    "SuggestUnavailableError",
     "check",
+    "draft_questions",
+    "suggest",
     "finding_id",
     "load_policy_pack",
     "load_schema",

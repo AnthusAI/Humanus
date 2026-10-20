@@ -2,23 +2,78 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://limatus.anth.us/schemas/suggest-request-v1.json",
   "title": "SuggestRequest",
-  "description": "Ask for rewrite options for one finding. The only operation that calls a generative model.",
+  "description": "Ask for rewrite options for one finding or for any span the editor selected. The only operation besides draft-questions that calls a generative model.",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schemaVersion", "content", "pack", "finding"],
+  "required": [
+    "schemaVersion",
+    "content",
+    "pack"
+  ],
   "properties": {
-    "schemaVersion": { "const": 1 },
-    "content": { "$ref": "check-request-v1.json#/$defs/content" },
-    "pack": { "$ref": "policy-pack-v1.json" },
-    "finding": { "$ref": "finding-v1.json" },
+    "schemaVersion": {
+      "const": 1
+    },
+    "content": {
+      "$ref": "check-request-v1.json#/$defs/content"
+    },
+    "pack": {
+      "$ref": "policy-pack-v1.json"
+    },
+    "finding": {
+      "$ref": "finding-v1.json"
+    },
     "options": {
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "model": { "type": "string", "default": "gpt-6-luna" },
-        "count": { "type": "integer", "minimum": 1, "maximum": 3, "default": 3 },
-        "instructions": { "type": "string", "description": "Optional editor note, e.g. 'shorter'." }
+        "model": {
+          "type": "string",
+          "default": "gpt-6-luna"
+        },
+        "count": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 3,
+          "default": 3
+        },
+        "instructions": {
+          "type": "string",
+          "maxLength": 500,
+          "description": "Optional editor note, e.g. 'shorter' or 'less formal'."
+        }
+      }
+    },
+    "selection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "start",
+        "end"
+      ],
+      "description": "A span of the content (UTF-16 offsets) to rewrite when there is no finding.",
+      "properties": {
+        "start": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "end": {
+          "type": "integer",
+          "minimum": 1
+        }
       }
     }
-  }
+  },
+  "oneOf": [
+    {
+      "required": [
+        "finding"
+      ]
+    },
+    {
+      "required": [
+        "selection"
+      ]
+    }
+  ]
 }

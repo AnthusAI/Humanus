@@ -7,7 +7,7 @@ UTF-16 code units so a browser editor can use them directly.
 from __future__ import annotations
 
 import hashlib
-from bisect import bisect_right
+from bisect import bisect_left, bisect_right
 from itertools import accumulate
 from typing import Any, Mapping
 
@@ -195,3 +195,10 @@ class Utf16Offsets:
 
     def __call__(self, index: int) -> int:
         return self._prefix[index]
+
+    def to_index(self, utf16_offset: int) -> int:
+        """The Python string index at a UTF-16 offset (which must not split a surrogate pair)."""
+        index = bisect_left(self._prefix, utf16_offset)
+        if index >= len(self._prefix) or self._prefix[index] != utf16_offset:
+            raise ValueError(f"UTF-16 offset {utf16_offset} is outside the text or splits a character")
+        return index
