@@ -18,11 +18,11 @@ lexicon:
 evidenceRules:
   - Cite primary sources and label uncertainty.
 referenceSamples:
-  - {id: sample-one, title: Sample One, url: https://anth.us/blog/sample-one/, path: ../editorial-diagnosis/reference-samples/sample-one.md}
-  - {id: sample-two, title: Sample Two, url: https://anth.us/blog/sample-two/, path: ../editorial-diagnosis/reference-samples/sample-two.md}
-  - {id: sample-three, title: Sample Three, url: https://anth.us/blog/sample-three/, path: ../editorial-diagnosis/reference-samples/sample-three.md}
-  - {id: sample-four, title: Sample Four, url: https://anth.us/blog/sample-four/, path: ../editorial-diagnosis/reference-samples/sample-four.md}
-  - {id: sample-five, title: Sample Five, url: https://anth.us/blog/sample-five/, path: ../editorial-diagnosis/reference-samples/sample-five.md}
+  - {id: sample-one, title: Sample One, url: https://anth.us/blog/sample-one/, path: reference-samples/sample-one.md}
+  - {id: sample-two, title: Sample Two, url: https://anth.us/blog/sample-two/, path: reference-samples/sample-two.md}
+  - {id: sample-three, title: Sample Three, url: https://anth.us/blog/sample-three/, path: reference-samples/sample-three.md}
+  - {id: sample-four, title: Sample Four, url: https://anth.us/blog/sample-four/, path: reference-samples/sample-four.md}
+  - {id: sample-five, title: Sample Five, url: https://anth.us/blog/sample-five/, path: reference-samples/sample-five.md}
 checks:
   uniformCadence: false
   uncontractedForms: false

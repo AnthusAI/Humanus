@@ -16,6 +16,3 @@ def hash_stable(value: Any) -> str:
 def hash_short(value: Any) -> str:
     return hash_stable(value)[:16]
 
-
-# Default model for constrained rewrite-option generation.
-DEFAULT_EDITORIAL_REWRITE_MODEL = "gpt-5.4-mini"

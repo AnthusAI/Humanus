@@ -1,3 +1,4 @@
+"""OpenAI Responses API with structured (JSON Schema) output, for rewrite suggestions."""
 from __future__ import annotations
 
 import json
@@ -7,7 +8,7 @@ import urllib.request
 from typing import Any
 
 
-class EditorialResponseTruncationError(RuntimeError):
+class ResponseTruncationError(RuntimeError):
     """The model stopped before completing the requested structured response."""
 
 
@@ -40,7 +41,7 @@ def call_structured_responses_api(
 ) -> dict[str, Any]:
     api_key = os.environ.get("OPENAI_API_KEY", "").strip()
     if not api_key:
-        raise RuntimeError("OPENAI_API_KEY is required for editorial rewrite options.")
+        raise RuntimeError("OPENAI_API_KEY is required for rewrite suggestions.")
 
     payload = {
         "model": model,
@@ -69,25 +70,25 @@ def call_structured_responses_api(
     except urllib.error.HTTPError as error:
         body = error.read().decode("utf-8", errors="replace")
         raise RuntimeError(
-            f"OpenAI editorial rewrite request failed: {error.code} {body[:400]}"
+            f"OpenAI request failed: {error.code} {body[:400]}"
         ) from error
 
     if _incomplete_response(parsed):
         details = parsed.get("incomplete_details")
         reason = details.get("reason") if isinstance(details, dict) else "unknown"
-        raise EditorialResponseTruncationError(
-            "OpenAI structured editorial response was incomplete "
+        raise ResponseTruncationError(
+            "OpenAI structured response was incomplete "
             f"(reason: {reason}). Increase max_output_tokens and retry; "
             "no partial JSON was returned."
         )
 
     text = extract_response_text(parsed)
     if not text:
-        raise RuntimeError("OpenAI editorial rewrite request returned no text.")
+        raise RuntimeError("OpenAI request returned no text.")
     try:
         result = json.loads(text)
     except json.JSONDecodeError as exc:
-        raise RuntimeError("OpenAI editorial rewrite request did not return JSON.") from exc
+        raise RuntimeError("OpenAI request did not return JSON.") from exc
     if not isinstance(result, dict):
-        raise RuntimeError("OpenAI editorial rewrite request did not return a JSON object.")
+        raise RuntimeError("OpenAI request did not return a JSON object.")
     return result

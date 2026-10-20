@@ -35,7 +35,7 @@ def test_skill_stdout_includes_frontmatter_and_heading():
         env=ENV,
     )
     assert "name:" in completed.stdout
-    assert "# Limatus copy-edit loop" in completed.stdout
+    assert "# Limatus editorial checks" in completed.stdout
 
 
 def test_help_mentions_skill():

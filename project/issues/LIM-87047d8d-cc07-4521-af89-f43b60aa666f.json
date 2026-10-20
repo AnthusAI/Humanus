@@ -3,7 +3,7 @@
   "title": "Retire the legacy scan/judge loop",
   "description": "Remove the pre-policy-pack pipeline now that check/suggest/draft-questions replace it: the OpenAI judge lane (editorial_judge, editorial_canary, judge features, guideline alignment), and the scan/diagnose, decide, options, apply, diff, compare, verify and eval commands with their modules, schemas and features. Move the heuristics the rules lane still imports (patterns and predicates in editorial_diagnosis, editorial_density) into a rules builtins module first. Keep usability, headline and standfirst only if Papyrus still uses them; otherwise retire them too.\n\nDo this together with PPY-4f539b, which replaces Papyrus's `papyrus editorial` wrapper and the `from limatus.X import *` shims; removing modules first would break Papyrus on upgrade. Breaking change: release as a new 0.x minor and bump Papyrus's limatus pin in the same change.",
   "type": "chore",
-  "status": "open",
+  "status": "in_progress",
   "priority": 1,
   "assignee": null,
   "creator": null,
@@ -14,7 +14,7 @@
   "dependencies": [],
   "comments": [],
   "created_at": "2026-10-20T02:00:38.159585Z",
-  "updated_at": "2026-10-20T02:00:38.159619Z",
+  "updated_at": "2026-10-20T03:11:42.797022Z",
   "closed_at": null,
   "agent": {
     "platform": "claude-code",
