@@ -4,7 +4,7 @@ from pathlib import Path
 
 import pytest
 
-from limatus.check import check
+from humanus.check import check
 
 FIXTURES = Path(__file__).parent / "fixtures" / "builtin-checks"
 

@@ -10,9 +10,9 @@ SRC_ROOT = REPO_ROOT / "src"
 if str(SRC_ROOT) not in sys.path:
     sys.path.insert(0, str(SRC_ROOT))
 
-from limatus.check import check  # noqa: E402
-from limatus.contracts import validate_payload  # noqa: E402
-from limatus.suggest import (  # noqa: E402
+from humanus.check import check  # noqa: E402
+from humanus.contracts import validate_payload  # noqa: E402
+from humanus.suggest import (  # noqa: E402
     SuggestRequestValidationError,
     SuggestUnavailableError,
     draft_questions,

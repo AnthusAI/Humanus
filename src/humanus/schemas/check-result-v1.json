@@ -1,0 +1,273 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://humanus.anth.us/schemas/check-result-v1.json",
+  "title": "CheckResult",
+  "description": "Standoff annotation of a document: segments, protected regions and findings, with offsets into the submitted text.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "offsetUnit",
+    "document",
+    "pack",
+    "segments",
+    "protected",
+    "findings",
+    "coverage",
+    "lanes"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "offsetUnit": {
+      "const": "utf16",
+      "description": "All start/end values count UTF-16 code units, as JavaScript string indexes do."
+    },
+    "document": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "hash",
+        "length"
+      ],
+      "properties": {
+        "hash": {
+          "type": "string",
+          "pattern": "^sha256:[0-9a-f]{64}$"
+        },
+        "length": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "pack": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "packId",
+        "version"
+      ],
+      "properties": {
+        "packId": {
+          "type": "string"
+        },
+        "version": {
+          "type": "string"
+        }
+      }
+    },
+    "segments": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/segment"
+      }
+    },
+    "protected": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/protectedRegion"
+      }
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "$ref": "finding-v1.json"
+      }
+    },
+    "coverage": {
+      "type": "array",
+      "description": "Every classifier decision, including passes, so the UI and calibration see what was checked.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "segmentId",
+          "policyId",
+          "detectorId",
+          "probability"
+        ],
+        "properties": {
+          "segmentId": {
+            "type": "string"
+          },
+          "policyId": {
+            "type": "string"
+          },
+          "detectorId": {
+            "type": "string"
+          },
+          "probability": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "rawProbability": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          }
+        }
+      }
+    },
+    "lanes": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "rules",
+        "classifier"
+      ],
+      "properties": {
+        "rules": {
+          "$ref": "#/$defs/laneStatus"
+        },
+        "classifier": {
+          "$ref": "#/$defs/laneStatus"
+        }
+      }
+    },
+    "usage": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "classifierRequests": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "classifierInputTokens": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "classifierCacheHits": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    }
+  },
+  "$defs": {
+    "span": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "start",
+        "end"
+      ],
+      "properties": {
+        "start": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "end": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "segment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "kind",
+        "start",
+        "end",
+        "textHash"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "document",
+            "paragraph",
+            "sentence"
+          ]
+        },
+        "block": {
+          "enum": [
+            "paragraph",
+            "heading",
+            "listItem"
+          ]
+        },
+        "parentId": {
+          "type": "string"
+        },
+        "start": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "end": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "textHash": {
+          "type": "string",
+          "description": "Hash of the segment's normalized plain text; equal hashes mean equal prose."
+        },
+        "text": {
+          "type": "string",
+          "description": "Plain prose with inline markup removed, as a reader sees it (paragraph and sentence segments). Lets a rendered preview find the segment."
+        }
+      }
+    },
+    "protectedRegion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "start",
+        "end"
+      ],
+      "properties": {
+        "kind": {
+          "enum": [
+            "frontMatter",
+            "code",
+            "directive",
+            "quote",
+            "table",
+            "html"
+          ]
+        },
+        "start": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "end": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "laneStatus": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status"
+      ],
+      "properties": {
+        "status": {
+          "enum": [
+            "ran",
+            "disabled",
+            "unavailable",
+            "failed",
+            "partial"
+          ]
+        },
+        "reason": {
+          "type": "string"
+        },
+        "detectors": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Detectors this lane evaluated."
+        }
+      }
+    }
+  }
+}

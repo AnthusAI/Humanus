@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://humanus.anth.us/schemas/feedback-labels-v1.json",
+  "title": "FeedbackLabels",
+  "description": "Editor decisions on classifier findings. accepted or fixed means violates=true; dismissed means violates=false.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "labels"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "labels": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "policyId",
+          "detectorId",
+          "probability",
+          "violates"
+        ],
+        "properties": {
+          "policyId": {
+            "type": "string"
+          },
+          "detectorId": {
+            "type": "string"
+          },
+          "probability": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1,
+            "description": "The raw (uncalibrated) model probability shown with the finding."
+          },
+          "violates": {
+            "type": "boolean"
+          }
+        }
+      }
+    }
+  }
+}

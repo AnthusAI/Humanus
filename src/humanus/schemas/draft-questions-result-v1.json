@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://humanus.anth.us/schemas/draft-questions-result-v1.json",
+  "title": "DraftQuestionsResult",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "detectors",
+    "model"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "model": {
+      "type": "string"
+    },
+    "detectors": {
+      "type": "array",
+      "items": {
+        "$ref": "policy-pack-v1.json#/$defs/classifierDetector"
+      }
+    },
+    "notes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Why each detector was proposed, and anything Humanus rejected."
+    }
+  }
+}

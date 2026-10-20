@@ -31,6 +31,10 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Build the limatus compatibility package
+        if: steps.release.outputs.released == 'true'
+        run: python -m pip install build && python -m build shim/limatus --outdir dist/
+
       - name: Upload distribution artifacts
         if: steps.release.outputs.released == 'true'
         uses: actions/upload-artifact@v4
@@ -44,7 +48,7 @@ jobs:
     if: needs.release.outputs.released == 'true'
     environment:
       name: pypi
-      url: https://pypi.org/project/limatus/
+      url: https://pypi.org/project/humanus/
     permissions:
       id-token: write
 
@@ -57,3 +61,6 @@ jobs:
 
       - name: Publish to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          # The limatus compatibility package keeps one version; later releases skip it.
+          skip-existing: true

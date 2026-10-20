@@ -12,11 +12,11 @@ ROOT = Path(__file__).resolve().parents[1]
 SRC = ROOT / "src"
 sys.path.insert(0, str(SRC))
 
-from limatus.usability_profile import (  # noqa: E402
+from humanus.usability_profile import (  # noqa: E402
     UsabilityProfileValidationError,
     load_usability_profile,
 )
-from limatus.usability_scan import (  # noqa: E402
+from humanus.usability_scan import (  # noqa: E402
     USABILITY_FORBIDDEN_OUTPUT_KEYS,
     parse_css_color,
     scan_html_page,
@@ -426,7 +426,7 @@ class UsabilityScanTests(unittest.TestCase):
                 [
                     sys.executable,
                     "-m",
-                    "limatus",
+                    "humanus",
                     "usability",
                     "scan",
                     "--page",
@@ -459,7 +459,7 @@ class UsabilityScanTests(unittest.TestCase):
                 [
                     sys.executable,
                     "-m",
-                    "limatus",
+                    "humanus",
                     "usability",
                     "scan",
                     "--page",

@@ -1,0 +1,104 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://humanus.anth.us/schemas/suggest-result-v1.json",
+  "title": "SuggestResult",
+  "description": "Rewrite options for one target: the sentence containing a finding, or the editor's selection. Each option replaces the target span.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "offsetUnit",
+    "target",
+    "options",
+    "model"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "offsetUnit": {
+      "const": "utf16"
+    },
+    "model": {
+      "type": "string"
+    },
+    "options": {
+      "type": "array",
+      "maxItems": 3,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "span",
+          "replacement",
+          "rationale",
+          "factVerificationRequired",
+          "unresolvedQuestions"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "span": {
+            "$ref": "finding-v1.json#/properties/span"
+          },
+          "replacement": {
+            "type": "string"
+          },
+          "rationale": {
+            "type": "string"
+          },
+          "factVerificationRequired": {
+            "type": "boolean"
+          },
+          "unresolvedQuestions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "target": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "span",
+        "excerpt"
+      ],
+      "properties": {
+        "findingId": {
+          "type": "string"
+        },
+        "span": {
+          "$ref": "finding-v1.json#/properties/span"
+        },
+        "excerpt": {
+          "type": "string"
+        }
+      }
+    },
+    "dropped": {
+      "type": "array",
+      "description": "Options the model proposed that Humanus rejected, and why.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "replacement",
+          "reason"
+        ],
+        "properties": {
+          "replacement": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}
