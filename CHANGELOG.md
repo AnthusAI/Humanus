@@ -1,19 +1,29 @@
 # CHANGELOG
 
 
-## Unreleased
+## v0.34.0 (2026-10-31)
+
+### Documentation
+
+- Document table and quotation checks; add Unreleased changelog entry
+  ([`0ec1d07`](https://github.com/AnthusAI/Humanus/commit/0ec1d073ea47735ddb6f4a077afafd29fa126d84))
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
 
 ### Features
 
-- **check**: Check the prose in Markdown table cells. Each cell with words is a `tableCell` paragraph
-  segment (sentences, rules lane and classifier lane included), findings carry UTF-16 spans into the
-  original document, and table syntax, numbers-only cells and code-only cells stay out of detection.
-  On by default; `options.tables: false` restores the protected `table` region. The `block` enums in
-  `check-result-v1` and `policy-pack-v1` gain `tableCell`, and `check-request-v1` gains `options.tables`.
-- **rules**: Rules findings that lie entirely inside a direct quotation (double quotes or a block
-  quote) are no longer reported. Detectors and policies take `quotations: "exempt" | "check"` to
-  override the default; placeholder leaks, chatbot artifacts, chat citation markup and AI-tool
-  tracking parameters in `ai-writing-tells` opt back in. The classifier lane is unchanged.
+- **check**: Check table-cell prose and exempt quotations from rules
+  ([`8fff0ca`](https://github.com/AnthusAI/Humanus/commit/8fff0ca94cba588db43a0a9cfed9bbb8cdfca8cf))
+
+Tables were protected regions, so claims that live in table cells were never read. Each cell with
+  words is now a tableCell paragraph segment that both lanes check, with spans into the original
+  text; options.tables=false restores the protected region. Whole-document measures leave cells out.
+
+Rules findings entirely inside a direct quotation (double quotes or a block quote) are no longer
+  reported unless the detector or policy sets quotations: check. The starter pack's placeholder,
+  chatbot, citation-markup and tracking-parameter policies opt back in.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
 
 
 ## v0.33.1 (2026-10-20)
