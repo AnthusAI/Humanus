@@ -31,6 +31,7 @@ class RegexDetector:
     exceptions: tuple[str, ...] = ()
     message: str | None = None
     blocks: tuple[str, ...] | None = None
+    quotations: str | None = None  # exempt | check; None inherits the policy
     lane: str = field(default="rules", init=False)
     kind: str = field(default="regex", init=False)
 
@@ -44,6 +45,7 @@ class PhraseDetector:
     exceptions: tuple[str, ...] = ()
     message: str | None = None
     blocks: tuple[str, ...] | None = None
+    quotations: str | None = None  # exempt | check; None inherits the policy
     lane: str = field(default="rules", init=False)
     kind: str = field(default="phrase", init=False)
 
@@ -55,6 +57,7 @@ class BuiltinDetector:
     params: Mapping[str, Any] = field(default_factory=dict)
     message: str | None = None
     blocks: tuple[str, ...] | None = None
+    quotations: str | None = None  # exempt | check; None inherits the policy
     lane: str = field(default="rules", init=False)
     kind: str = field(default="builtin", init=False)
 
@@ -98,6 +101,7 @@ class Policy:
     violating_examples: tuple[str, ...] = ()
     complying_examples: tuple[str, ...] = ()
     rewrite_guidance: str | None = None
+    quotations: str | None = None  # default for the policy's rules detectors: exempt | check
 
 
 @dataclass(frozen=True)
@@ -183,6 +187,7 @@ def _parse_policy(raw: Mapping[str, Any]) -> Policy:
         violating_examples=tuple(examples.get("violates", ())),
         complying_examples=tuple(examples.get("complies", ())),
         rewrite_guidance=raw.get("rewriteGuidance"),
+        quotations=raw.get("quotations"),
     )
 
 
@@ -210,6 +215,7 @@ def _parse_detector(raw: Mapping[str, Any]) -> Detector:
     if raw["kind"] == "regex":
         return RegexDetector(
             pattern=raw["pattern"],
+            quotations=raw.get("quotations"),
             ignore_case=raw.get("ignoreCase", False),
             exceptions=tuple(raw.get("exceptions", ())),
             **common,
@@ -217,12 +223,13 @@ def _parse_detector(raw: Mapping[str, Any]) -> Detector:
     if raw["kind"] == "phrase":
         return PhraseDetector(
             phrases=tuple(raw["phrases"]),
+            quotations=raw.get("quotations"),
             case_sensitive=raw.get("caseSensitive", False),
             replacement=raw.get("replacement"),
             exceptions=tuple(raw.get("exceptions", ())),
             **common,
         )
-    return BuiltinDetector(check=raw["check"], params=dict(raw.get("params", {})), **common)
+    return BuiltinDetector(check=raw["check"], quotations=raw.get("quotations"), params=dict(raw.get("params", {})), **common)
 
 
 def _check_semantics(pack: PolicyPack) -> None:

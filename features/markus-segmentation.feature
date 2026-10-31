@@ -46,10 +46,6 @@ Feature: Segment Markus documents into paragraphs and sentences
 
       > Someone else's words. Leave them alone.
 
-      | a | b |
-      |---|---|
-      | 1 | 2 |
-
       Closing paragraph.
       """
     When the document is segmented
@@ -57,8 +53,42 @@ Feature: Segment Markus documents into paragraphs and sentences
       | block     | source             |
       | paragraph | Intro paragraph.   |
       | paragraph | Closing paragraph. |
-    And the protected regions are "directive, code, quote, table"
+    And the protected regions are "directive, code, quote"
     And no segment overlaps a protected region
+
+  Scenario: Table cells are prose and the table syntax is not
+    Given the Markus document:
+      """
+      Before the table.
+
+      | Metric | Claim |
+      |:-------|------:|
+      | Speed  | Runs **fast**. It never fails. |
+      | Count  | 1,200 |
+      | Call   | `run()` |
+      | Pipe   | in-cell text |
+
+      After the table.
+      """
+    When the document is segmented
+    Then the paragraph segments are:
+      | block     | source                          |
+      | paragraph | Before the table.               |
+      | tableCell | Metric                          |
+      | tableCell | Claim                           |
+      | tableCell | Speed                           |
+      | tableCell | Runs **fast**. It never fails.  |
+      | tableCell | Count                           |
+      | tableCell | Call                            |
+      | tableCell | Pipe                            |
+      | tableCell | in-cell text                    |
+      | paragraph | After the table.                |
+    And the sentence segments of paragraph 5 are:
+      | source               |
+      | Runs **fast**.       |
+      | It never fails.      |
+    And every segment's offsets select its source from the document
+    And the document has no protected regions
 
   Scenario: Container directive content is prose
     Given the Markus document:

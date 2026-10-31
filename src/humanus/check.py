@@ -48,7 +48,7 @@ def check(
         raise CheckRequestValidationError(REQUEST_SCHEMA, str(exc), location) from exc
 
     content = request["content"]
-    document = segment_document(content["text"], content["format"])
+    document = segment_document(content["text"], content["format"], tables=request.get("options", {}).get("tables", True))
     lane_options = request.get("options", {}).get("lanes", {})
     lanes: dict[str, Any] = {}
     hits: list[Hit] = []

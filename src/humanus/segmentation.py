@@ -7,8 +7,11 @@ check result converts them to UTF-16 at its boundary.
 
 Markup that is not the author's prose is reported as a protected region and
 never segmented: front matter, code, Markus directives, block quotes (someone
-else's words), tables and raw HTML. Prose inside a container directive
-(``:::callout`` ... ``:::``) is still prose.
+else's words) and raw HTML. Prose inside a container directive
+(``:::callout`` ... ``:::``) is still prose. Table cells are prose too: each
+cell with words in it is a ``tableCell`` paragraph, so the pipes and the
+alignment row stay out of every detector; ``tables=False`` makes tables a
+protected region again.
 
 Segment ids are derived from the segment's normalized text, so a paragraph
 keeps its id when other paragraphs change. Repeated text gets an occurrence
@@ -35,7 +38,7 @@ class Segment:
     end: int
     source: str  # exact source text, text[start:end]
     text: str  # plain prose with inline markup removed
-    block: str | None = None  # paragraph | heading | listItem
+    block: str | None = None  # paragraph | heading | listItem | tableCell
     parent_id: str | None = None
     container: str | None = None  # innermost container directive (e.g. "pull-quote"), if any
 
@@ -69,15 +72,18 @@ class SegmentedDocument:
         )
 
 
-def segment_document(text: str, format: str = "markus") -> SegmentedDocument:
-    """Segment ``text`` written in ``format`` (``markus``, ``markdown`` or ``text``)."""
+def segment_document(text: str, format: str = "markus", *, tables: bool = True) -> SegmentedDocument:
+    """Segment ``text`` written in ``format`` (``markus``, ``markdown`` or ``text``).
+
+    ``tables`` (Markdown and Markus) segments table-cell prose; ``False`` protects tables.
+    """
     containers: list[tuple[str, int, int]] = []
     if format == "text":
         protected: list[ProtectedRegion] = []
         blocks = [(m.start(), m.end(), "paragraph") for m in re.finditer(r"\S(?:.*\S)?(?:\n[ \t]*\S.*)*", text)]
         prose = [_trim_span(text, start, end) + (block,) for start, end, block in blocks]
     elif format in {"markus", "markdown"}:
-        prose, protected, containers = _markdown_blocks(text)
+        prose, protected, containers = _markdown_blocks(text, tables)
     else:
         raise ValueError(f"Unsupported content format '{format}'")
     return _build(text, prose, protected, containers)
@@ -165,6 +171,8 @@ _FENCE = re.compile(r"^[ ]{0,3}(`{3,}|~{3,})")
 _LEAF_DIRECTIVE = re.compile(r"^[ ]{0,3}::[A-Za-z][\w-]*")
 _CONTAINER_OPEN = re.compile(r"^[ ]{0,3}:{3,}[A-Za-z][\w-]*")
 _CONTAINER_CLOSE = re.compile(r"^[ ]{0,3}:{3,}\s*$")
+_CODE_ONLY = re.compile(r"(`+)(?:(?!\1).)+\1")
+_HAS_LETTER = re.compile(r"[^\W\d_]")
 
 
 @lru_cache(maxsize=1)
@@ -172,7 +180,7 @@ def _parser() -> MarkdownIt:
     return MarkdownIt("commonmark").enable("table")
 
 
-def _markdown_blocks(text: str) -> tuple[list[tuple[int, int, str]], list[ProtectedRegion], list[tuple[str, int, int]]]:
+def _markdown_blocks(text: str, tables: bool = True) -> tuple[list[tuple[int, int, str]], list[ProtectedRegion], list[tuple[str, int, int]]]:
     lines = text.split("\n")
     line_starts = [0]
     for line in lines[:-1]:
@@ -194,7 +202,10 @@ def _markdown_blocks(text: str) -> tuple[list[tuple[int, int, str]], list[Protec
             if token.type == skip_until and token.level == skip_level:
                 skip_until = None
             continue
-        if token.type in {"blockquote_open", "table_open"} and token.map:
+        if token.type == "table_open" and token.map and tables:
+            prose.extend(_table_cells(lines, line_starts, *token.map))
+            skip_until, skip_level = "table_close", token.level
+        elif token.type in {"blockquote_open", "table_open"} and token.map:
             protected.append(ProtectedRegion("quote" if token.type == "blockquote_open" else "table", *line_span(token.map[0], token.map[1] - 1)))
             skip_until, skip_level = token.type.replace("_open", "_close"), token.level
         elif token.type in {"fence", "code_block", "html_block"} and token.map:
@@ -211,6 +222,36 @@ def _markdown_blocks(text: str) -> tuple[list[tuple[int, int, str]], list[Protec
             if span is not None:
                 prose.append((*span, block))
     return prose, protected, containers
+
+
+def _table_cells(lines: list[str], line_starts: list[int], first: int, stop: int) -> list[tuple[int, int, str]]:
+    """Source spans of the table cells that hold words (not numbers or code alone).
+
+    Row lines are split on pipes that are not escaped; the alignment row (the
+    second line) is skipped.
+    """
+    cells: list[tuple[int, int, str]] = []
+    for number in range(first, stop):
+        if number == first + 1:
+            continue
+        line = lines[number].rstrip("\r")
+        bounds = [-1]
+        index = 0
+        while index < len(line):
+            if line[index] == "\\":
+                index += 2
+                continue
+            if line[index] == "|":
+                bounds.append(index)
+            index += 1
+        bounds.append(len(line))
+        for left, right in zip(bounds, bounds[1:]):
+            start, end = _trim_span(line, left + 1, right)
+            source = line[start:end]
+            if not source or _CODE_ONLY.fullmatch(source) or not _HAS_LETTER.search(plain_text(source)):
+                continue
+            cells.append((line_starts[number] + start, line_starts[number] + end, "tableCell"))
+    return cells
 
 
 def _mask_markus_lines(lines: list[str], line_span) -> tuple[list[str], list[ProtectedRegion], list[tuple[str, int, int]]]:
@@ -374,7 +415,7 @@ def _is_abbreviation(before: str) -> bool:
 # --- plain text ------------------------------------------------------------------
 
 _PLAIN_TEXT_RULES: tuple[tuple[re.Pattern[str], str], ...] = (
-    (re.compile(r"\\([\\`*_{}\[\]()#+\-.!])"), r"\1"),
+    (re.compile(r"\\([\\`*_{}\[\]()#+\-.!|])"), r"\1"),
     (re.compile(r"!\[([^\]]*)\]\([^)]*\)"), r"\1"),
     (re.compile(r"\[([^\]]+)\]\([^)]*\)"), r"\1"),
     (re.compile(r"\[([^\]]+)\]\[[^\]]*\]"), r"\1"),

@@ -543,3 +543,8 @@ def step_segments_plain(context, text):
 @then('the finding\'s excerpt text is "{text}"')
 def step_excerpt_text(context, text):
     assert [f.get("excerptText") for f in context.check_result["findings"]] == [text], context.check_result["findings"]
+
+
+@then("the document has no protected regions")
+def step_no_protected(context):
+    assert context.segmented.protected == (), context.segmented.protected

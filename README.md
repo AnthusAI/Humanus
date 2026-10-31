@@ -93,8 +93,15 @@ callers in any language validate against the same files.
 **Offsets** count UTF-16 code units, as JavaScript string indexes do.
 **Segments** are the document, its prose paragraphs (paragraphs, headings, list
 items) and their sentences; each carries its plain text so a rendered preview
-can place findings. Front matter, code, Markus directives, block quotes, tables
-and raw HTML are protected regions and never checked. Paragraph, sentence and
+can place findings. Front matter, code, Markus directives, block quotes and raw
+HTML are protected regions and never checked. Table cells are prose: each cell
+that has words in it is a paragraph segment with block `tableCell`, split into
+sentences like any other paragraph, so both lanes read it and findings point at
+the cell text; pipes and the alignment row stay out of detection, and cells that
+hold only numbers or code are skipped. Set `options.tables` to `false` to make
+tables a protected region again. Whole-document measures (average sentence
+length, reading grade, information density, paragraph length, uniform cadence,
+overused words) leave table cells out. Paragraph, sentence and
 finding ids derive from text, so they survive edits elsewhere.
 
 ## Lanes
@@ -108,6 +115,13 @@ finding ids derive from text, so they survive edits elsewhere.
   undefined acronyms, one instruction per step, imperative steps, -ing forms,
   missing articles and one meaning per word. Phrase detectors take `exceptions`,
   such as technical names, inside which a match is not a finding.
+  Direct quotations are someone else's words: a rules finding that lies
+  entirely inside a double-quoted passage (straight or curly) or a block quote
+  is not reported. A detector or its policy sets `quotations: "check"` to opt
+  back in (the detector wins); the starter pack does so for placeholder leaks,
+  chatbot artifacts, chat citation markup and AI-tool tracking parameters.
+  `passive_voice` also ignores a passive clause inside a quotation when the
+  rest of the sentence is not passive. The classifier lane still reads quotations.
 - **Starter packs** (`humanus pack builtin <name>`):
   - `ai-writing-tells`: 24 policies adapted from
     [avoid-ai-writing](https://github.com/conorbronsdon/avoid-ai-writing) (MIT).

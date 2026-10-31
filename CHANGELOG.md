@@ -1,6 +1,21 @@
 # CHANGELOG
 
 
+## Unreleased
+
+### Features
+
+- **check**: Check the prose in Markdown table cells. Each cell with words is a `tableCell` paragraph
+  segment (sentences, rules lane and classifier lane included), findings carry UTF-16 spans into the
+  original document, and table syntax, numbers-only cells and code-only cells stay out of detection.
+  On by default; `options.tables: false` restores the protected `table` region. The `block` enums in
+  `check-result-v1` and `policy-pack-v1` gain `tableCell`, and `check-request-v1` gains `options.tables`.
+- **rules**: Rules findings that lie entirely inside a direct quotation (double quotes or a block
+  quote) are no longer reported. Detectors and policies take `quotations: "exempt" | "check"` to
+  override the default; placeholder leaks, chatbot artifacts, chat citation markup and AI-tool
+  tracking parameters in `ai-writing-tells` opt back in. The classifier lane is unchanged.
+
+
 ## v0.33.1 (2026-10-20)
 
 ### Bug Fixes

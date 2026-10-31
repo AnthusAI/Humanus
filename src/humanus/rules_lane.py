@@ -1,20 +1,32 @@
 """The deterministic rules lane: phrase, regex and built-in detectors.
 
-Every detector runs only on prose segments, so code, quotes, directives and
-the rest of the protected regions are never checked. Phrase detectors also
+Every detector runs only on prose segments, so code, block quotes, directives
+and the rest of the protected regions are never checked. A finding that lies
+entirely inside a direct quotation (double quotes) is dropped as well, because
+the words are someone else's, unless the detector or its policy sets
+``quotations: check`` (placeholder leaks and chatbot artifacts do). Phrase detectors also
 skip inline code, URLs, link targets and citations; regex detectors see the
 raw prose so they can match URL fragments when a policy asks for that.
 """
 from __future__ import annotations
 
 import re
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from functools import lru_cache
 from typing import Iterable
 
 from .builtin_checks import BUILTIN_CHECKS, Match
 from .policy_pack import BuiltinDetector, Detector, PhraseDetector, Policy, PolicyPack, RegexDetector
 from .segmentation import Segment, SegmentedDocument, mask_inline
+
+# Checks that judge the document as a whole run on its sentences and paragraphs, not table cells.
+AGGREGATE_CHECKS = frozenset(
+    {"information_density", "average_sentence_length", "reading_grade_level", "paragraph_length", "uniform_cadence", "overused_words"}
+)
+# Sentence-level checks that look inside the sentence for the words to judge.
+QUOTATION_AWARE_CHECKS = frozenset({"passive_voice"})
+
+_QUOTATION = re.compile(r"\u201c[^\u201c\u201d]+\u201d|\"[^\"\n]+\"")
 
 
 @dataclass(frozen=True)
@@ -37,17 +49,32 @@ def run_rules_lane(document: SegmentedDocument, pack: PolicyPack) -> tuple[list[
     """Run every enabled rules detector; return the hits and the detector count."""
     hits: list[Hit] = []
     count = 0
+    quotations: list[tuple[int, int]] | None = None
     for policy in pack.enabled_policies:
         for detector in policy.detectors:
             if detector.lane != "rules":
                 continue
             count += 1
-            for start, end, message, replacement in _run_detector(document, detector):
+            exempt = (detector.quotations or policy.quotations or "exempt") == "exempt"
+            if exempt and quotations is None:
+                quotations = quotation_spans(document)
+            for start, end, message, replacement in _run_detector(document, detector, exempt):
+                if exempt and any(a <= start and end <= b for a, b in quotations):
+                    continue
                 hits.append(Hit(policy, detector, start, end, detector.message or message or policy.title, replacement))
     return _dedupe(hits), count
 
 
-def _run_detector(document: SegmentedDocument, detector: Detector) -> Iterable[Match]:
+def quotation_spans(document: SegmentedDocument) -> list[tuple[int, int]]:
+    """Source spans of direct quotations: double-quoted passages in a paragraph, and block quotes."""
+    spans = [(r.start, r.end) for r in document.protected if r.kind == "quote"]
+    for paragraph in document.paragraphs:
+        masked = mask_inline(paragraph.source)
+        spans.extend((paragraph.start + m.start(), paragraph.start + m.end()) for m in _QUOTATION.finditer(masked))
+    return spans
+
+
+def _run_detector(document: SegmentedDocument, detector: Detector, exempt_quotations: bool = False) -> Iterable[Match]:
     paragraphs = [p for p in document.paragraphs if _applies(detector, p)]
     if isinstance(detector, PhraseDetector):
         pattern = _phrase_pattern(detector.phrases, detector.case_sensitive)
@@ -68,8 +95,14 @@ def _run_detector(document: SegmentedDocument, detector: Detector) -> Iterable[M
                 if match.end() > match.start() and not any(a <= match.start() and match.end() <= b for a, b in excepted):
                     yield paragraph.start + match.start(), paragraph.start + match.end(), None, None
     elif isinstance(detector, BuiltinDetector):
+        params = dict(detector.params)
+        if detector.check in AGGREGATE_CHECKS:
+            document = replace(document, segments=tuple(s for s in document.segments if s.block != "tableCell"))
+            paragraphs = [p for p in paragraphs if p.block != "tableCell"]
+        if exempt_quotations and detector.check in QUOTATION_AWARE_CHECKS:
+            params["_quotations"] = quotation_spans(document)
         sentences = [s for s in document.sentences() if _applies(detector, s)]
-        yield from BUILTIN_CHECKS[detector.check](document, paragraphs, sentences, dict(detector.params))
+        yield from BUILTIN_CHECKS[detector.check](document, paragraphs, sentences, params)
 
 
 def _applies(detector: Detector, segment: Segment) -> bool:
