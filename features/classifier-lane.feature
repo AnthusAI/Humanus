@@ -101,3 +101,21 @@ Feature: Zero-shot classifier lane
     When the document is classified
     Then the classifier lane reports status "partial"
     And the decision model received fewer than 6 requests
+
+  Scenario: Table cells are judged as sentences in their own paragraph
+    Given the document to classify is:
+      """
+      Intro.
+
+      | Product | Claim |
+      |---------|-------|
+      | Alpha   | Our system is fast, trust us. |
+      | Beta    | 42 |
+      """
+    When the document is classified
+    Then the findings are:
+      | policy            | excerpt                       | status    | severity |
+      | concrete-claims   | Our system is fast, trust us. | violation | warn     |
+      | focused           | Our system is fast, trust us. | violation | info     |
+      | no-unearned-trust | Our system is fast, trust us. | violation | error    |
+    And no finding excerpt contains table syntax

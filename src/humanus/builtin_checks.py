@@ -12,7 +12,7 @@ from collections import defaultdict
 from typing import Callable, Iterable
 
 from .emoji import EMOJI_PATTERN
-from .segmentation import Segment, SegmentedDocument, mask_inline, normalize_text
+from .segmentation import Segment, SegmentedDocument, mask_inline, normalize_text, plain_text
 from .standard_checks import STANDARD_CHECKS
 
 Match = tuple[int, int, "str | None", "str | None"]
@@ -282,6 +282,20 @@ def _no_emojis(document, paragraphs, sentences, params):
             yield paragraph.start + match.start(), paragraph.start + match.end(), "Contains an emoji.", ""
 
 
+def _passive_voice(document, paragraphs, sentences, params):
+    """Passive voice; with ``_quotations`` (document spans), words inside a quotation do not count."""
+    quotations = params.get("_quotations", ())
+    for sentence in sentences:
+        source = sentence.source
+        for a, b in quotations:
+            lo, hi = max(a, sentence.start) - sentence.start, min(b, sentence.end) - sentence.start
+            if lo < hi:
+                source = source[:lo] + " " * (hi - lo) + source[hi:]
+        text = plain_text(source) if source != sentence.source else sentence.text
+        if PASSIVE.search(text):
+            yield sentence.start, sentence.end, "Sentence uses passive voice.", None
+
+
 BUILTIN_CHECKS: dict[str, BuiltinCheck] = {
     "empty_leadin": _sentence_check(_empty_leadin, "Sentence opens with empty boilerplate instead of a concrete stake."),
     "list_shaped_prose": _list_shaped_prose,
@@ -292,7 +306,7 @@ BUILTIN_CHECKS: dict[str, BuiltinCheck] = {
     "unsupported_certainty": _sentence_check(_unsupported_certainty, "Sentence states certainty without attributable evidence."),
     "uniform_cadence": _uniform_cadence,
     "redundancy": _redundancy,
-    "passive_voice": _sentence_check(lambda s: bool(PASSIVE.search(s.text)), "Sentence uses passive voice."),
+    "passive_voice": _passive_voice,
     "missing_attribution": _sentence_check(_missing_attribution, "Numeric or statistical claim lacks attributable evidence."),
     "information_density": _information_density,
     "overused_words": _overused_words,

@@ -190,7 +190,8 @@
           "enum": [
             "paragraph",
             "heading",
-            "listItem"
+            "listItem",
+            "tableCell"
           ]
         },
         "parentId": {

@@ -93,8 +93,15 @@ callers in any language validate against the same files.
 **Offsets** count UTF-16 code units, as JavaScript string indexes do.
 **Segments** are the document, its prose paragraphs (paragraphs, headings, list
 items) and their sentences; each carries its plain text so a rendered preview
-can place findings. Front matter, code, Markus directives, block quotes, tables
-and raw HTML are protected regions and never checked. Paragraph, sentence and
+can place findings. Front matter, code, Markus directives, block quotes and raw
+HTML are protected regions and never checked. Table cells are prose: each cell
+that has words in it is a paragraph segment with block `tableCell`, split into
+sentences like any other paragraph, so both lanes read it and findings point at
+the cell text; pipes and the alignment row stay out of detection, and cells that
+hold only numbers or code are skipped. Set `options.tables` to `false` to make
+tables a protected region again. Whole-document measures (average sentence
+length, reading grade, information density, paragraph length, uniform cadence,
+overused words) leave table cells out. Paragraph, sentence and
 finding ids derive from text, so they survive edits elsewhere.
 
 ## Lanes

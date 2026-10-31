@@ -16,6 +16,7 @@ policies:
 
   - id: chatbot-artifacts
     version: 1
+    quotations: check
     title: Chatbot artifacts
     severity: error
     tags: [chatbot, fingerprint]
@@ -114,6 +115,7 @@ policies:
 
   - id: placeholder-leaks
     version: 1
+    quotations: check
     title: Unfilled placeholders
     severity: error
     tags: [fingerprint]
@@ -163,6 +165,7 @@ policies:
 
   - id: chat-citation-markup
     version: 1
+    quotations: check
     title: Chat citation markup
     severity: error
     tags: [chatbot, fingerprint]
@@ -198,6 +201,7 @@ policies:
 
   - id: ai-tool-url-params
     version: 1
+    quotations: check
     title: AI-tool tracking parameters in links
     severity: error
     tags: [fingerprint]

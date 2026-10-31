@@ -30,6 +30,7 @@
         "guidance": { "type": "string", "minLength": 1, "description": "The policy in prose, for editors and for rewrite suggestions." },
         "severity": { "$ref": "#/$defs/severity" },
         "enabled": { "type": "boolean", "default": true },
+        "quotations": { "$ref": "#/$defs/quotations" },
         "tags": { "type": "array", "items": { "type": "string" } },
         "detectors": {
           "type": "array",
@@ -69,7 +70,11 @@
         }
       }
     },
-    "block": { "enum": ["paragraph", "heading", "listItem"] },
+    "block": { "enum": ["paragraph", "heading", "listItem", "tableCell"] },
+    "quotations": {
+      "enum": ["exempt", "check"],
+      "description": "Whether a rules finding that lies entirely inside a direct quotation (double quotes or a block quote) is reported. Defaults to exempt; a detector overrides its policy."
+    },
     "regexDetector": {
       "allOf": [{ "$ref": "#/$defs/detectorBase" }],
       "type": "object",
@@ -80,7 +85,8 @@
         "kind": { "const": "regex" },
         "pattern": { "type": "string", "minLength": 1, "description": "Python regular expression." },
         "ignoreCase": { "type": "boolean", "default": false },
-        "exceptions": { "type": "array", "items": { "type": "string" }, "description": "Regexes; a match inside an exception match is not a finding." }
+        "exceptions": { "type": "array", "items": { "type": "string" }, "description": "Regexes; a match inside an exception match is not a finding." },
+        "quotations": { "$ref": "#/$defs/quotations" }
       }
     },
     "phraseDetector": {
@@ -98,7 +104,8 @@
           "items": { "type": "string", "minLength": 1 },
           "description": "Phrases, such as technical names, inside which a match is not a finding."
         },
-        "replacement": { "type": "string", "description": "Preferred wording, offered as a deterministic suggestion." }
+        "replacement": { "type": "string", "description": "Preferred wording, offered as a deterministic suggestion." },
+        "quotations": { "$ref": "#/$defs/quotations" }
       }
     },
     "builtinDetector": {
@@ -136,7 +143,8 @@
             "one_meaning"
           ]
         },
-        "params": { "type": "object" }
+        "params": { "type": "object" },
+        "quotations": { "$ref": "#/$defs/quotations" }
       },
       "allOf": [
         { "$ref": "#/$defs/detectorBase" },

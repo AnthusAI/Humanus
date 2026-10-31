@@ -24,6 +24,11 @@
       "type": "object",
       "additionalProperties": false,
       "properties": {
+        "tables": {
+          "type": "boolean",
+          "default": true,
+          "description": "Check the prose in Markdown table cells (segments with block 'tableCell'). False makes tables a protected region that no lane reads."
+        },
         "lanes": {
           "type": "object",
           "additionalProperties": false,
