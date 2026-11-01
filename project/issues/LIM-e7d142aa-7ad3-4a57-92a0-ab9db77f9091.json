@@ -1,0 +1,20 @@
+{
+  "id": "LIM-e7d142aa-7ad3-4a57-92a0-ab9db77f9091",
+  "title": "Drop the limatus compatibility package: Limatus is Humanus",
+  "description": "Ryan 2026-11-01: Limatus became Humanus; fix old references. Remove shim/limatus, its release-workflow build step (PyPI refused it with 403 on every release since 0.33.1) and the README note. pip install limatus stays at the last published version on PyPI; nothing new is published under that name.",
+  "type": "task",
+  "status": "open",
+  "priority": 2,
+  "assignee": null,
+  "creator": null,
+  "parent": null,
+  "labels": [],
+  "dependencies": [],
+  "comments": [],
+  "created_at": "2026-11-01T12:03:55.712111Z",
+  "updated_at": "2026-11-01T12:03:55.712573Z",
+  "closed_at": null,
+  "right_now_summary": null,
+  "right_now_updated_at": null,
+  "custom": {}
+}
