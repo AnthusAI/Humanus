@@ -4,10 +4,6 @@ Humanus is a configurable editorial compliance engine. A publication sends its
 own editorial policies with each request; Humanus marks every place a draft
 breaks them, says how sure it is, and offers rewrites when an editor asks.
 
-Humanus was called Limatus until version 0.33. `pip install limatus` still
-works: it installs Humanus and keeps `import limatus` and the `limatus` command
-working with a deprecation warning.
-
 ## Press Release
 
 **Anthus AI Solutions introduces Humanus, an open-source engine that checks writing against a publication's own editorial policies — and only rewrites when an editor asks**
