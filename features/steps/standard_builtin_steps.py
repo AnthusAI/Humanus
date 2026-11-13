@@ -16,6 +16,7 @@ def _pack(detector: dict) -> dict:
     return {
         "schemaVersion": 1,
         "packId": "standard-checks",
+        "language": "en",
         "version": "1",
         "policies": [{"id": "standard", "version": 1, "title": "Standard", "guidance": "g", "severity": "info", "detectors": [detector]}],
     }

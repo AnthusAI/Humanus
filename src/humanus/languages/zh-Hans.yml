@@ -1,0 +1,90 @@
+# Simplified Chinese language pack. Serves zh-Hans and the regions written in
+# Simplified characters (zh-CN, zh-SG, zh-MY); never Traditional (zh-Hant).
+tag: zh-Hans
+version: "1.0.0"
+name: Simplified Chinese
+aliases: [zh-CN, zh-SG, zh-MY]
+
+# Chinese is written without spaces between words, so a phrase matches
+# anywhere in running text.
+phraseMatching: substring
+
+# Length is counted in characters: each Han character is one unit, and so is
+# each run of Latin letters or digits ("Waymo", "2025").
+units:
+  name: character
+  pattern: '[㐀-䶿一-鿿豈-﫿]|[A-Za-z0-9]+(?:[''’-][A-Za-z0-9]+)*'
+
+segmentation:
+  # Full-width marks end a sentence with no space after them and no capital.
+  terminators: '。！？'
+  # Half-width marks (a slip the typography pack reports) end a sentence only
+  # before white space, so "5.0" and "UI.js" stay whole.
+  spacedTerminators: '.!?'
+  closers: '”’」』）》】"'')]*_'
+  openers: '“‘「『（《【"''([*_`'
+  capitalAfter: false
+  abbreviationOpeners: '(["“''‘'
+  abbreviations: []
+
+quotations:
+  - ['“', '”']
+  - ['"', '"']
+  - ['「', '」']
+  - ['『', '』']
+
+builtins: [no_emojis, sentence_length, average_sentence_length, paragraph_length, frame, density, typography]
+
+lexicons:
+  passiveMarkers: [被]
+
+tagger: null
+
+baseline:
+  passiveMarkers:
+    per1000: 1.0
+    measured: false
+    source: >-
+      Provisional, not yet measured: to be replaced by a rate computed from an
+      openly licensed corpus of native Simplified Chinese news. Xiao and Dai
+      (2014), comparing ZCTC (translated) with LCMC (native), found 被 passives
+      significantly more frequent in translated Chinese (LL = 69.59, p < 0.001)
+      and short agentless ones especially so, but publish the rates only in a
+      figure. https://eprints.lancs.ac.uk/id/eprint/64330/1/02_Xiao_and_Dai.pdf
+
+typography:
+  # Characters of the language's own script, for the rules that look at what
+  # stands next to a mark.
+  scriptCharacters: '[㐀-䶿一-鿿豈-﫿]'
+  # GB/T 15834-2011: full-width punctuation in Chinese text. "context" says
+  # which neighbour (ignoring spaces) must be a Chinese character.
+  punctuationWidth:
+    - {mark: ',', fullWidth: '，', context: either}
+    - {mark: '.', fullWidth: '。', context: before, notBefore: '[A-Za-z0-9]'}
+    - {mark: ':', fullWidth: '：', context: either}
+    - {mark: ';', fullWidth: '；', context: either}
+    - {mark: '?', fullWidth: '？', context: either}
+    - {mark: '!', fullWidth: '！', context: either}
+    - {mark: '(', fullWidth: '（', context: after}
+    - {mark: ')', fullWidth: '）', context: before}
+  # No space is written beside these marks.
+  fullWidthPunctuation: '，。：；？！（）“”‘’《》〈〉、…—「」『』【】'
+  # Mainland usage: “” outside, ‘’ inside.
+  quotes:
+    outer: ['“', '”']
+    inner: ['‘', '’']
+  ellipsis: '……'
+  # House choice (not a standard): one space between Chinese and Latin text or digits.
+  latinSpacing: ' '
+  # English number words left behind by a translation, and how Chinese writes them.
+  numberWords:
+    percent: {format: '{n}%'}
+    per cent: {format: '{n}%'}
+    thousand: {multiply: 1000}
+    million: {multiply: 1000000}
+    billion: {multiply: 1000000000}
+    trillion: {multiply: 1000000000000}
+  largeNumberUnits:
+    - {value: 1000000000000, unit: 万亿}
+    - {value: 100000000, unit: 亿}
+    - {value: 10000, unit: 万}

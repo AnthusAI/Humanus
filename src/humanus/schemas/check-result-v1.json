@@ -10,6 +10,7 @@
     "offsetUnit",
     "document",
     "pack",
+    "language",
     "segments",
     "protected",
     "findings",
@@ -51,6 +52,23 @@
       ],
       "properties": {
         "packId": {
+          "type": "string"
+        },
+        "version": {
+          "type": "string"
+        }
+      }
+    },
+    "language": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "tag",
+        "version"
+      ],
+      "description": "The language pack the content was read with.",
+      "properties": {
+        "tag": {
           "type": "string"
         },
         "version": {
@@ -267,6 +285,30 @@
           "type": "integer",
           "minimum": 0,
           "description": "Detectors this lane evaluated."
+        },
+        "notRun": {
+          "type": "array",
+          "description": "Rules detectors that did not run because the content's language pack lacks what they need, each with the reason.",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "policyId",
+              "detectorId",
+              "reason"
+            ],
+            "properties": {
+              "policyId": {
+                "type": "string"
+              },
+              "detectorId": {
+                "type": "string"
+              },
+              "reason": {
+                "type": "string"
+              }
+            }
+          }
         }
       }
     }

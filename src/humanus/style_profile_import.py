@@ -48,6 +48,11 @@ class StyleProfileImportError(ValueError):
     """The style profile cannot be read or converted."""
 
 
+# Style profiles were written for English publications and their house checks
+# are English built-ins, so an imported pack is an English pack.
+STYLE_PROFILE_LANGUAGE = "en"
+
+
 def policy_pack_from_style_profile(path: str | Path, version: str | None = None) -> dict[str, Any]:
     """Read a style profile file and return a validated policy pack payload."""
     profile_path = Path(path).resolve()
@@ -126,6 +131,7 @@ def policy_pack_from_style_profile(path: str | Path, version: str | None = None)
         "packId": raw["publicationKey"],
         "version": version or f"style-profile-import-{date.today().isoformat()}",
         "title": f"{voice} (imported style profile)",
+        "language": STYLE_PROFILE_LANGUAGE,
         "guidance": raw.get("editorialAim") or f"Voice: {voice}. Audience: {raw.get('audience', 'general readers')}",
         "policies": policies,
         "referenceSamples": [_sample(entry, profile_path.parent) for entry in raw.get("referenceSamples") or []],

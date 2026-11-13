@@ -3,7 +3,8 @@
 A caller sends content and a policy pack; ``check`` returns where the content
 breaks the pack's policies, ``suggest`` offers rewrites for a finding or any
 selection, ``draft_questions`` helps write classifier detectors, and
-``calibrate`` learns from editors' decisions. The JSON Schemas under
+``calibrate`` learns from editors' decisions. Every request states its
+content's language, which a shipped language pack must serve. The JSON Schemas under
 ``humanus/schemas`` are the contract (``load_schema``).
 """
 
@@ -13,6 +14,7 @@ from .calibration import apply_calibration, calibrate
 from .check import CheckRequestValidationError, check
 from .contracts import ContractValidationError, load_schema, validate_payload
 from .finding_ids import finding_id
+from .languages import Language, UnsupportedLanguageError, list_languages, resolve_language
 from .packs import builtin_pack, list_builtin_packs
 from .policy_pack import PolicyPack, PolicyPackValidationError, load_policy_pack
 from .segmentation import SegmentedDocument, segment_document
@@ -22,12 +24,14 @@ from .suggest import SuggestRequestValidationError, SuggestUnavailableError, dra
 __all__ = [
     "CheckRequestValidationError",
     "ContractValidationError",
+    "Language",
     "PolicyPack",
     "PolicyPackValidationError",
     "SegmentedDocument",
     "StyleProfileImportError",
     "SuggestRequestValidationError",
     "SuggestUnavailableError",
+    "UnsupportedLanguageError",
     "__version__",
     "apply_calibration",
     "builtin_pack",
@@ -36,9 +40,11 @@ __all__ = [
     "draft_questions",
     "finding_id",
     "list_builtin_packs",
+    "list_languages",
     "load_policy_pack",
     "load_schema",
     "policy_pack_from_style_profile",
+    "resolve_language",
     "segment_document",
     "suggest",
     "validate_payload",

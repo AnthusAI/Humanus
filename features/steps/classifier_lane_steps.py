@@ -74,7 +74,7 @@ def step_classifier_pack(context):
                 "detectors": [detector],
             }
         )
-    context.classifier_pack = {"schemaVersion": 1, "packId": "classifier-example", "version": "1", "policies": policies}
+    context.classifier_pack = {"schemaVersion": 1, "packId": "classifier-example", "language": "en", "version": "1", "policies": policies}
 
 
 @given("the document to classify is:")
@@ -115,7 +115,7 @@ def step_budget(context, budget, cost):
 def _classify(context, text: str) -> dict:
     request = {
         "schemaVersion": 1,
-        "content": {"format": "markus", "text": text},
+        "content": {"format": "markus", "language": "en", "text": text},
         "pack": context.classifier_pack,
         "options": {"classifier": context.classifier_options} if context.classifier_options else {},
     }
@@ -211,6 +211,7 @@ def _detector(question_type: str, criteria, violation: dict):
     pack = {
         "schemaVersion": 1,
         "packId": "p",
+        "language": "en",
         "version": "1",
         "policies": [
             {

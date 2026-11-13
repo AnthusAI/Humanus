@@ -1,0 +1,105 @@
+# Chinese AI-writing tells: a small advisory starter set. The evidence for
+# Chinese "AI tells" is editors' observation (folk), not corpus measurement, so
+# every policy here is info severity: advice to look closer, never a block.
+# Phrases were written for Humanus from the patterns those lists describe.
+schemaVersion: 1
+packId: ai-writing-tells-zh-hans
+version: "1.0.0"
+title: Chinese AI writing tells
+language: zh-Hans
+guidance: >-
+  写给尊重的读者看：直接陈述事实，说明来源，说完就停。删去聊天助手的客套话、
+  套话式的过渡和升华结尾。命中只是提示，不是判定；有实际意义的措辞应保留，
+  不要为替换而编造事实或来源。
+policies:
+  - id: chatbot-residue
+    version: 1
+    title: Chatbot residue
+    severity: info
+    quotations: check
+    evidence:
+      grade: folk
+      note: High precision in practice; a published page never needs these lines.
+      sources: ["https://zh.wikipedia.org/wiki/Wikipedia:AI生成文的特徵"]
+    guidance: 删去聊天助手留下的客套话：开场的“当然可以”和结尾的“希望对你有帮助”。
+    detectors:
+      - id: residue-phrases
+        lane: rules
+        kind: phrase
+        phrases: [当然可以, 希望这对你有帮助, 希望对你有所帮助, 希望对您有所帮助, 作为一个人工智能, 作为一个AI, 如果你还有其他问题]
+  - id: stock-connectives
+    version: 1
+    title: Stock connectives and signposts
+    severity: info
+    evidence:
+      grade: folk
+      note: HC3 (Guo et al. 2023) measured more conjunctions in ChatGPT's Chinese answers, but on question answering, not news.
+      sources: ["https://zh.wikipedia.org/wiki/Wikipedia:AI生成文的特徵", "https://arxiv.org/abs/2301.07597"]
+    guidance: 套话式的过渡和总结（值得注意的是、综上所述、首先……其次……最后）只是在宣布结构；直接写内容。
+    detectors:
+      - id: signpost-phrases
+        lane: rules
+        kind: phrase
+        phrases: [值得注意的是, 需要指出的是, 综上所述, 总而言之]
+      - id: first-then-finally
+        lane: rules
+        kind: builtin
+        check: frame
+        params: {parts: [首先, 其次, 最后], within: paragraph, maxGap: 80}
+  - id: contrast-frames
+    version: 1
+    title: Contrast frames
+    severity: info
+    evidence: {grade: folk, sources: ["https://zh.wikipedia.org/wiki/Wikipedia:AI生成文的特徵"]}
+    guidance: “不是……而是……”和“不仅……更是……”先立一个没人提出的说法再推翻它；直接说要说的。
+    detectors:
+      - {id: not-but, lane: rules, kind: builtin, check: frame, params: {parts: [不是, 而是], maxGap: 30}}
+      - {id: not-only-but-more, lane: rules, kind: builtin, check: frame, params: {parts: [不仅, 更是], maxGap: 30}}
+  - id: inflated-vocabulary
+    version: 1
+    title: Inflated vocabulary
+    severity: info
+    evidence:
+      grade: folk
+      note: No Chinese corpus study of AI vocabulary was found; candidates until our own keyness study.
+      sources: ["https://zh.wikipedia.org/wiki/Wikipedia:AI生成文的特徵"]
+    guidance: 赋能、助力、至关重要、深入探讨、彰显之类的词把普通的事说得很宏大；换成具体说法。
+    detectors:
+      - id: inflated-words
+        lane: rules
+        kind: phrase
+        phrases: [赋能, 助力, 至关重要, 深入探讨, 彰显, 凸显]
+  - id: template-openers
+    version: 1
+    title: Template openers
+    severity: info
+    evidence: {grade: folk, sources: ["https://zh.wikipedia.org/wiki/Wikipedia:AI生成文的特徵"]}
+    guidance: “随着……的不断发展”“在当今……时代”是空泛的开头；从具体的事实写起。
+    detectors:
+      - {id: with-the-development, lane: rules, kind: builtin, check: frame, params: {parts: [随着, 不断发展], maxGap: 15}}
+      - {id: in-todays-era, lane: rules, kind: builtin, check: frame, params: {parts: [在当今, 时代], maxGap: 10}}
+  - id: uplift-endings
+    version: 1
+    title: Uplift endings
+    severity: info
+    evidence: {grade: folk, sources: ["https://zh.wikipedia.org/wiki/Wikipedia:AI生成文的特徵"]}
+    guidance: “让我们拭目以待”“未来可期”是不提供信息的升华结尾；以最后一个事实收尾。
+    detectors:
+      - id: uplift-phrases
+        lane: rules
+        kind: phrase
+        phrases: [让我们拭目以待, 拭目以待, 未来可期]
+  - id: stacked-four-character-triads
+    version: 1
+    title: Stacked four-character phrases
+    severity: info
+    evidence:
+      grade: folk
+      note: The tell is the stacked run, not idioms as such; translated Chinese under-uses four-character idioms (Xiao and Dai 2014).
+      sources: ["https://zh.wikipedia.org/wiki/Wikipedia:AI生成文的特徵", "https://eprints.lancs.ac.uk/id/eprint/64330/1/02_Xiao_and_Dai.pdf"]
+    guidance: 三个以上四字词用顿号排比（稳定可靠、高效便捷、安全可控）读起来像宣传稿；挑一个有证据的说法写具体。
+    detectors:
+      - id: triad
+        lane: rules
+        kind: regex
+        pattern: '(?:[一-鿿]{4}、){2,}[一-鿿]{4}'

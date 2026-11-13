@@ -17,7 +17,7 @@ STE = Path(__file__).parent / "fixtures" / "asd-ste100"
 
 
 def _findings(pack: dict, text: str) -> list[dict]:
-    return check({"schemaVersion": 1, "content": {"format": "markus", "text": text}, "pack": pack})["findings"]
+    return check({"schemaVersion": 1, "content": {"format": "markus", "language": "en", "text": text}, "pack": pack})["findings"]
 
 
 def _policies(pack: dict, path: Path) -> set[str]:

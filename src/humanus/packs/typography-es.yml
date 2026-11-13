@@ -1,0 +1,31 @@
+# Mechanical typography for Spanish. The rules are code; their data (quotation
+# marks, decimal and thousands separators) is in the es language pack and its
+# regional overlays, so the same pack serves es and es-419 with their own forms.
+schemaVersion: 1
+packId: typography-es
+version: "1.0.0"
+title: Spanish typography
+language: es
+guidance: >-
+  Quote with the marks of the variant (« » in general Spanish, “ ” in Latin
+  American Spanish) and write numbers in the variant's form (1250,50 and
+  12.500 in general Spanish).
+policies:
+  - id: quotation-marks
+    version: 1
+    title: Spanish quotation marks
+    severity: warn
+    quotations: check
+    evidence: {grade: normative, sources: ["https://www.rae.es/dpd/comillas"]}
+    guidance: Replace straight quotation marks with the variant's quotation marks.
+    detectors:
+      - {id: quotation-marks, lane: rules, kind: builtin, check: typography, params: {rule: quotation-marks}}
+  - id: number-format
+    version: 1
+    title: Spanish number forms
+    severity: warn
+    quotations: check
+    evidence: {grade: normative, sources: ["CLDR number symbols (es)", "https://www.rae.es/dpd/números"]}
+    guidance: A number carried over in English form (1,250.50) is written with the variant's decimal and thousands marks.
+    detectors:
+      - {id: number-format, lane: rules, kind: builtin, check: typography, params: {rule: number-format}}

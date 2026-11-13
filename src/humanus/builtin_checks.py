@@ -12,6 +12,8 @@ from collections import defaultdict
 from typing import Callable, Iterable
 
 from .emoji import EMOJI_PATTERN
+from .language_checks import density, frame, typography
+from .languages import LanguageCannotRun
 from .segmentation import Segment, SegmentedDocument, mask_inline, normalize_text, plain_text
 from .standard_checks import STANDARD_CHECKS
 
@@ -78,20 +80,6 @@ STAT_COUNT_UNIT = re.compile('\\b\\d{3,}\\s+(users|ms|seconds|minutes|hours|days
 STICKER_NUMBER = re.compile('#\\d+\\b')
 REFRAIN_MAX_WORDS = 12
 TOKEN = re.compile(r"[A-Za-z0-9']+")
-
-# Function-word inventory aligned with Ure (1971) / Halliday lexical-density practice.
-FUNCTION_WORDS = frozenset(
-    """
-    a about above after again against all am an and any are as at be because been before being
-    below between both but by can could did do does doing down during each few for from further
-    had has have having he her here hers herself him himself his how i if in into is it its
-    itself just me more most my myself no nor not now of off on once only or other our ours
-    ourselves out over own same she should so some such than that the their theirs them
-    themselves then there these they this those through to too under until up very was we were
-    what when where which while who whom why will with would you your yours yourself yourselves
-    """.split()
-)
-
 
 # --- sentence predicates ----------------------------------------------------------
 
@@ -240,8 +228,8 @@ def _redundancy(document, paragraphs, sentences, params):
                 yield sentence.start, sentence.end, "Repeats a four-word phrase used elsewhere in the document.", None
 
 
-def lexical_density(tokens: list[str]) -> float:
-    return sum(1 for token in tokens if token not in FUNCTION_WORDS) / len(tokens) if tokens else 0.0
+def lexical_density(tokens: list[str], function_words: frozenset[str]) -> float:
+    return sum(1 for token in tokens if token not in function_words) / len(tokens) if tokens else 0.0
 
 
 def gzip_ratio(text: str) -> float:
@@ -250,16 +238,20 @@ def gzip_ratio(text: str) -> float:
 
 
 def _information_density(document, paragraphs, sentences, params):
+    language = document.language
+    baseline = language.baseline.get("informationDensity")
+    if not baseline:
+        raise LanguageCannotRun(f"the {language.tag} language pack has no native baseline for information density")
     prose = "\n\n".join(p.text for p in paragraphs)
     tokens = [token.lower() for token in TOKEN.findall(prose)]
     if len(tokens) < params.get("minWords", 400):
         return
-    density = lexical_density(tokens)
-    minimum = params.get("minLexicalDensity", 0.45)
+    density = lexical_density(tokens, frozenset(language.lexicon("functionWords")))
+    minimum = params.get("minLexicalDensity", baseline["minLexicalDensity"])
     if density < minimum:
         yield 0, len(document.text), f"Lexical density {density:.3f} is below {minimum:.3f}: many words, little content.", None
     ratio = gzip_ratio(prose)
-    maximum = params.get("maxGzipRatio", 0.35)
+    maximum = params.get("maxGzipRatio", baseline["maxGzipRatio"])
     if ratio <= maximum:
         yield 0, len(document.text), f"The text compresses unusually well (gzip ratio {ratio:.3f} <= {maximum:.3f}): it repeats itself.", None
 
@@ -314,4 +306,7 @@ BUILTIN_CHECKS: dict[str, BuiltinCheck] = {
     "contrast_cap": _contrast_cap,
     "no_emojis": _no_emojis,
     **STANDARD_CHECKS,
+    "frame": frame,
+    "density": density,
+    "typography": typography,
 }

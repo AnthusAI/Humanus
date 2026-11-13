@@ -112,6 +112,7 @@
       "additionalProperties": false,
       "required": [
         "format",
+        "language",
         "text"
       ],
       "properties": {
@@ -121,6 +122,11 @@
             "markdown",
             "text"
           ]
+        },
+        "language": {
+          "type": "string",
+          "minLength": 1,
+          "description": "BCP 47 tag of the content's language (en, es, zh-Hans, zh-CN ...). Humanus reads the text with that language's pack; a language with no pack is refused, never read as another language."
         },
         "text": {
           "type": "string"

@@ -6,11 +6,13 @@ import pytest
 
 from humanus.check import CheckRequestValidationError, Utf16Offsets, check
 from humanus.policy_pack import PolicyPackValidationError, load_policy_pack
+from humanus.languages import resolve_language
 from humanus.segmentation import segment_document, split_sentences
 
 PACK = {
     "schemaVersion": 1,
     "packId": "p",
+    "language": "en",
     "version": "1",
     "policies": [
         {
@@ -36,17 +38,17 @@ PACK = {
 
 
 def _sources(text: str, kind: str = "paragraph", fmt: str = "markus") -> list[tuple[str | None, str]]:
-    document = segment_document(text, fmt)
+    document = segment_document(text, fmt, language="en")
     return [(s.block, s.source) for s in document.segments if s.kind == kind]
 
 
 def _sentences(text: str) -> list[str]:
-    return [text[a:b] for a, b in split_sentences(text)]
+    return [text[a:b] for a, b in split_sentences(text, resolve_language("en"))]
 
 
 def test_crlf_offsets_select_source() -> None:
     text = "First line\r\ncontinues. Second.\r\n\r\n- item one\r\n- item two\r\n"
-    document = segment_document(text)
+    document = segment_document(text, language="en")
     assert [s.source for s in document.paragraphs] == ["First line\r\ncontinues. Second.", "item one", "item two"]
     for segment in document.segments:
         assert text[segment.start : segment.end] == segment.source
@@ -64,7 +66,7 @@ def test_nested_list_items_are_list_items() -> None:
 
 def test_indented_code_and_html_are_protected() -> None:
     text = "Prose.\n\n    code block. not prose.\n\n<div>raw</div>\n"
-    document = segment_document(text)
+    document = segment_document(text, language="en")
     assert [s.source for s in document.paragraphs] == ["Prose."]
     assert [r.kind for r in document.protected] == ["code", "html"]
 
@@ -88,14 +90,14 @@ def test_emphasis_wrapped_sentence_start() -> None:
 
 def test_text_format_has_no_protected_regions() -> None:
     text = "# not a heading\n\nSecond block. Two sentences.\n"
-    document = segment_document(text, "text")
+    document = segment_document(text, "text", language="en")
     assert [s.source for s in document.paragraphs] == ["# not a heading", "Second block. Two sentences."]
     assert document.protected == ()
 
 
 def test_unknown_format_is_rejected() -> None:
     with pytest.raises(ValueError):
-        segment_document("x", "html")
+        segment_document("x", "html", language="en")
 
 
 def test_utf16_offsets_count_astral_characters_twice() -> None:
@@ -128,7 +130,7 @@ def test_choice_question_requires_criteria() -> None:
 def test_check_reports_pack_errors_under_pack_location() -> None:
     pack = copy.deepcopy(PACK)
     pack["policies"].append(copy.deepcopy(pack["policies"][0]))
-    request = {"schemaVersion": 1, "content": {"format": "markus", "text": "Hi."}, "pack": pack}
+    request = {"schemaVersion": 1, "content": {"format": "markus", "language": "en", "text": "Hi."}, "pack": pack}
     with pytest.raises(CheckRequestValidationError) as error:
         check(request)
     assert error.value.location == "pack/policies/1/id"
@@ -137,7 +139,7 @@ def test_check_reports_pack_errors_under_pack_location() -> None:
 def test_disabled_lane_is_reported_disabled() -> None:
     request = {
         "schemaVersion": 1,
-        "content": {"format": "markus", "text": "Hi."},
+        "content": {"format": "markus", "language": "en", "text": "Hi."},
         "pack": PACK,
         "options": {"lanes": {"classifier": False}},
     }

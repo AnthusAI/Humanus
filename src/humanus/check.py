@@ -14,7 +14,8 @@ from typing import Any, Mapping
 from .contracts import ContractValidationError, validate_payload
 from .classifier_lane import ClassifierCache, DecisionModel, default_decision_model, process_cache, run_classifier_lane
 from .finding_ids import finding_id
-from .policy_pack import PolicyPack, PolicyPackValidationError, load_policy_pack
+from .languages import Language, UnsupportedLanguageError, resolve_language
+from .policy_pack import ANY_LANGUAGE, PolicyPack, PolicyPackValidationError, load_policy_pack
 from .rules_lane import Hit, run_rules_lane
 from .segmentation import ProtectedRegion, Segment, SegmentedDocument, normalize_text, plain_text, segment_document
 
@@ -48,15 +49,18 @@ def check(
         raise CheckRequestValidationError(REQUEST_SCHEMA, str(exc), location) from exc
 
     content = request["content"]
-    document = segment_document(content["text"], content["format"], tables=request.get("options", {}).get("tables", True))
+    language = reading_language(content["language"], pack, REQUEST_SCHEMA, CheckRequestValidationError)
+    document = segment_document(content["text"], content["format"], language=language, tables=request.get("options", {}).get("tables", True))
     lane_options = request.get("options", {}).get("lanes", {})
     lanes: dict[str, Any] = {}
     hits: list[Hit] = []
 
     if lane_options.get("rules", True):
-        rule_hits, detectors = run_rules_lane(document, pack)
+        rule_hits, detectors, not_run = run_rules_lane(document, pack)
         hits.extend(rule_hits)
         lanes["rules"] = {"status": "ran", "detectors": detectors}
+        if not_run:
+            lanes["rules"]["notRun"] = not_run
     else:
         lanes["rules"] = {"status": "disabled"}
 
@@ -84,6 +88,30 @@ def check(
     return _annotate(document, pack, hits, lanes, coverage, usage)
 
 
+def reading_language(
+    tag: str, pack: PolicyPack, schema_name: str, error_class: type[ContractValidationError]
+) -> Language:
+    """The language pack to read content tagged ``tag`` with, checked against the policy pack's language.
+
+    A language with no language pack is refused, and so is a policy pack
+    written for another language: English policies never run on Chinese text.
+    A pack for a base language (es) applies to its regional variants (es-419);
+    a pack for one variant never applies to another.
+    """
+    try:
+        language = resolve_language(tag)
+    except UnsupportedLanguageError as exc:
+        raise error_class(schema_name, str(exc), "content/language") from exc
+    if pack.language != ANY_LANGUAGE and resolve_language(pack.language).tag not in {language.tag, language.base}:
+        raise error_class(
+            schema_name,
+            f"policy pack '{pack.pack_id}' is written for '{pack.language}' but the content is '{tag}'; "
+            f"use a pack for {language.tag} or a language-neutral pack (language \"*\")",
+            "content/language",
+        )
+    return language
+
+
 def _annotate(
     document: SegmentedDocument,
     pack: PolicyPack,
@@ -101,6 +129,7 @@ def _annotate(
             "length": to_utf16(len(document.text)),
         },
         "pack": {"packId": pack.pack_id, "version": pack.version},
+        "language": {"tag": document.language.tag, "version": document.language.version},
         "segments": [_segment_payload(segment, to_utf16) for segment in document.segments],
         "protected": [_region_payload(region, to_utf16) for region in document.protected],
         "findings": _finding_payloads(document, hits, to_utf16),

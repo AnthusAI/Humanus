@@ -27,6 +27,8 @@ from functools import lru_cache
 
 from markdown_it import MarkdownIt
 
+from .languages import Language, resolve_language
+
 DOCUMENT_SEGMENT_ID = "doc"
 
 
@@ -58,6 +60,7 @@ class ProtectedRegion:
 class SegmentedDocument:
     text: str
     segments: tuple[Segment, ...]
+    language: Language  # the language the document was read in
     protected: tuple[ProtectedRegion, ...] = field(default=())
 
     @property
@@ -72,11 +75,15 @@ class SegmentedDocument:
         )
 
 
-def segment_document(text: str, format: str = "markus", *, tables: bool = True) -> SegmentedDocument:
-    """Segment ``text`` written in ``format`` (``markus``, ``markdown`` or ``text``).
+def segment_document(text: str, format: str = "markus", *, language: Language | str, tables: bool = True) -> SegmentedDocument:
+    """Segment ``text`` written in ``format`` (``markus``, ``markdown`` or ``text``) in ``language``.
 
-    ``tables`` (Markdown and Markus) segments table-cell prose; ``False`` protects tables.
+    ``language`` is a language pack or a BCP 47 tag; sentences end where that
+    language ends them. ``tables`` (Markdown and Markus) segments table-cell
+    prose; ``False`` protects tables.
     """
+    if isinstance(language, str):
+        language = resolve_language(language)
     containers: list[tuple[str, int, int]] = []
     if format == "text":
         protected: list[ProtectedRegion] = []
@@ -86,7 +93,7 @@ def segment_document(text: str, format: str = "markus", *, tables: bool = True) 
         prose, protected, containers = _markdown_blocks(text, tables)
     else:
         raise ValueError(f"Unsupported content format '{format}'")
-    return _build(text, prose, protected, containers)
+    return _build(text, prose, protected, containers, language)
 
 
 def normalize_text(text: str) -> str:
@@ -109,6 +116,7 @@ def _build(
     prose: list[tuple[int, int, str]],
     protected: list[ProtectedRegion],
     containers: list[tuple[str, int, int]],
+    language: Language,
 ) -> SegmentedDocument:
     segments = [Segment(DOCUMENT_SEGMENT_ID, "document", 0, len(text), text, plain_text(text))]
     ids = _IdAllocator()
@@ -121,7 +129,7 @@ def _build(
         container = min(enclosing, key=lambda c: c[2] - c[1])[0] if enclosing else None
         paragraph_id = ids.allocate("p", paragraph_text)
         segments.append(Segment(paragraph_id, "paragraph", start, end, source, paragraph_text, block, DOCUMENT_SEGMENT_ID, container))
-        for s_start, s_end in split_sentences(source):
+        for s_start, s_end in split_sentences(source, language):
             sentence_source = source[s_start:s_end]
             sentence_text = plain_text(sentence_source)
             if not sentence_text:
@@ -139,7 +147,7 @@ def _build(
                     container,
                 )
             )
-    return SegmentedDocument(text, tuple(segments), tuple(sorted(protected, key=lambda r: (r.start, r.end))))
+    return SegmentedDocument(text, tuple(segments), language, tuple(sorted(protected, key=lambda r: (r.start, r.end))))
 
 
 class _IdAllocator:
@@ -331,16 +339,6 @@ def _inline_source_span(content: str, lines: list[str], line_starts: list[int], 
 
 # --- sentences ------------------------------------------------------------------
 
-_TERMINATORS = ".!?…"
-_CLOSERS = "\"'”’)]*_"
-_OPENERS = "\"'“‘([*_`"
-_ABBREVIATIONS = frozenset(
-    {
-        "mr", "mrs", "ms", "dr", "prof", "sr", "jr", "st", "vs", "cf", "fig", "figs", "no", "nos",
-        "approx", "dept", "est", "mt", "gen", "gov", "sen", "rep", "rev", "lt", "col", "sgt",
-        "e.g", "i.e", "a.m", "p.m", "et al", "al", "ca", "vol", "pp", "op", "ed", "eds",
-    }
-)
 _INLINE_MASKS = (
     re.compile(r"(`+)(?:(?!\1).)+?\1", re.S),  # inline code
     re.compile(r"!\[[^\]]*\]\([^)]*\)"),  # images
@@ -352,23 +350,31 @@ _INLINE_MASKS = (
 )
 
 
-def split_sentences(source: str) -> list[tuple[int, int]]:
-    """Sentence spans within ``source`` (a single prose block)."""
+def split_sentences(source: str, language: Language) -> list[tuple[int, int]]:
+    """Sentence spans within ``source`` (a single prose block), by ``language``'s rules.
+
+    A *terminator* (Chinese "。") ends a sentence wherever it stands. A *spaced
+    terminator* (".", "?") ends one only before white space, and in a language
+    with capitals only when the next sentence starts with a capital or a digit
+    and the mark does not close an abbreviation. Closing quotes and brackets
+    after the mark stay with the sentence they close.
+    """
     masked = mask_inline(source)
+    marks = language.terminators + language.spaced_terminators
     spans: list[tuple[int, int]] = []
     start = 0
     index = 0
     length = len(masked)
     while index < length:
-        if masked[index] not in _TERMINATORS:
+        if masked[index] not in marks:
             index += 1
             continue
         end = index
-        while end < length and masked[end] in _TERMINATORS:
+        while end < length and masked[end] in marks:
             end += 1
-        while end < length and masked[end] in _CLOSERS:
+        while end < length and masked[end] in language.closers:
             end += 1
-        if _is_boundary(masked, index, end):
+        if _is_boundary(masked, index, end, language):
             spans.append(_trim_span(source, start, end))
             start = end
         index = end
@@ -385,31 +391,34 @@ def mask_inline(source: str) -> str:
     return masked
 
 
-def _is_boundary(masked: str, terminator_at: int, end: int) -> bool:
+def _is_boundary(masked: str, terminator_at: int, end: int, language: Language) -> bool:
     if end >= len(masked):
+        return True
+    if any(mark in language.terminators for mark in masked[terminator_at:end]):
         return True
     if not masked[end].isspace():
         return False
     following = masked[end:].lstrip()
     if not following:
         return True
-    starter = following.lstrip(_OPENERS)
-    if not starter or not (starter[0].isupper() or starter[0].isdigit()):
-        return False
-    if masked[terminator_at] == "." and _is_abbreviation(masked[:terminator_at]):
+    if language.capital_after:
+        starter = following.lstrip(language.openers)
+        if not starter or not (starter[0].isupper() or starter[0].isdigit()):
+            return False
+    if masked[terminator_at] == "." and _is_abbreviation(masked[:terminator_at], language):
         return False
     return True
 
 
-def _is_abbreviation(before: str) -> bool:
-    word = re.split(r"[\s(\[\"“'‘]", before)[-1]
+def _is_abbreviation(before: str, language: Language) -> bool:
+    word = re.split(f"[\\s{re.escape(language.abbreviation_openers)}]", before)[-1]
     if not word:
         return False
     if re.fullmatch(r"[A-Z]", word):  # an initial, as in "J. Smith"
         return True
     if re.fullmatch(r"(?:[A-Za-z]\.)+[A-Za-z]", word):  # U.S, e.g, i.e
         return True
-    return word.lower() in _ABBREVIATIONS
+    return word.lower() in language.abbreviations
 
 
 # --- plain text ------------------------------------------------------------------

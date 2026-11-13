@@ -1,0 +1,68 @@
+# Mechanical typography for Simplified Chinese. The rules are code; their data
+# (which marks, which quotes, which number units) is in the zh-Hans language
+# pack. Every finding carries its replacement, so a CMS can apply them all.
+schemaVersion: 1
+packId: typography-zh-hans
+version: "1.0.0"
+title: Chinese typography
+language: zh-Hans
+guidance: >-
+  Use full-width Chinese punctuation, mainland quotation marks “ ” (and ‘ ’
+  inside), the Chinese ellipsis ……, no space beside full-width marks, one
+  space between Chinese and Latin letters or digits (house choice), and
+  Chinese number forms (68%, 5000 万) instead of English number words.
+policies:
+  - id: punctuation-width
+    version: 1
+    title: Full-width punctuation
+    severity: warn
+    quotations: check
+    evidence: {grade: normative, sources: ["GB/T 15834-2011", "https://github.com/sparanoid/chinese-copywriting-guidelines"]}
+    guidance: Chinese text takes full-width commas, full stops, colons, semicolons, question and exclamation marks and parentheses.
+    detectors:
+      - {id: punctuation-width, lane: rules, kind: builtin, check: typography, params: {rule: punctuation-width}}
+  - id: quotation-marks
+    version: 1
+    title: Chinese quotation marks
+    severity: warn
+    quotations: check
+    evidence: {grade: normative, sources: ["GB/T 15834-2011"]}
+    guidance: Mainland Simplified Chinese quotes with “ ” outside and ‘ ’ inside, never straight quotes.
+    detectors:
+      - {id: quotation-marks, lane: rules, kind: builtin, check: typography, params: {rule: quotation-marks}}
+  - id: ellipsis
+    version: 1
+    title: Chinese ellipsis
+    severity: warn
+    quotations: check
+    evidence: {grade: normative, sources: ["GB/T 15834-2011"]}
+    guidance: The Chinese ellipsis is six dots, ……, not three periods.
+    detectors:
+      - {id: ellipsis, lane: rules, kind: builtin, check: typography, params: {rule: ellipsis}}
+  - id: space-beside-full-width
+    version: 1
+    title: No space beside full-width punctuation
+    severity: warn
+    quotations: check
+    evidence: {grade: normative, sources: ["https://github.com/sparanoid/chinese-copywriting-guidelines"]}
+    guidance: Full-width marks carry their own spacing; write no space before or after them.
+    detectors:
+      - {id: space-beside-full-width, lane: rules, kind: builtin, check: typography, params: {rule: space-beside-full-width}}
+  - id: latin-spacing
+    version: 1
+    title: Space between Chinese and Latin text
+    severity: info
+    quotations: check
+    evidence: {grade: normative, note: "A house choice, not a national standard; the common tech-press convention.", sources: ["https://github.com/sparanoid/chinese-copywriting-guidelines"]}
+    guidance: Put one space between Chinese characters and Latin letters or digits (Waymo 的, 2025 年).
+    detectors:
+      - {id: latin-spacing, lane: rules, kind: builtin, check: typography, params: {rule: latin-spacing}}
+  - id: number-words
+    version: 1
+    title: Chinese number forms
+    severity: warn
+    quotations: check
+    evidence: {grade: normative, note: "GB/T 15835 numeral usage not yet reviewed by a native editor."}
+    guidance: Write percentages as 68% and large numbers with 万 and 亿, not English number words left by a translation.
+    detectors:
+      - {id: number-words, lane: rules, kind: builtin, check: typography, params: {rule: number-words}}

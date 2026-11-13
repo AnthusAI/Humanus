@@ -1,0 +1,74 @@
+# English language pack. Everything here is what Humanus assumed about every
+# text before it had language packs; moving it into data changed no result.
+tag: en
+version: "1.0.0"
+name: English
+aliases: []
+
+# How a phrase detector matches: "word" means a phrase must stand on word
+# boundaries; "substring" (for scripts written without spaces) means anywhere.
+phraseMatching: word
+
+# The unit lengths are counted in, and the pattern that finds one unit.
+units:
+  name: word
+  pattern: '[A-Za-z0-9]+(?:[''’-][A-Za-z0-9]+)*'
+
+segmentation:
+  # Marks that end a sentence wherever they appear.
+  terminators: ''
+  # Marks that end a sentence only before white space (or the end of the block).
+  spacedTerminators: '.!?…'
+  closers: '"''”’)]*_'
+  openers: '"''“‘([*_`'
+  # After a spaced terminator, the next sentence must start with a capital or a digit.
+  capitalAfter: true
+  # Characters that may stand before an abbreviation, as in "(Dr." or "“Mr.".
+  abbreviationOpeners: '(["“''‘'
+  abbreviations: [
+    mr, mrs, ms, dr, prof, sr, jr, st, vs, cf, fig, figs, "no", nos,
+    approx, dept, est, mt, gen, gov, sen, rep, rev, lt, col, sgt,
+    e.g, i.e, a.m, p.m, et al, al, ca, vol, pp, op, ed, eds,
+  ]
+
+# Direct quotations, as (opening, closing) marks. A rules finding entirely
+# inside one is someone else's words.
+quotations:
+  - ['“', '”']
+  - ['"', '"']
+
+# Built-in checks this language can run. A policy using any other built-in is
+# reported in lanes.rules.notRun instead of running.
+builtins: [
+  empty_leadin, list_shaped_prose, vague_claim, unsupported_certainty, uniform_cadence, redundancy,
+  passive_voice, missing_attribution, information_density, overused_words, uncontracted_forms,
+  contrast_cap, no_emojis, sentence_length, average_sentence_length, paragraph_length,
+  reading_grade_level, double_negative, undefined_acronym, multiple_instructions, imperative_steps,
+  ing_form, missing_article, one_meaning, frame, density, typography,
+]
+
+# Word classes, by name. Function words follow Ure (1971) / Halliday
+# lexical-density practice.
+lexicons:
+  functionWords: [
+    a, about, above, after, again, against, all, am, an, and, any, are, as, at, be, because, been, before, being,
+    below, between, both, but, by, can, could, did, do, does, doing, down, during, each, few, for, from, further,
+    had, has, have, having, he, her, here, hers, herself, him, himself, his, how, i, if, in, into, is, it, its,
+    itself, just, me, more, most, my, myself, "no", nor, not, now, of, "off", "on", once, only, or, other, our, ours,
+    ourselves, out, over, own, same, she, should, so, some, such, than, that, the, their, theirs, them,
+    themselves, then, there, these, they, this, those, through, to, too, under, until, up, very, was, we, were,
+    what, when, where, which, while, who, whom, why, will, with, would, you, your, yours, yourself, yourselves,
+  ]
+
+# Part-of-speech tagger: none yet.
+tagger: null
+
+# What native writing looks like, for the statistical checks.
+baseline:
+  informationDensity:
+    minLexicalDensity: 0.45
+    maxGzipRatio: 0.35
+    source: Humanus defaults since 0.1 (lexical density after Ure 1971; gzip ratio from the avoid-ai-writing heuristics).
+
+# English has no typography rules yet.
+typography: {}

@@ -10,6 +10,7 @@ Use this skill when an agent (or a human with agent help) copy-edits prose again
 ## Principles
 
 - **Policies come from the publication.** A *policy pack* (`humanus schema policy-pack-v1`) holds the policies; Humanus stores none. Get the pack from the CMS (Papyrus: `papyrus editorial pack`) or convert a legacy style profile with `humanus pack import`.
+- **Say the language.** Every check states the content's language (`--language en`, `es-419`, `zh-Hans` ...) and the pack must be written for it (or be language-neutral, `"*"`). A language Humanus has no language pack for is refused; never retry it as English.
 - **Check is read-only.** `check` returns findings with spans; it never changes the draft.
 - **Two lanes find problems.** The *rules* lane (phrases, patterns, built-in checks) is deterministic. The *classifier* lane asks a decision model (TypeSafe Jev) each policy's question about every sentence, paragraph or the whole document; its findings carry a probability, and `status: review` means "unsure, a person should decide".
 - **Generative models only suggest.** `suggest` (rewrites) and `draft-questions` (policy authoring) use an LLM; nothing an LLM writes is applied automatically.
@@ -18,7 +19,7 @@ Use this skill when an agent (or a human with agent help) copy-edits prose again
 
 ## Workflow
 
-1. **check**: `humanus check --draft draft.md --pack pack.json` (or `--request check-request.json`). Read `findings` (policy, severity, message, excerpt, span, probability) and `lanes` (did the classifier run, partially, or not at all).
+1. **check**: `humanus check --draft draft.md --pack pack.json --language en` (or `--request check-request.json`). Read `findings` (policy, severity, message, excerpt, span, probability) and `lanes` (did the classifier run, partially, or not at all).
 2. **suggest**: for a finding or a selected span, `humanus suggest --request suggest-request.json` returns up to three options for the finding's whole sentence (or the exact selection). Pass an editor note in `options.instructions` ("shorter", "less formal").
 3. **choose**: show the options to the human; apply exactly the one they pick, replacing `span` in the draft (or a working copy).
 4. **check again**: findings ids are stable for unchanged sentences, so dismissals carry over.

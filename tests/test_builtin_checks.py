@@ -16,10 +16,11 @@ def _findings(text: str, check_name: str, params: dict | None = None) -> list[di
     pack = {
         "schemaVersion": 1,
         "packId": "p",
+        "language": "en",
         "version": "1",
         "policies": [{"id": "house", "version": 1, "title": "House", "guidance": "g", "severity": "info", "detectors": [detector]}],
     }
-    request = {"schemaVersion": 1, "content": {"format": "markus", "text": text}, "pack": pack}
+    request = {"schemaVersion": 1, "content": {"format": "markus", "language": "en", "text": text}, "pack": pack}
     return check(request, decision_model=None)["findings"]
 
 

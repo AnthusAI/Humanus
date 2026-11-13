@@ -12,10 +12,10 @@ import os
 import re
 from typing import Any, Mapping, Protocol
 
-from .check import Utf16Offsets
+from .check import Utf16Offsets, reading_language
 from .contracts import ContractValidationError, validate_payload
 from .openai_responses import call_structured_responses_api
-from .policy_pack import Policy, PolicyPack, PolicyPackValidationError, load_policy_pack
+from .policy_pack import ANY_LANGUAGE, Policy, PolicyPack, PolicyPackValidationError, load_policy_pack
 from .rules_lane import run_rules_lane
 from .segmentation import SegmentedDocument, normalize_text, segment_document
 
@@ -124,7 +124,8 @@ def suggest(request: Mapping[str, Any], *, generator: Generator | None | object 
     pack = _load_pack(request["pack"], "suggest-request-v1")
     content = request["content"]
     text = content["text"]
-    document = segment_document(text, content["format"])
+    language = reading_language(content["language"], pack, "suggest-request-v1", SuggestRequestValidationError)
+    document = segment_document(text, content["format"], language=language)
     offsets = Utf16Offsets(text)
     finding = request.get("finding")
     span16 = finding["span"] if finding else request["selection"]
@@ -309,11 +310,11 @@ def _still_breaks(
 ) -> bool:
     new_text = document.text[:start] + replacement + document.text[end:]
     detector = next(d for d in policy.detectors if d.id == detector_id)
-    single = PolicyPack(pack_id="recheck", version="1", policies=(Policy(
+    single = PolicyPack(pack_id="recheck", version="1", language=document.language.tag, policies=(Policy(
         id=policy.id, version=policy.version, title=policy.title, guidance=policy.guidance,
         severity=policy.severity, detectors=(detector,),
     ),))
-    hits, _ = run_rules_lane(segment_document(new_text), single)
+    hits, _, _ = run_rules_lane(segment_document(new_text, language=document.language), single)
     new_end = start + len(replacement)
     return any(hit.start < new_end and start < hit.end and (hit.end - hit.start) < len(new_text) for hit in hits)
 
@@ -411,6 +412,7 @@ def _detector_problem(detector: dict[str, Any], taken: list[str]) -> str | None:
     probe = {
         "schemaVersion": 1,
         "packId": "probe",
+        "language": ANY_LANGUAGE,  # only the detector's shape is being validated
         "version": "1",
         "policies": [{"id": "probe", "version": 1, "title": "probe", "guidance": "probe", "severity": "info", "detectors": [detector]}],
     }

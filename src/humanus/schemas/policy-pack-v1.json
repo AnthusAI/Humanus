@@ -5,14 +5,18 @@
   "description": "A versioned set of editorial policies supplied by the caller with each request. Humanus stores no policies of its own.",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schemaVersion", "packId", "version", "policies"],
+  "required": ["schemaVersion", "packId", "version", "language", "policies"],
   "properties": {
     "schemaVersion": { "const": 1 },
     "packId": { "$ref": "#/$defs/slug" },
     "version": { "type": "string", "minLength": 1, "description": "Caller-assigned pack version, echoed in every result." },
     "title": { "type": "string" },
     "guidance": { "type": "string", "description": "Publication-wide editorial aim, given to rewrite suggestions." },
-    "language": { "type": "string", "default": "en" },
+    "language": {
+      "type": "string",
+      "minLength": 1,
+      "description": "BCP 47 tag of the language the policies are written for, which a Humanus language pack must serve (en, es, zh-Hans ...), or \"*\" for language-neutral policies. A pack is used only on content in its language."
+    },
     "policies": { "type": "array", "items": { "$ref": "#/$defs/policy" } },
     "referenceSamples": { "type": "array", "items": { "$ref": "#/$defs/referenceSample" } }
   },
@@ -45,7 +49,19 @@
             "complies": { "type": "array", "items": { "type": "string", "minLength": 1 } }
           }
         },
-        "rewriteGuidance": { "type": "string" }
+        "rewriteGuidance": { "type": "string" },
+        "evidence": { "$ref": "#/$defs/evidence" }
+      }
+    },
+    "evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["grade"],
+      "description": "How well the policy's pattern is known to indicate the problem: measured (a corpus study), normative (a published standard) or folk (editors' observation, not measured).",
+      "properties": {
+        "grade": { "enum": ["measured", "normative", "folk"] },
+        "note": { "type": "string" },
+        "sources": { "type": "array", "items": { "type": "string", "minLength": 1 } }
       }
     },
     "detector": {
@@ -140,7 +156,10 @@
             "imperative_steps",
             "ing_form",
             "missing_article",
-            "one_meaning"
+            "one_meaning",
+            "frame",
+            "density",
+            "typography"
           ]
         },
         "params": { "type": "object" },
@@ -153,6 +172,71 @@
           "then": {
             "required": ["params"],
             "properties": { "params": { "type": "object", "required": ["max"], "properties": { "max": { "type": "integer", "minimum": 0 } } } }
+          }
+        },
+        {
+          "if": { "properties": { "check": { "const": "frame" } } },
+          "then": {
+            "required": ["params"],
+            "properties": {
+              "params": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["parts"],
+                "description": "Ordered parts, each found after the one before within one sentence (or paragraph), with at most maxGap units of the language between them.",
+                "properties": {
+                  "parts": { "type": "array", "items": { "type": "string", "minLength": 1 }, "minItems": 2 },
+                  "maxGap": { "type": "integer", "minimum": 0, "default": 30 },
+                  "within": { "enum": ["sentence", "paragraph"], "default": "sentence" }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": { "properties": { "check": { "const": "density" } } },
+          "then": {
+            "required": ["params"],
+            "properties": {
+              "params": {
+                "type": "object",
+                "additionalProperties": false,
+                "description": "How often a word class occurs in each paragraph, compared with the language pack's native baseline rate for that class. A paragraph is reported when so many occurrences would be improbable (Poisson, below 'significance') at the native rate.",
+                "properties": {
+                  "lexicon": { "type": "string", "minLength": 1, "description": "A word class in the language pack." },
+                  "tag": { "type": "string", "minLength": 1, "description": "A part-of-speech tag; needs a language pack with a tagger." },
+                  "significance": { "type": "number", "exclusiveMinimum": 0, "maximum": 0.5, "default": 0.01 }
+                },
+                "oneOf": [{ "required": ["lexicon"] }, { "required": ["tag"] }]
+              }
+            }
+          }
+        },
+        {
+          "if": { "properties": { "check": { "const": "typography" } } },
+          "then": {
+            "required": ["params"],
+            "properties": {
+              "params": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["rule"],
+                "description": "A mechanical typography rule whose data comes from the language pack; every finding carries its deterministic replacement.",
+                "properties": {
+                  "rule": {
+                    "enum": [
+                      "punctuation-width",
+                      "quotation-marks",
+                      "ellipsis",
+                      "space-beside-full-width",
+                      "latin-spacing",
+                      "number-words",
+                      "number-format"
+                    ]
+                  }
+                }
+              }
+            }
           }
         },
         {

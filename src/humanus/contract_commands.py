@@ -25,19 +25,20 @@ def contract_check(flags: list[str]) -> int:
     parser.add_argument("--draft", help="document to check (instead of --request)")
     parser.add_argument("--pack", help="policy pack JSON/YAML file (with --draft)")
     parser.add_argument("--format", default="markus", choices=["markus", "markdown", "text"])
+    parser.add_argument("--language", help="BCP 47 tag of the draft's language, e.g. en, es-419, zh-Hans (with --draft)")
     parser.add_argument("--output", help="write the result here instead of stdout")
     args = parser.parse_args(flags)
 
     if args.request:
         request = json.loads(Path(args.request).read_text(encoding="utf-8"))
-    elif args.draft and args.pack:
+    elif args.draft and args.pack and args.language:
         request = {
             "schemaVersion": 1,
-            "content": {"format": args.format, "text": Path(args.draft).read_text(encoding="utf-8")},
+            "content": {"format": args.format, "language": args.language, "text": Path(args.draft).read_text(encoding="utf-8")},
             "pack": _read_structured(Path(args.pack)),
         }
     else:
-        parser.error("give --request, or --draft with --pack")
+        parser.error("give --request, or --draft with --pack and --language")
     _emit(check(request), args.output)
     return 0
 

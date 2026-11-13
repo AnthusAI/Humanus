@@ -54,3 +54,14 @@ https://digital.gov/guides/plain-language. The guidelines are a work of the
 U.S. government and are in the public domain. The word substitutions are drawn
 from the guidelines' list of simple words and phrases; the policy guidance and
 questions were written for Humanus.
+
+## Chinese and Spanish starter packs
+
+`typography-zh-hans`, `typography-es`, `ai-writing-tells-zh-hans`,
+`translationese-zh-hans`, `ai-writing-tells-es` and `word-choice-es-419` were
+written for Humanus. Each policy names its sources in `evidence.sources`: GB/T
+15834-2011 and the chinese-copywriting-guidelines for Chinese typography, the
+Real Academia Española and CLDR for Spanish forms, the Chinese Wikipedia page
+on AI-generated text and corpus studies of translated Chinese (Xiao and Dai
+2014; Kong and Macken 2025) for the advisory patterns. No text was copied from
+those sources beyond the short words and phrases the rules look for.

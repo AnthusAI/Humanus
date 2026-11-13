@@ -57,7 +57,7 @@ rewrite suggestions and drafted questions (`gpt-6-luna` by default).
 ```bash
 humanus pack builtin ai-writing-tells > pack.json      # a starter pack to edit
 humanus pack import --profile style-profile.yml > pack.json   # or convert a legacy style profile
-humanus check --draft draft.md --pack pack.json        # findings, segments, lanes (check-result-v1)
+humanus check --draft draft.md --pack pack.json --language en   # findings, segments, lanes (check-result-v1)
 humanus suggest --request suggest-request.json         # rewrite options for a finding or selection
 humanus draft-questions --request draft-request.json   # classifier detectors for a prose policy
 humanus calibrate --labels labels.json                 # calibration from editors' decisions
@@ -67,7 +67,7 @@ humanus schema policy-pack-v1                          # print any contract sche
 ```python
 from humanus import check, suggest
 
-result = check({"schemaVersion": 1, "content": {"format": "markus", "text": text}, "pack": pack})
+result = check({"schemaVersion": 1, "content": {"format": "markus", "language": "en", "text": text}, "pack": pack})
 for finding in result["findings"]:
     print(finding["severity"], finding["policyId"], finding["excerpt"], finding.get("probability"))
 ```
@@ -80,7 +80,7 @@ callers in any language validate against the same files.
 | Schema | Purpose |
 | --- | --- |
 | `policy-pack-v1` | Policies: prose guidance, severity (`info`/`warn`/`error`), examples, rewrite guidance and detectors — `rules` (`regex`, `phrase`, `builtin`) or `classifier` (a zero-shot question at sentence, paragraph or document scope, with threshold, review band and optional calibration) |
-| `check-request-v1` / `check-result-v1` | Content (`markus`, `markdown` or `text`) plus a pack in; segments, protected regions, findings, coverage and lane status out |
+| `check-request-v1` / `check-result-v1` | Content (`markus`, `markdown` or `text`, with its `language`) plus a pack in; the language pack used, segments, protected regions, findings, coverage and lane status out |
 | `finding-v1` | One located problem, with an id that is stable across rescans |
 | `suggest-request-v1` / `suggest-result-v1` | Rewrite options for a finding (rewritten as its sentence) or an editor's selection |
 | `draft-questions-request-v1` / `draft-questions-result-v1` | Classifier detectors drafted from a prose policy |
@@ -99,6 +99,39 @@ tables a protected region again. Whole-document measures (average sentence
 length, reading grade, information density, paragraph length, uniform cadence,
 overused words) leave table cells out. Paragraph, sentence and
 finding ids derive from text, so they survive edits elsewhere.
+
+## Languages
+
+Every check request states the language of its content (`content.language`, a
+BCP 47 tag) and every policy pack states the language its policies are written
+for (`language`, or `"*"` for language-neutral policies). Humanus reads the text
+with that language's **language pack** (`src/humanus/languages/*.yml`): where
+sentences end (Chinese `。！？` with no space or capital after them; Spanish
+`¿…?` and `¡…!`), what a unit of length is (words, or characters in Chinese),
+how a phrase matches (on word boundaries, or anywhere in a script written
+without spaces), which quotation marks enclose someone else's words, which
+built-in checks the language can run, its word classes, its native baseline
+rates and its typography data. Shipped: `en`, `es`, `es-419` (an overlay on
+`es`: only what differs, such as quotation marks and number forms) and
+`zh-Hans` (also served for `zh-CN`, `zh-SG`, `zh-MY`).
+
+- A language with no pack is **refused** with an error that names it; text is
+  never checked as if it were English. Tags match exactly (or a documented
+  alias): `es-AR` is refused, not read as `es`.
+- A pack written for another language is refused: English policies never run
+  on Chinese text. A pack for a base language (`es`) applies to its variants
+  (`es-419`); a pack for one variant never applies to another.
+- A rules detector the language cannot run (an English built-in on Chinese, a
+  word class needing a tagger the pack lacks) is listed in
+  `lanes.rules.notRun` with the reason.
+
+Generic built-ins take everything from the language pack: `frame` (ordered
+parts with a bounded gap in one sentence, such as `不是 … 而是`), `density` (a
+word class per paragraph against the pack's native rate, reported when the
+count would be improbable at that rate) and `typography` (a named mechanical
+rule: `punctuation-width`, `quotation-marks`, `ellipsis`,
+`space-beside-full-width`, `latin-spacing`, `number-words`, `number-format`).
+Length checks count in the language's unit.
 
 ## Lanes
 
@@ -128,6 +161,12 @@ finding ids derive from text, so they survive edits elsewhere.
     with simple-word and excess-word replacements, "must" for "shall", hidden
     verbs, length and readability limits, and Jev questions for addressing the
     reader as "you", putting the main point first and avoiding jargon.
+  - `typography-zh-hans`, `typography-es`: mechanical punctuation, quotation
+    mark and number-form rules, each finding with its deterministic replacement.
+  - `ai-writing-tells-zh-hans`, `translationese-zh-hans`, `ai-writing-tells-es`:
+    small advisory starter sets (all `info`), each policy marked with its
+    `evidence` grade (`measured`, `normative` or `folk`).
+  - `word-choice-es-419`: Latin American word choice (computadora, falla).
 
   See `humanus/packs/NOTICE.md` for sources and licenses.
 - **Classifier** (TypeSafe Jev, zero-shot): one request per segment carries

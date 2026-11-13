@@ -15,8 +15,10 @@ from typing import Any, Mapping, Union
 import yaml
 
 from .contracts import ContractValidationError, validate_payload
+from .languages import UnsupportedLanguageError, resolve_language
 
 SCHEMA_NAME = "policy-pack-v1"
+ANY_LANGUAGE = "*"  # a pack of language-neutral policies, usable on content in any language
 
 
 class PolicyPackValidationError(ContractValidationError):
@@ -102,6 +104,7 @@ class Policy:
     complying_examples: tuple[str, ...] = ()
     rewrite_guidance: str | None = None
     quotations: str | None = None  # default for the policy's rules detectors: exempt | check
+    evidence: Mapping[str, Any] | None = None  # {grade: measured | normative | folk, note, sources}
 
 
 @dataclass(frozen=True)
@@ -116,10 +119,10 @@ class ReferenceSample:
 class PolicyPack:
     pack_id: str
     version: str
+    language: str  # a BCP 47 tag served by a language pack, or "*" for language-neutral policies
     policies: tuple[Policy, ...]
     title: str | None = None
     guidance: str | None = None
-    language: str = "en"
     reference_samples: tuple[ReferenceSample, ...] = ()
 
     def policy(self, policy_id: str) -> Policy:
@@ -164,7 +167,7 @@ def _parse_pack(raw: Mapping[str, Any]) -> PolicyPack:
         version=raw["version"],
         title=raw.get("title"),
         guidance=raw.get("guidance"),
-        language=raw.get("language", "en"),
+        language=raw["language"],
         policies=tuple(_parse_policy(item) for item in raw["policies"]),
         reference_samples=tuple(
             ReferenceSample(id=s["id"], text=s["text"], title=s.get("title"), url=s.get("url"))
@@ -188,6 +191,7 @@ def _parse_policy(raw: Mapping[str, Any]) -> Policy:
         complying_examples=tuple(examples.get("complies", ())),
         rewrite_guidance=raw.get("rewriteGuidance"),
         quotations=raw.get("quotations"),
+        evidence=raw.get("evidence"),
     )
 
 
@@ -233,6 +237,11 @@ def _parse_detector(raw: Mapping[str, Any]) -> Detector:
 
 
 def _check_semantics(pack: PolicyPack) -> None:
+    if pack.language != ANY_LANGUAGE:
+        try:
+            resolve_language(pack.language)
+        except UnsupportedLanguageError as exc:
+            _fail(str(exc), "language")
     seen_policies: set[str] = set()
     for p_index, policy in enumerate(pack.policies):
         if policy.id in seen_policies:

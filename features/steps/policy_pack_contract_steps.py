@@ -28,6 +28,7 @@ def _base_pack() -> dict:
     return {
         "schemaVersion": 1,
         "packId": "example-publication",
+        "language": "en",
         "version": "2026-10-19.1",
         "title": "Example publication policies",
         "policies": [
@@ -302,7 +303,7 @@ def step_markus_document(context):
 
 @when("the document is segmented")
 def step_segment(context):
-    context.segmented = segment_document(context.markus_text)
+    context.segmented = segment_document(context.markus_text, language="en")
 
 
 def _paragraphs(context):
@@ -378,7 +379,7 @@ def step_distinct_repeats(context, a, b):
 def step_rewrite_second(context):
     context.before = context.segmented
     edited = context.markus_text.replace("Edited paragraph.", "A completely different second paragraph. With two sentences.")
-    context.segmented = segment_document(edited)
+    context.segmented = segment_document(edited, language="en")
 
 
 @then("the first paragraph and its sentences keep their ids")
@@ -396,7 +397,7 @@ EMOJI_DOCUMENT = "# Launch 🚀\n\nWe shipped it. The 🎉 team celebrated.\n\nN
 
 
 def _check_request(text: str) -> dict:
-    return {"schemaVersion": 1, "content": {"format": "markus", "text": text}, "pack": _base_pack()}
+    return {"schemaVersion": 1, "content": {"format": "markus", "language": "en", "text": text}, "pack": _base_pack()}
 
 
 @given("a check request for a Markus document with an emoji before its prose")
@@ -436,7 +437,7 @@ def step_offset_unit(context, unit):
 def step_utf16_spans(context):
     text = context.check_request["content"]["text"]
     utf16 = text.encode("utf-16-le")
-    segmented = {s.id: s for s in segment_document(text).segments}
+    segmented = {s.id: s for s in segment_document(text, language="en").segments}
     for segment in context.check_result["segments"]:
         selected = utf16[segment["start"] * 2 : segment["end"] * 2].decode("utf-16-le")
         assert selected == segmented[segment["id"]].source, (segment, selected)
@@ -531,7 +532,7 @@ def step_ids_differ(context):
 def step_request_flagging(context, phrase):
     pack = _base_pack()
     pack["policies"][0]["detectors"][0]["phrases"] = [phrase]
-    context.check_request = {"schemaVersion": 1, "content": {"format": "markus", "text": context.text}, "pack": pack}
+    context.check_request = {"schemaVersion": 1, "content": {"format": "markus", "language": "en", "text": context.text}, "pack": pack}
 
 
 @then('the paragraph and sentence segments carry the plain text "{text}"')

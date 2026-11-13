@@ -1,0 +1,6048 @@
+{
+ "ai-writing-tells|features/fixtures/multilingual/en.md|markus": {
+  "findings": [
+   {
+    "detectorId": "todays-world",
+    "excerpt": "In today's rapidly",
+    "id": "f-33929e603b7a3ddd",
+    "message": "Formulaic openers",
+    "policyId": "formulaic-openers",
+    "severity": "warn",
+    "span": {
+     "end": 65,
+     "start": 47
+    }
+   },
+   {
+    "detectorId": "metaphor-landscape",
+    "excerpt": "digital landscape",
+    "id": "f-a91601ce500ef622",
+    "message": "AI-frequency vocabulary",
+    "policyId": "ai-vocabulary",
+    "severity": "warn",
+    "span": {
+     "end": 92,
+     "start": 75
+    }
+   },
+   {
+    "detectorId": "important-to-note",
+    "excerpt": "it is important to note that",
+    "id": "f-7033cac6622ffb2c",
+    "message": "Filler phrases",
+    "policyId": "filler-phrases",
+    "severity": "info",
+    "span": {
+     "end": 122,
+     "start": 94
+    }
+   },
+   {
+    "detectorId": "minimizer-reveal",
+    "excerpt": "is not just a technical problem, it is",
+    "id": "f-fbd846e476cc0eab",
+    "message": "\"Not just X, it's Y\" framing",
+    "policyId": "negative-parallelism",
+    "severity": "warn",
+    "span": {
+     "end": 169,
+     "start": 131
+    }
+   },
+   {
+    "detectorId": "intensifier-words",
+    "excerpt": "truly",
+    "id": "f-204e3b21fc77007d",
+    "message": "Hollow intensifiers",
+    "policyId": "hollow-intensifiers",
+    "severity": "info",
+    "span": {
+     "end": 279,
+     "start": 274
+    }
+   },
+   {
+    "detectorId": "transition-words",
+    "excerpt": "Moreover",
+    "id": "f-7000b4a11aac026b",
+    "message": "Stock transitions",
+    "policyId": "stock-transitions",
+    "severity": "info",
+    "span": {
+     "end": 559,
+     "start": 551
+    }
+   },
+   {
+    "detectorId": "serves-as",
+    "excerpt": "serves as",
+    "id": "f-9a817901ed317d90",
+    "message": "Plain-word swaps",
+    "policyId": "plain-words",
+    "replacement": "is",
+    "severity": "info",
+    "span": {
+     "end": 580,
+     "start": 571
+    }
+   },
+   {
+    "detectorId": "testament-to",
+    "excerpt": "testament to",
+    "id": "f-ee2b7069980c44c9",
+    "message": "AI-frequency vocabulary",
+    "policyId": "ai-vocabulary",
+    "severity": "warn",
+    "span": {
+     "end": 595,
+     "start": 583
+    }
+   },
+   {
+    "detectorId": "marker-words",
+    "excerpt": "pivotal",
+    "id": "f-fa7775bb1e7e0285",
+    "message": "AI-frequency vocabulary",
+    "policyId": "ai-vocabulary",
+    "severity": "warn",
+    "span": {
+     "end": 607,
+     "start": 600
+    }
+   },
+   {
+    "detectorId": "robust",
+    "excerpt": "robust",
+    "id": "f-cc683852b93936de",
+    "message": "AI-frequency vocabulary",
+    "policyId": "ai-vocabulary",
+    "severity": "warn",
+    "span": {
+     "end": 622,
+     "start": 616
+    }
+   },
+   {
+    "detectorId": "delves-into",
+    "excerpt": "delves into",
+    "id": "f-a389c408ca95f533",
+    "message": "AI-frequency vocabulary",
+    "policyId": "ai-vocabulary",
+    "replacement": "explores",
+    "severity": "warn",
+    "span": {
+     "end": 646,
+     "start": 635
+    }
+   },
+   {
+    "detectorId": "marker-words",
+    "excerpt": "intricate",
+    "id": "f-be668fcd11f50a2b",
+    "message": "AI-frequency vocabulary",
+    "policyId": "ai-vocabulary",
+    "severity": "warn",
+    "span": {
+     "end": 660,
+     "start": 651
+    }
+   },
+   {
+    "detectorId": "marker-words",
+    "excerpt": "tapestry",
+    "id": "f-39f4a47521765068",
+    "message": "AI-frequency vocabulary",
+    "policyId": "ai-vocabulary",
+    "severity": "warn",
+    "span": {
+     "end": 669,
+     "start": 661
+    }
+   },
+   {
+    "detectorId": "experts-say",
+    "excerpt": "Experts say",
+    "id": "f-eed5c4e77b21e62d",
+    "message": "Vague attributions",
+    "policyId": "vague-attributions",
+    "severity": "warn",
+    "span": {
+     "end": 763,
+     "start": 752
+    }
+   },
+   {
+    "detectorId": "transition-words",
+    "excerpt": "At the end of the day",
+    "id": "f-16d2c646a9fc49d2",
+    "message": "Stock transitions",
+    "policyId": "stock-transitions",
+    "severity": "info",
+    "span": {
+     "end": 822,
+     "start": 801
+    }
+   },
+   {
+    "detectorId": "stock-closers",
+    "excerpt": "The future looks bright",
+    "id": "f-bf96b82fa450d8c2",
+    "message": "Generic conclusions",
+    "policyId": "generic-conclusions",
+    "severity": "warn",
+    "span": {
+     "end": 902,
+     "start": 879
+    }
+   },
+   {
+    "detectorId": "stock-closers",
+    "excerpt": "only time will tell",
+    "id": "f-fb56063d5ea85ee9",
+    "message": "Generic conclusions",
+    "policyId": "generic-conclusions",
+    "severity": "warn",
+    "span": {
+     "end": 927,
+     "start": 908
+    }
+   }
+  ],
+  "segments": [
+   [
+    "doc",
+    0,
+    945
+   ],
+   [
+    "p-6d50a962ea9d",
+    2,
+    45
+   ],
+   [
+    "s-6d50a962ea9d",
+    2,
+    45
+   ],
+   [
+    "p-7171f693272f",
+    47,
+    295
+   ],
+   [
+    "s-0168e05bac80",
+    47,
+    182
+   ],
+   [
+    "s-ae86b1e634d8",
+    183,
+    295
+   ],
+   [
+    "p-9a883d3beb35",
+    297,
+    549
+   ],
+   [
+    "s-dfcadfa6fcf0",
+    297,
+    415
+   ],
+   [
+    "s-ea164f678044",
+    416,
+    476
+   ],
+   [
+    "s-42d5f89b1a03",
+    477,
+    549
+   ],
+   [
+    "p-acd0babdcdff",
+    551,
+    799
+   ],
+   [
+    "s-e939b72bf517",
+    551,
+    631
+   ],
+   [
+    "s-c66ab891ab4c",
+    632,
+    751
+   ],
+   [
+    "s-74a2c525e4aa",
+    752,
+    799
+   ],
+   [
+    "p-acca39d5c364",
+    801,
+    944
+   ],
+   [
+    "s-9a65c9bb5cc5",
+    801,
+    878
+   ],
+   [
+    "s-fdd287ceccd5",
+    879,
+    944
+   ]
+  ]
+ },
+ "ai-writing-tells|features/fixtures/multilingual/en.md|text": {
+  "findings": [
+   {
+    "detectorId": "todays-world",
+    "excerpt": "In today's rapidly",
+    "id": "f-33929e603b7a3ddd",
+    "message": "Formulaic openers",
+    "policyId": "formulaic-openers",
+    "severity": "warn",
+    "span": {
+     "end": 65,
+     "start": 47
+    }
+   },
+   {
+    "detectorId": "metaphor-landscape",
+    "excerpt": "digital landscape",
+    "id": "f-a91601ce500ef622",
+    "message": "AI-frequency vocabulary",
+    "policyId": "ai-vocabulary",
+    "severity": "warn",
+    "span": {
+     "end": 92,
+     "start": 75
+    }
+   },
+   {
+    "detectorId": "important-to-note",
+    "excerpt": "it is important to note that",
+    "id": "f-7033cac6622ffb2c",
+    "message": "Filler phrases",
+    "policyId": "filler-phrases",
+    "severity": "info",
+    "span": {
+     "end": 122,
+     "start": 94
+    }
+   },
+   {
+    "detectorId": "minimizer-reveal",
+    "excerpt": "is not just a technical problem, it is",
+    "id": "f-fbd846e476cc0eab",
+    "message": "\"Not just X, it's Y\" framing",
+    "policyId": "negative-parallelism",
+    "severity": "warn",
+    "span": {
+     "end": 169,
+     "start": 131
+    }
+   },
+   {
+    "detectorId": "intensifier-words",
+    "excerpt": "truly",
+    "id": "f-204e3b21fc77007d",
+    "message": "Hollow intensifiers",
+    "policyId": "hollow-intensifiers",
+    "severity": "info",
+    "span": {
+     "end": 279,
+     "start": 274
+    }
+   },
+   {
+    "detectorId": "transition-words",
+    "excerpt": "Moreover",
+    "id": "f-7000b4a11aac026b",
+    "message": "Stock transitions",
+    "policyId": "stock-transitions",
+    "severity": "info",
+    "span": {
+     "end": 559,
+     "start": 551
+    }
+   },
+   {
+    "detectorId": "serves-as",
+    "excerpt": "serves as",
+    "id": "f-9a817901ed317d90",
+    "message": "Plain-word swaps",
+    "policyId": "plain-words",
+    "replacement": "is",
+    "severity": "info",
+    "span": {
+     "end": 580,
+     "start": 571
+    }
+   },
+   {
+    "detectorId": "testament-to",
+    "excerpt": "testament to",
+    "id": "f-ee2b7069980c44c9",
+    "message": "AI-frequency vocabulary",
+    "policyId": "ai-vocabulary",
+    "severity": "warn",
+    "span": {
+     "end": 595,
+     "start": 583
+    }
+   },
+   {
+    "detectorId": "marker-words",
+    "excerpt": "pivotal",
+    "id": "f-fa7775bb1e7e0285",
+    "message": "AI-frequency vocabulary",
+    "policyId": "ai-vocabulary",
+    "severity": "warn",
+    "span": {
+     "end": 607,
+     "start": 600
+    }
+   },
+   {
+    "detectorId": "robust",
+    "excerpt": "robust",
+    "id": "f-cc683852b93936de",
+    "message": "AI-frequency vocabulary",
+    "policyId": "ai-vocabulary",
+    "severity": "warn",
+    "span": {
+     "end": 622,
+     "start": 616
+    }
+   },
+   {
+    "detectorId": "delves-into",
+    "excerpt": "delves into",
+    "id": "f-a389c408ca95f533",
+    "message": "AI-frequency vocabulary",
+    "policyId": "ai-vocabulary",
+    "replacement": "explores",
+    "severity": "warn",
+    "span": {
+     "end": 646,
+     "start": 635
+    }
+   },
+   {
+    "detectorId": "marker-words",
+    "excerpt": "intricate",
+    "id": "f-be668fcd11f50a2b",
+    "message": "AI-frequency vocabulary",
+    "policyId": "ai-vocabulary",
+    "severity": "warn",
+    "span": {
+     "end": 660,
+     "start": 651
+    }
+   },
+   {
+    "detectorId": "marker-words",
+    "excerpt": "tapestry",
+    "id": "f-39f4a47521765068",
+    "message": "AI-frequency vocabulary",
+    "policyId": "ai-vocabulary",
+    "severity": "warn",
+    "span": {
+     "end": 669,
+     "start": 661
+    }
+   },
+   {
+    "detectorId": "experts-say",
+    "excerpt": "Experts say",
+    "id": "f-eed5c4e77b21e62d",
+    "message": "Vague attributions",
+    "policyId": "vague-attributions",
+    "severity": "warn",
+    "span": {
+     "end": 763,
+     "start": 752
+    }
+   },
+   {
+    "detectorId": "transition-words",
+    "excerpt": "At the end of the day",
+    "id": "f-16d2c646a9fc49d2",
+    "message": "Stock transitions",
+    "policyId": "stock-transitions",
+    "severity": "info",
+    "span": {
+     "end": 822,
+     "start": 801
+    }
+   },
+   {
+    "detectorId": "stock-closers",
+    "excerpt": "The future looks bright",
+    "id": "f-bf96b82fa450d8c2",
+    "message": "Generic conclusions",
+    "policyId": "generic-conclusions",
+    "severity": "warn",
+    "span": {
+     "end": 902,
+     "start": 879
+    }
+   },
+   {
+    "detectorId": "stock-closers",
+    "excerpt": "only time will tell",
+    "id": "f-fb56063d5ea85ee9",
+    "message": "Generic conclusions",
+    "policyId": "generic-conclusions",
+    "severity": "warn",
+    "span": {
+     "end": 927,
+     "start": 908
+    }
+   }
+  ],
+  "segments": [
+   [
+    "doc",
+    0,
+    945
+   ],
+   [
+    "p-e8bd5589c8c5",
+    0,
+    45
+   ],
+   [
+    "s-e8bd5589c8c5",
+    0,
+    45
+   ],
+   [
+    "p-7171f693272f",
+    47,
+    295
+   ],
+   [
+    "s-0168e05bac80",
+    47,
+    182
+   ],
+   [
+    "s-ae86b1e634d8",
+    183,
+    295
+   ],
+   [
+    "p-9a883d3beb35",
+    297,
+    549
+   ],
+   [
+    "s-dfcadfa6fcf0",
+    297,
+    415
+   ],
+   [
+    "s-ea164f678044",
+    416,
+    476
+   ],
+   [
+    "s-42d5f89b1a03",
+    477,
+    549
+   ],
+   [
+    "p-acd0babdcdff",
+    551,
+    799
+   ],
+   [
+    "s-e939b72bf517",
+    551,
+    631
+   ],
+   [
+    "s-c66ab891ab4c",
+    632,
+    751
+   ],
+   [
+    "s-74a2c525e4aa",
+    752,
+    799
+   ],
+   [
+    "p-acca39d5c364",
+    801,
+    944
+   ],
+   [
+    "s-9a65c9bb5cc5",
+    801,
+    878
+   ],
+   [
+    "s-fdd287ceccd5",
+    879,
+    944
+   ]
+  ]
+ },
+ "ai-writing-tells|features/fixtures/policy-pack/reference-samples/sample-five.md|markus": {
+  "findings": [],
+  "segments": [
+   [
+    "doc",
+    0,
+    73
+   ],
+   [
+    "p-dd2420395064",
+    0,
+    72
+   ],
+   [
+    "s-473bfd491ac9",
+    0,
+    30
+   ],
+   [
+    "s-52182645fff7",
+    31,
+    72
+   ]
+  ]
+ },
+ "ai-writing-tells|features/fixtures/policy-pack/reference-samples/sample-five.md|text": {
+  "findings": [],
+  "segments": [
+   [
+    "doc",
+    0,
+    73
+   ],
+   [
+    "p-dd2420395064",
+    0,
+    72
+   ],
+   [
+    "s-473bfd491ac9",
+    0,
+    30
+   ],
+   [
+    "s-52182645fff7",
+    31,
+    72
+   ]
+  ]
+ },
+ "ai-writing-tells|features/fixtures/policy-pack/reference-samples/sample-four.md|markus": {
+  "findings": [],
+  "segments": [
+   [
+    "doc",
+    0,
+    87
+   ],
+   [
+    "p-8b6493e47a4c",
+    0,
+    86
+   ],
+   [
+    "s-604e77f95bde",
+    0,
+    33
+   ],
+   [
+    "s-44df68e569ef",
+    34,
+    86
+   ]
+  ]
+ },
+ "ai-writing-tells|features/fixtures/policy-pack/reference-samples/sample-four.md|text": {
+  "findings": [],
+  "segments": [
+   [
+    "doc",
+    0,
+    87
+   ],
+   [
+    "p-8b6493e47a4c",
+    0,
+    86
+   ],
+   [
+    "s-604e77f95bde",
+    0,
+    33
+   ],
+   [
+    "s-44df68e569ef",
+    34,
+    86
+   ]
+  ]
+ },
+ "ai-writing-tells|features/fixtures/policy-pack/reference-samples/sample-one.md|markus": {
+  "findings": [],
+  "segments": [
+   [
+    "doc",
+    0,
+    89
+   ],
+   [
+    "p-585682226e8d",
+    0,
+    88
+   ],
+   [
+    "s-499fc0c2ce50",
+    0,
+    43
+   ],
+   [
+    "s-8b6840f3a083",
+    44,
+    88
+   ]
+  ]
+ },
+ "ai-writing-tells|features/fixtures/policy-pack/reference-samples/sample-one.md|text": {
+  "findings": [],
+  "segments": [
+   [
+    "doc",
+    0,
+    89
+   ],
+   [
+    "p-585682226e8d",
+    0,
+    88
+   ],
+   [
+    "s-499fc0c2ce50",
+    0,
+    43
+   ],
+   [
+    "s-8b6840f3a083",
+    44,
+    88
+   ]
+  ]
+ },
+ "ai-writing-tells|features/fixtures/policy-pack/reference-samples/sample-three.md|markus": {
+  "findings": [],
+  "segments": [
+   [
+    "doc",
+    0,
+    79
+   ],
+   [
+    "p-f177a8ed0025",
+    0,
+    78
+   ],
+   [
+    "s-73e4f6a36ed9",
+    0,
+    37
+   ],
+   [
+    "s-58d1731d66a9",
+    38,
+    78
+   ]
+  ]
+ },
+ "ai-writing-tells|features/fixtures/policy-pack/reference-samples/sample-three.md|text": {
+  "findings": [],
+  "segments": [
+   [
+    "doc",
+    0,
+    79
+   ],
+   [
+    "p-f177a8ed0025",
+    0,
+    78
+   ],
+   [
+    "s-73e4f6a36ed9",
+    0,
+    37
+   ],
+   [
+    "s-58d1731d66a9",
+    38,
+    78
+   ]
+  ]
+ },
+ "ai-writing-tells|features/fixtures/policy-pack/reference-samples/sample-two.md|markus": {
+  "findings": [],
+  "segments": [
+   [
+    "doc",
+    0,
+    87
+   ],
+   [
+    "p-4055f2cccf88",
+    0,
+    86
+   ],
+   [
+    "s-ed9251272b37",
+    0,
+    43
+   ],
+   [
+    "s-6fba61820dad",
+    44,
+    86
+   ]
+  ]
+ },
+ "ai-writing-tells|features/fixtures/policy-pack/reference-samples/sample-two.md|text": {
+  "findings": [],
+  "segments": [
+   [
+    "doc",
+    0,
+    87
+   ],
+   [
+    "p-4055f2cccf88",
+    0,
+    86
+   ],
+   [
+    "s-ed9251272b37",
+    0,
+    43
+   ],
+   [
+    "s-6fba61820dad",
+    44,
+    86
+   ]
+  ]
+ },
+ "ai-writing-tells|tests/fixtures/asd-ste100/article-clean-draft.md|markus": {
+  "findings": [],
+  "segments": [
+   [
+    "doc",
+    0,
+    30
+   ],
+   [
+    "p-8731034ab4bd",
+    0,
+    30
+   ],
+   [
+    "s-8731034ab4bd",
+    0,
+    30
+   ]
+  ]
+ },
+ "ai-writing-tells|tests/fixtures/asd-ste100/article-clean-draft.md|text": {
+  "findings": [],
+  "segments": [
+   [
+    "doc",
+    0,
+    30
+   ],
+   [
+    "p-8731034ab4bd",
+    0,
+    30
+   ],
+   [
+    "s-8731034ab4bd",
+    0,
+    30
+   ]
+  ]
+ },
+ "ai-writing-tells|tests/fixtures/asd-ste100/at-limit-description-draft.md|markus": {
+  "findings": [],
+  "segments": [
+   [
+    "doc",
+    0,
+    129
+   ],
+   [
+    "p-b18198be5505",
+    0,
+    129
+   ],
+   [
+    "s-b18198be5505",
+    0,
+    129
+   ]
+  ]
+ },
+ "ai-writing-tells|tests/fixtures/asd-ste100/at-limit-description-draft.md|text": {
+  "findings": [],
+  "segments": [
+   [
+    "doc",
+    0,
+    129
+   ],
+   [
+    "p-b18198be5505",
+    0,
+    129
+   ],
+   [
+    "s-b18198be5505",
+    0,
+    129
+   ]
+  ]
+ },
+ "ai-writing-tells|tests/fixtures/asd-ste100/at-limit-procedure-draft.md|markus": {
+  "findings": [],
+  "segments": [
+   [
+    "doc",
+    0,
+    111
+   ],
+   [
+    "p-5c37c1d03d90",
+    3,
+    111
+   ],
+   [
+    "s-5c37c1d03d90",
+    3,
+    111
+   ]
+  ]
+ },
+ "ai-writing-tells|tests/fixtures/asd-ste100/at-limit-procedure-draft.md|text": {
+  "findings": [],
+  "segments": [
+   [
+    "doc",
+    0,
+    111
+   ],
+   [
+    "p-2485cf44ea82",
+    0,
+    111
+   ],
+   [
+    "s-c977dbe78522",
+    0,
+    2
+   ],
+   [
+    "s-5c37c1d03d90",
+    3,
+    111
+   ]
+  ]
+ },
+ "ai-writing-tells|tests/fixtures/asd-ste100/clean-technical-draft.md|markus": {
+  "findings": [],
+  "segments": [
+   [
+    "doc",
+    0,
+    68
+   ],
+   [
+    "p-4a2bcf28640d",
+    0,
+    68
+   ],
+   [
+    "s-be6af2d4f451",
+    0,
+    24
+   ],
+   [
+    "s-e19f9dd4a4ed",
+    25,
+    47
+   ],
+   [
+    "s-493938fe1ac4",
+    48,
+    68
+   ]
+  ]
+ },
+ "ai-writing-tells|tests/fixtures/asd-ste100/clean-technical-draft.md|text": {
+  "findings": [],
+  "segments": [
+   [
+    "doc",
+    0,
+    68
+   ],
+   [
+    "p-4a2bcf28640d",
+    0,
+    68
+   ],
+   [
+    "s-be6af2d4f451",
+    0,
+    24
+   ],
+   [
+    "s-e19f9dd4a4ed",
+    25,
+    47
+   ],
+   [
+    "s-493938fe1ac4",
+    48,
+    68
+   ]
+  ]
+ },
+ "ai-writing-tells|tests/fixtures/asd-ste100/gold/must-fail/gold-structure.md|markus": {
+  "findings": [],
+  "segments": [
+   [
+    "doc",
+    0,
+    194
+   ],
+   [
+    "p-b20b8c6b94ed",
+    2,
+    20
+   ],
+   [
+    "s-b20b8c6b94ed",
+    2,
+    20
+   ],
+   [
+    "p-3c2212dbbba7",
+    25,
+    139
+   ],
+   [
+    "s-3c2212dbbba7",
+    25,
+    139
+   ],
+   [
+    "p-7642c15a6a2d",
+    144,
+    194
+   ],
+   [
+    "s-7642c15a6a2d",
+    144,
+    194
+   ]
+  ]
+ },
+ "ai-writing-tells|tests/fixtures/asd-ste100/gold/must-fail/gold-structure.md|text": {
+  "findings": [],
+  "segments": [
+   [
+    "doc",
+    0,
+    194
+   ],
+   [
+    "p-2b741fcd4cf9",
+    0,
+    20
+   ],
+   [
+    "s-2b741fcd4cf9",
+    0,
+    20
+   ],
+   [
+    "p-a92c4c37ddbc",
+    22,
+    139
+   ],
+   [
+    "s-c977dbe78522",
+    22,
+    24
+   ],
+   [
+    "s-3c2212dbbba7",
+    25,
+    139
+   ],
+   [
+    "p-9ff1f270b03d",
+    141,
+    194
+   ],
+   [
+    "s-6bc54f13bea5",
+    141,
+    143
+   ],
+   [
+    "s-7642c15a6a2d",
+    144,
+    194
+   ]
+  ]
+ },
+ "ai-writing-tells|tests/fixtures/asd-ste100/gold/must-fail/gold-vocabulary.md|markus": {
+  "findings": [
+   {
+    "detectorId": "utilize",
+    "excerpt": "Utilize",
+    "id": "f-14b89f5ea14b7604",
+    "message": "Plain-word swaps",
+    "policyId": "plain-words",
+    "replacement": "use",
+    "severity": "info",
+    "span": {
+     "end": 7,
+     "start": 0
+    }
+   }
+  ],
+  "segments": [
+   [
+    "doc",
+    0,
+    52
+   ],
+   [
+    "p-1b80dd1271ad",
+    0,
+    52
+   ],
+   [
+    "s-fefc2b3d94cc",
+    0,
+    27
+   ],
+   [
+    "s-33050c6b0e42",
+    28,
+    52
+   ]
+  ]
+ },
+ "ai-writing-tells|tests/fixtures/asd-ste100/gold/must-fail/gold-vocabulary.md|text": {
+  "findings": [
+   {
+    "detectorId": "utilize",
+    "excerpt": "Utilize",
+    "id": "f-14b89f5ea14b7604",
+    "message": "Plain-word swaps",
+    "policyId": "plain-words",
+    "replacement": "use",
+    "severity": "info",
+    "span": {
+     "end": 7,
+     "start": 0
+    }
+   }
+  ],
+  "segments": [
+   [
+    "doc",
+    0,
+    52
+   ],
+   [
+    "p-1b80dd1271ad",
+    0,
+    52
+   ],
+   [
+    "s-fefc2b3d94cc",
+    0,
+    27
+   ],
+   [
+    "s-33050c6b0e42",
+    28,
+    52
+   ]
+  ]
+ },
+ "ai-writing-tells|tests/fixtures/asd-ste100/gold/must-fail/gold-voice.md|markus": {
+  "findings": [],
+  "segments": [
+   [
+    "doc",
+    0,
+    102
+   ],
+   [
+    "p-3ef4eea990d3",
+    0,
+    102
+   ],
+   [
+    "s-1da229a9e556",
+    0,
+    39
+   ],
+   [
+    "s-165907e3752a",
+    40,
+    75
+   ],
+   [
+    "s-25d2659ad97b",
+    76,
+    102
+   ]
+  ]
+ },
+ "ai-writing-tells|tests/fixtures/asd-ste100/gold/must-fail/gold-voice.md|text": {
+  "findings": [],
+  "segments": [
+   [
+    "doc",
+    0,
+    102
+   ],
+   [
+    "p-3ef4eea990d3",
+    0,
+    102
+   ],
+   [
+    "s-1da229a9e556",
+    0,
+    39
+   ],
+   [
+    "s-165907e3752a",
+    40,
+    75
+   ],
+   [
+    "s-25d2659ad97b",
+    76,
+    102
+   ]
+  ]
+ },
+ "ai-writing-tells|tests/fixtures/asd-ste100/gold/must-pass/gold-clean-description.md|markus": {
+  "findings": [],
+  "segments": [
+   [
+    "doc",
+    0,
+    96
+   ],
+   [
+    "p-b9b70721f727",
+    0,
+    96
+   ],
+   [
+    "s-0c8c33358c90",
+    0,
+    35
+   ],
+   [
+    "s-45580527d7ea",
+    36,
+    96
+   ]
+  ]
+ },
+ "ai-writing-tells|tests/fixtures/asd-ste100/gold/must-pass/gold-clean-description.md|text": {
+  "findings": [],
+  "segments": [
+   [
+    "doc",
+    0,
+    96
+   ],
+   [
+    "p-b9b70721f727",
+    0,
+    96
+   ],
+   [
+    "s-0c8c33358c90",
+    0,
+    35
+   ],
+   [
+    "s-45580527d7ea",
+    36,
+    96
+   ]
+  ]
+ },
+ "ai-writing-tells|tests/fixtures/asd-ste100/gold/must-pass/gold-clean-procedure.md|markus": {
+  "findings": [],
+  "segments": [
+   [
+    "doc",
+    0,
+    162
+   ],
+   [
+    "p-b20b8c6b94ed",
+    2,
+    20
+   ],
+   [
+    "s-b20b8c6b94ed",
+    2,
+    20
+   ],
+   [
+    "p-feafdf189938",
+    25,
+    48
+   ],
+   [
+    "s-feafdf189938",
+    25,
+    48
+   ],
+   [
+    "p-0c3c76b95a08",
+    52,
+    75
+   ],
+   [
+    "s-0c3c76b95a08",
+    52,
+    75
+   ],
+   [
+    "p-be6af2d4f451",
+    79,
+    103
+   ],
+   [
+    "s-be6af2d4f451",
+    79,
+    103
+   ],
+   [
+    "p-e19f9dd4a4ed",
+    107,
+    129
+   ],
+   [
+    "s-e19f9dd4a4ed",
+    107,
+    129
+   ],
+   [
+    "p-a5a84e883bf3",
+    133,
+    162
+   ],
+   [
+    "s-a5a84e883bf3",
+    133,
+    162
+   ]
+  ]
+ },
+ "ai-writing-tells|tests/fixtures/asd-ste100/gold/must-pass/gold-clean-procedure.md|text": {
+  "findings": [],
+  "segments": [
+   [
+    "doc",
+    0,
+    162
+   ],
+   [
+    "p-2b741fcd4cf9",
+    0,
+    20
+   ],
+   [
+    "s-2b741fcd4cf9",
+    0,
+    20
+   ],
+   [
+    "p-24130c57e970",
+    22,
+    162
+   ],
+   [
+    "s-c977dbe78522",
+    22,
+    24
+   ],
+   [
+    "s-feafdf189938",
+    25,
+    48
+   ],
+   [
+    "s-6bc54f13bea5",
+    49,
+    51
+   ],
+   [
+    "s-0c3c76b95a08",
+    52,
+    75
+   ],
+   [
+    "s-267c23695b6e",
+    76,
+    78
+   ],
+   [
+    "s-be6af2d4f451",
+    79,
+    103
+   ],
+   [
+    "s-23f663630e2f",
+    104,
+    106
+   ],
+   [
+    "s-e19f9dd4a4ed",
+    107,
+    129
+   ],
+   [
+    "s-540dd397b2d3",
+    130,
+    132
+   ],
+   [
+    "s-a5a84e883bf3",
+    133,
+    162
+   ]
+  ]
+ },
+ "ai-writing-tells|tests/fixtures/asd-ste100/multi-meaning-draft.md|markus": {
+  "findings": [],
+  "segments": [
+   [
+    "doc",
+    0,
+    66
+   ],
+   [
+    "p-8302a097439c",
+    0,
+    66
+   ],
+   [
+    "s-756228febe38",
+    0,
+    27
+   ],
+   [
+    "s-e80aaf0fb390",
+    28,
+    66
+   ]
+  ]
+ },
+ "ai-writing-tells|tests/fixtures/asd-ste100/multi-meaning-draft.md|text": {
+  "findings": [],
+  "segments": [
+   [
+    "doc",
+    0,
+    66
+   ],
+   [
+    "p-8302a097439c",
+    0,
+    66
+   ],
+   [
+    "s-756228febe38",
+    0,
+    27
+   ],
+   [
+    "s-e80aaf0fb390",
+    28,
+    66
+   ]
+  ]
+ },
+ "ai-writing-tells|tests/fixtures/asd-ste100/non-imperative-draft.md|markus": {
+  "findings": [],
+  "segments": [
+   [
+    "doc",
+    0,
+    43
+   ],
+   [
+    "p-cf3cd686800b",
+    0,
+    43
+   ],
+   [
+    "s-cf3cd686800b",
+    0,
+    43
+   ]
+  ]
+ },
+ "ai-writing-tells|tests/fixtures/asd-ste100/non-imperative-draft.md|text": {
+  "findings": [],
+  "segments": [
+   [
+    "doc",
+    0,
+    43
+   ],
+   [
+    "p-cf3cd686800b",
+    0,
+    43
+   ],
+   [
+    "s-cf3cd686800b",
+    0,
+    43
+   ]
+  ]
+ },
+ "ai-writing-tells|tests/fixtures/asd-ste100/technical-ing-draft.md|markus": {
+  "findings": [],
+  "segments": [
+   [
+    "doc",
+    0,
+    34
+   ],
+   [
+    "p-3fc2b6b29607",
+    0,
+    34
+   ],
+   [
+    "s-3fc2b6b29607",
+    0,
+    34
+   ]
+  ]
+ },
+ "ai-writing-tells|tests/fixtures/asd-ste100/technical-ing-draft.md|text": {
+  "findings": [],
+  "segments": [
+   [
+    "doc",
+    0,
+    34
+   ],
+   [
+    "p-3fc2b6b29607",
+    0,
+    34
+   ],
+   [
+    "s-3fc2b6b29607",
+    0,
+    34
+   ]
+  ]
+ },
+ "ai-writing-tells|tests/fixtures/asd-ste100/two-instructions-draft.md|markus": {
+  "findings": [],
+  "segments": [
+   [
+    "doc",
+    0,
+    50
+   ],
+   [
+    "p-7642c15a6a2d",
+    0,
+    50
+   ],
+   [
+    "s-7642c15a6a2d",
+    0,
+    50
+   ]
+  ]
+ },
+ "ai-writing-tells|tests/fixtures/asd-ste100/two-instructions-draft.md|text": {
+  "findings": [],
+  "segments": [
+   [
+    "doc",
+    0,
+    50
+   ],
+   [
+    "p-7642c15a6a2d",
+    0,
+    50
+   ],
+   [
+    "s-7642c15a6a2d",
+    0,
+    50
+   ]
+  ]
+ },
+ "ai-writing-tells|tests/fixtures/builtin-checks/redundancy-blockquote-mixed.md|markus": {
+  "findings": [],
+  "segments": [
+   [
+    "doc",
+    0,
+    224
+   ],
+   [
+    "p-70926b276cb3",
+    0,
+    92
+   ],
+   [
+    "s-70926b276cb3",
+    0,
+    92
+   ],
+   [
+    "p-0857f9c16a6a",
+    173,
+    223
+   ],
+   [
+    "s-0857f9c16a6a",
+    173,
+    223
+   ]
+  ]
+ },
+ "ai-writing-tells|tests/fixtures/builtin-checks/redundancy-blockquote-mixed.md|text": {
+  "findings": [],
+  "segments": [
+   [
+    "doc",
+    0,
+    224
+   ],
+   [
+    "p-70926b276cb3",
+    0,
+    92
+   ],
+   [
+    "s-70926b276cb3",
+    0,
+    92
+   ],
+   [
+    "p-5d77ddc764da",
+    94,
+    171
+   ],
+   [
+    "s-5d77ddc764da",
+    94,
+    171
+   ],
+   [
+    "p-0857f9c16a6a",
+    173,
+    223
+   ],
+   [
+    "s-0857f9c16a6a",
+    173,
+    223
+   ]
+  ]
+ },
+ "ai-writing-tells|tests/fixtures/builtin-checks/redundancy-blockquote-refrain.md|markus": {
+  "findings": [],
+  "segments": [
+   [
+    "doc",
+    0,
+    203
+   ],
+   [
+    "p-c9bf5c8190d6",
+    0,
+    67
+   ],
+   [
+    "s-c9bf5c8190d6",
+    0,
+    67
+   ],
+   [
+    "p-0857f9c16a6a",
+    152,
+    202
+   ],
+   [
+    "s-0857f9c16a6a",
+    152,
+    202
+   ]
+  ]
+ },
+ "ai-writing-tells|tests/fixtures/builtin-checks/redundancy-blockquote-refrain.md|text": {
+  "findings": [],
+  "segments": [
+   [
+    "doc",
+    0,
+    203
+   ],
+   [
+    "p-c9bf5c8190d6",
+    0,
+    67
+   ],
+   [
+    "s-c9bf5c8190d6",
+    0,
+    67
+   ],
+   [
+    "p-2f9a50a78062",
+    69,
+    150
+   ],
+   [
+    "s-2f9a50a78062",
+    69,
+    150
+   ],
+   [
+    "p-0857f9c16a6a",
+    152,
+    202
+   ],
+   [
+    "s-0857f9c16a6a",
+    152,
+    202
+   ]
+  ]
+ },
+ "ai-writing-tells|tests/fixtures/builtin-checks/redundancy-body-prose.md|markus": {
+  "findings": [],
+  "segments": [
+   [
+    "doc",
+    0,
+    179
+   ],
+   [
+    "p-70926b276cb3",
+    0,
+    92
+   ],
+   [
+    "s-70926b276cb3",
+    0,
+    92
+   ],
+   [
+    "p-a2eec3b45e6e",
+    94,
+    178
+   ],
+   [
+    "s-a2eec3b45e6e",
+    94,
+    178
+   ]
+  ]
+ },
+ "ai-writing-tells|tests/fixtures/builtin-checks/redundancy-body-prose.md|text": {
+  "findings": [],
+  "segments": [
+   [
+    "doc",
+    0,
+    179
+   ],
+   [
+    "p-70926b276cb3",
+    0,
+    92
+   ],
+   [
+    "s-70926b276cb3",
+    0,
+    92
+   ],
+   [
+    "p-a2eec3b45e6e",
+    94,
+    178
+   ],
+   [
+    "s-a2eec3b45e6e",
+    94,
+    178
+   ]
+  ]
+ },
+ "ai-writing-tells|tests/fixtures/builtin-checks/redundancy-image-alts.md|markus": {
+  "findings": [],
+  "segments": [
+   [
+    "doc",
+    0,
+    229
+   ],
+   [
+    "p-64dcb873101e",
+    0,
+    49
+   ],
+   [
+    "s-64dcb873101e",
+    0,
+    49
+   ],
+   [
+    "p-51801588e9b9",
+    51,
+    104
+   ],
+   [
+    "s-51801588e9b9",
+    51,
+    104
+   ],
+   [
+    "p-cc1c799bbc75",
+    106,
+    173
+   ],
+   [
+    "s-cc1c799bbc75",
+    106,
+    173
+   ],
+   [
+    "p-51801588e9b9-2",
+    175,
+    228
+   ],
+   [
+    "s-51801588e9b9-2",
+    175,
+    228
+   ]
+  ]
+ },
+ "ai-writing-tells|tests/fixtures/builtin-checks/redundancy-image-alts.md|text": {
+  "findings": [],
+  "segments": [
+   [
+    "doc",
+    0,
+    229
+   ],
+   [
+    "p-64dcb873101e",
+    0,
+    49
+   ],
+   [
+    "s-64dcb873101e",
+    0,
+    49
+   ],
+   [
+    "p-51801588e9b9",
+    51,
+    104
+   ],
+   [
+    "s-51801588e9b9",
+    51,
+    104
+   ],
+   [
+    "p-cc1c799bbc75",
+    106,
+    173
+   ],
+   [
+    "s-cc1c799bbc75",
+    106,
+    173
+   ],
+   [
+    "p-51801588e9b9-2",
+    175,
+    228
+   ],
+   [
+    "s-51801588e9b9-2",
+    175,
+    228
+   ]
+  ]
+ },
+ "ai-writing-tells|tests/fixtures/builtin-checks/redundancy-italic-pull-quote.md|markus": {
+  "findings": [],
+  "segments": [
+   [
+    "doc",
+    0,
+    498
+   ],
+   [
+    "p-fc24cd261079",
+    0,
+    68
+   ],
+   [
+    "s-fc24cd261079",
+    0,
+    68
+   ],
+   [
+    "p-ff8616cd5a76",
+    70,
+    233
+   ],
+   [
+    "s-c761863cba42",
+    70,
+    184
+   ],
+   [
+    "s-2cf829c32ad2",
+    185,
+    233
+   ],
+   [
+    "p-ca0ff4d2fb89",
+    295,
+    438
+   ],
+   [
+    "s-60d6c07dedda",
+    295,
+    390
+   ],
+   [
+    "s-6178b55c2131",
+    391,
+    438
+   ],
+   [
+    "p-fe61663d10ec",
+    444,
+    497
+   ],
+   [
+    "s-fe61663d10ec",
+    444,
+    497
+   ]
+  ]
+ },
+ "ai-writing-tells|tests/fixtures/builtin-checks/redundancy-italic-pull-quote.md|text": {
+  "findings": [],
+  "segments": [
+   [
+    "doc",
+    0,
+    498
+   ],
+   [
+    "p-fc24cd261079",
+    0,
+    68
+   ],
+   [
+    "s-fc24cd261079",
+    0,
+    68
+   ],
+   [
+    "p-ff8616cd5a76",
+    70,
+    233
+   ],
+   [
+    "s-c761863cba42",
+    70,
+    184
+   ],
+   [
+    "s-2cf829c32ad2",
+    185,
+    233
+   ],
+   [
+    "p-12fad3ebda60",
+    235,
+    442
+   ],
+   [
+    "s-f3dbca21f421",
+    235,
+    390
+   ],
+   [
+    "s-12a58d49346a",
+    391,
+    442
+   ],
+   [
+    "p-fe61663d10ec",
+    444,
+    497
+   ],
+   [
+    "s-fe61663d10ec",
+    444,
+    497
+   ]
+  ]
+ },
+ "asd-ste100|features/fixtures/multilingual/en.md|markus": {
+  "findings": [
+   {
+    "detectorId": "ing-form",
+    "excerpt": "evolving",
+    "id": "f-5746800ab2d966e7",
+    "message": "'evolving' is an -ing form; use a simple verb or a noun.",
+    "policyId": "ste-no-ing",
+    "severity": "warn",
+    "span": {
+     "end": 74,
+     "start": 66
+    }
+   },
+   {
+    "detectorId": "passive-voice",
+    "excerpt": "The company did not say how many of the crashes were reported to police.",
+    "id": "f-877f00c519666468",
+    "message": "Sentence uses passive voice.",
+    "policyId": "ste-active-voice",
+    "severity": "warn",
+    "span": {
+     "end": 549,
+     "start": 477
+    }
+   },
+   {
+    "detectorId": "ing-form",
+    "excerpt": "tooling",
+    "id": "f-9452a9045b279e96",
+    "message": "'tooling' is an -ing form; use a simple verb or a noun.",
+    "policyId": "ste-no-ing",
+    "severity": "warn",
+    "span": {
+     "end": 630,
+     "start": 623
+    }
+   },
+   {
+    "detectorId": "ing-form",
+    "excerpt": "sharing",
+    "id": "f-682332f71ce13885",
+    "message": "'sharing' is an -ing form; use a simple verb or a noun.",
+    "policyId": "ste-no-ing",
+    "severity": "warn",
+    "span": {
+     "end": 680,
+     "start": 673
+    }
+   },
+   {
+    "detectorId": "ing-form",
+    "excerpt": "underscoring",
+    "id": "f-e777b94074f945e6",
+    "message": "'underscoring' is an -ing form; use a simple verb or a noun.",
+    "policyId": "ste-no-ing",
+    "severity": "warn",
+    "span": {
+     "end": 709,
+     "start": 697
+    }
+   },
+   {
+    "detectorId": "ing-form",
+    "excerpt": "sharing",
+    "id": "f-c1db19f0eff139d3",
+    "message": "'sharing' is an -ing form; use a simple verb or a noun.",
+    "policyId": "ste-no-ing",
+    "severity": "warn",
+    "span": {
+     "end": 852,
+     "start": 845
+    }
+   },
+   {
+    "detectorId": "ing-form",
+    "excerpt": "moving",
+    "id": "f-ea81a02088e10d82",
+    "message": "'moving' is an -ing form; use a simple verb or a noun.",
+    "policyId": "ste-no-ing",
+    "severity": "warn",
+    "span": {
+     "end": 877,
+     "start": 871
+    }
+   }
+  ],
+  "segments": [
+   [
+    "doc",
+    0,
+    945
+   ],
+   [
+    "p-6d50a962ea9d",
+    2,
+    45
+   ],
+   [
+    "s-6d50a962ea9d",
+    2,
+    45
+   ],
+   [
+    "p-7171f693272f",
+    47,
+    295
+   ],
+   [
+    "s-0168e05bac80",
+    47,
+    182
+   ],
+   [
+    "s-ae86b1e634d8",
+    183,
+    295
+   ],
+   [
+    "p-9a883d3beb35",
+    297,
+    549
+   ],
+   [
+    "s-dfcadfa6fcf0",
+    297,
+    415
+   ],
+   [
+    "s-ea164f678044",
+    416,
+    476
+   ],
+   [
+    "s-42d5f89b1a03",
+    477,
+    549
+   ],
+   [
+    "p-acd0babdcdff",
+    551,
+    799
+   ],
+   [
+    "s-e939b72bf517",
+    551,
+    631
+   ],
+   [
+    "s-c66ab891ab4c",
+    632,
+    751
+   ],
+   [
+    "s-74a2c525e4aa",
+    752,
+    799
+   ],
+   [
+    "p-acca39d5c364",
+    801,
+    944
+   ],
+   [
+    "s-9a65c9bb5cc5",
+    801,
+    878
+   ],
+   [
+    "s-fdd287ceccd5",
+    879,
+    944
+   ]
+  ]
+ },
+ "asd-ste100|features/fixtures/multilingual/en.md|text": {
+  "findings": [
+   {
+    "detectorId": "ing-form",
+    "excerpt": "evolving",
+    "id": "f-5746800ab2d966e7",
+    "message": "'evolving' is an -ing form; use a simple verb or a noun.",
+    "policyId": "ste-no-ing",
+    "severity": "warn",
+    "span": {
+     "end": 74,
+     "start": 66
+    }
+   },
+   {
+    "detectorId": "passive-voice",
+    "excerpt": "The company did not say how many of the crashes were reported to police.",
+    "id": "f-877f00c519666468",
+    "message": "Sentence uses passive voice.",
+    "policyId": "ste-active-voice",
+    "severity": "warn",
+    "span": {
+     "end": 549,
+     "start": 477
+    }
+   },
+   {
+    "detectorId": "ing-form",
+    "excerpt": "tooling",
+    "id": "f-9452a9045b279e96",
+    "message": "'tooling' is an -ing form; use a simple verb or a noun.",
+    "policyId": "ste-no-ing",
+    "severity": "warn",
+    "span": {
+     "end": 630,
+     "start": 623
+    }
+   },
+   {
+    "detectorId": "ing-form",
+    "excerpt": "sharing",
+    "id": "f-682332f71ce13885",
+    "message": "'sharing' is an -ing form; use a simple verb or a noun.",
+    "policyId": "ste-no-ing",
+    "severity": "warn",
+    "span": {
+     "end": 680,
+     "start": 673
+    }
+   },
+   {
+    "detectorId": "ing-form",
+    "excerpt": "underscoring",
+    "id": "f-e777b94074f945e6",
+    "message": "'underscoring' is an -ing form; use a simple verb or a noun.",
+    "policyId": "ste-no-ing",
+    "severity": "warn",
+    "span": {
+     "end": 709,
+     "start": 697
+    }
+   },
+   {
+    "detectorId": "ing-form",
+    "excerpt": "sharing",
+    "id": "f-c1db19f0eff139d3",
+    "message": "'sharing' is an -ing form; use a simple verb or a noun.",
+    "policyId": "ste-no-ing",
+    "severity": "warn",
+    "span": {
+     "end": 852,
+     "start": 845
+    }
+   },
+   {
+    "detectorId": "ing-form",
+    "excerpt": "moving",
+    "id": "f-ea81a02088e10d82",
+    "message": "'moving' is an -ing form; use a simple verb or a noun.",
+    "policyId": "ste-no-ing",
+    "severity": "warn",
+    "span": {
+     "end": 877,
+     "start": 871
+    }
+   }
+  ],
+  "segments": [
+   [
+    "doc",
+    0,
+    945
+   ],
+   [
+    "p-e8bd5589c8c5",
+    0,
+    45
+   ],
+   [
+    "s-e8bd5589c8c5",
+    0,
+    45
+   ],
+   [
+    "p-7171f693272f",
+    47,
+    295
+   ],
+   [
+    "s-0168e05bac80",
+    47,
+    182
+   ],
+   [
+    "s-ae86b1e634d8",
+    183,
+    295
+   ],
+   [
+    "p-9a883d3beb35",
+    297,
+    549
+   ],
+   [
+    "s-dfcadfa6fcf0",
+    297,
+    415
+   ],
+   [
+    "s-ea164f678044",
+    416,
+    476
+   ],
+   [
+    "s-42d5f89b1a03",
+    477,
+    549
+   ],
+   [
+    "p-acd0babdcdff",
+    551,
+    799
+   ],
+   [
+    "s-e939b72bf517",
+    551,
+    631
+   ],
+   [
+    "s-c66ab891ab4c",
+    632,
+    751
+   ],
+   [
+    "s-74a2c525e4aa",
+    752,
+    799
+   ],
+   [
+    "p-acca39d5c364",
+    801,
+    944
+   ],
+   [
+    "s-9a65c9bb5cc5",
+    801,
+    878
+   ],
+   [
+    "s-fdd287ceccd5",
+    879,
+    944
+   ]
+  ]
+ },
+ "asd-ste100|features/fixtures/policy-pack/reference-samples/sample-five.md|markus": {
+  "findings": [],
+  "segments": [
+   [
+    "doc",
+    0,
+    73
+   ],
+   [
+    "p-dd2420395064",
+    0,
+    72
+   ],
+   [
+    "s-473bfd491ac9",
+    0,
+    30
+   ],
+   [
+    "s-52182645fff7",
+    31,
+    72
+   ]
+  ]
+ },
+ "asd-ste100|features/fixtures/policy-pack/reference-samples/sample-five.md|text": {
+  "findings": [],
+  "segments": [
+   [
+    "doc",
+    0,
+    73
+   ],
+   [
+    "p-dd2420395064",
+    0,
+    72
+   ],
+   [
+    "s-473bfd491ac9",
+    0,
+    30
+   ],
+   [
+    "s-52182645fff7",
+    31,
+    72
+   ]
+  ]
+ },
+ "asd-ste100|features/fixtures/policy-pack/reference-samples/sample-four.md|markus": {
+  "findings": [],
+  "segments": [
+   [
+    "doc",
+    0,
+    87
+   ],
+   [
+    "p-8b6493e47a4c",
+    0,
+    86
+   ],
+   [
+    "s-604e77f95bde",
+    0,
+    33
+   ],
+   [
+    "s-44df68e569ef",
+    34,
+    86
+   ]
+  ]
+ },
+ "asd-ste100|features/fixtures/policy-pack/reference-samples/sample-four.md|text": {
+  "findings": [],
+  "segments": [
+   [
+    "doc",
+    0,
+    87
+   ],
+   [
+    "p-8b6493e47a4c",
+    0,
+    86
+   ],
+   [
+    "s-604e77f95bde",
+    0,
+    33
+   ],
+   [
+    "s-44df68e569ef",
+    34,
+    86
+   ]
+  ]
+ },
+ "asd-ste100|features/fixtures/policy-pack/reference-samples/sample-one.md|markus": {
+  "findings": [],
+  "segments": [
+   [
+    "doc",
+    0,
+    89
+   ],
+   [
+    "p-585682226e8d",
+    0,
+    88
+   ],
+   [
+    "s-499fc0c2ce50",
+    0,
+    43
+   ],
+   [
+    "s-8b6840f3a083",
+    44,
+    88
+   ]
+  ]
+ },
+ "asd-ste100|features/fixtures/policy-pack/reference-samples/sample-one.md|text": {
+  "findings": [],
+  "segments": [
+   [
+    "doc",
+    0,
+    89
+   ],
+   [
+    "p-585682226e8d",
+    0,
+    88
+   ],
+   [
+    "s-499fc0c2ce50",
+    0,
+    43
+   ],
+   [
+    "s-8b6840f3a083",
+    44,
+    88
+   ]
+  ]
+ },
+ "asd-ste100|features/fixtures/policy-pack/reference-samples/sample-three.md|markus": {
+  "findings": [],
+  "segments": [
+   [
+    "doc",
+    0,
+    79
+   ],
+   [
+    "p-f177a8ed0025",
+    0,
+    78
+   ],
+   [
+    "s-73e4f6a36ed9",
+    0,
+    37
+   ],
+   [
+    "s-58d1731d66a9",
+    38,
+    78
+   ]
+  ]
+ },
+ "asd-ste100|features/fixtures/policy-pack/reference-samples/sample-three.md|text": {
+  "findings": [],
+  "segments": [
+   [
+    "doc",
+    0,
+    79
+   ],
+   [
+    "p-f177a8ed0025",
+    0,
+    78
+   ],
+   [
+    "s-73e4f6a36ed9",
+    0,
+    37
+   ],
+   [
+    "s-58d1731d66a9",
+    38,
+    78
+   ]
+  ]
+ },
+ "asd-ste100|features/fixtures/policy-pack/reference-samples/sample-two.md|markus": {
+  "findings": [],
+  "segments": [
+   [
+    "doc",
+    0,
+    87
+   ],
+   [
+    "p-4055f2cccf88",
+    0,
+    86
+   ],
+   [
+    "s-ed9251272b37",
+    0,
+    43
+   ],
+   [
+    "s-6fba61820dad",
+    44,
+    86
+   ]
+  ]
+ },
+ "asd-ste100|features/fixtures/policy-pack/reference-samples/sample-two.md|text": {
+  "findings": [],
+  "segments": [
+   [
+    "doc",
+    0,
+    87
+   ],
+   [
+    "p-4055f2cccf88",
+    0,
+    86
+   ],
+   [
+    "s-ed9251272b37",
+    0,
+    43
+   ],
+   [
+    "s-6fba61820dad",
+    44,
+    86
+   ]
+  ]
+ },
+ "asd-ste100|tests/fixtures/asd-ste100/article-clean-draft.md|markus": {
+  "findings": [],
+  "segments": [
+   [
+    "doc",
+    0,
+    30
+   ],
+   [
+    "p-8731034ab4bd",
+    0,
+    30
+   ],
+   [
+    "s-8731034ab4bd",
+    0,
+    30
+   ]
+  ]
+ },
+ "asd-ste100|tests/fixtures/asd-ste100/article-clean-draft.md|text": {
+  "findings": [],
+  "segments": [
+   [
+    "doc",
+    0,
+    30
+   ],
+   [
+    "p-8731034ab4bd",
+    0,
+    30
+   ],
+   [
+    "s-8731034ab4bd",
+    0,
+    30
+   ]
+  ]
+ },
+ "asd-ste100|tests/fixtures/asd-ste100/at-limit-description-draft.md|markus": {
+  "findings": [],
+  "segments": [
+   [
+    "doc",
+    0,
+    129
+   ],
+   [
+    "p-b18198be5505",
+    0,
+    129
+   ],
+   [
+    "s-b18198be5505",
+    0,
+    129
+   ]
+  ]
+ },
+ "asd-ste100|tests/fixtures/asd-ste100/at-limit-description-draft.md|text": {
+  "findings": [],
+  "segments": [
+   [
+    "doc",
+    0,
+    129
+   ],
+   [
+    "p-b18198be5505",
+    0,
+    129
+   ],
+   [
+    "s-b18198be5505",
+    0,
+    129
+   ]
+  ]
+ },
+ "asd-ste100|tests/fixtures/asd-ste100/at-limit-procedure-draft.md|markus": {
+  "findings": [],
+  "segments": [
+   [
+    "doc",
+    0,
+    111
+   ],
+   [
+    "p-5c37c1d03d90",
+    3,
+    111
+   ],
+   [
+    "s-5c37c1d03d90",
+    3,
+    111
+   ]
+  ]
+ },
+ "asd-ste100|tests/fixtures/asd-ste100/at-limit-procedure-draft.md|text": {
+  "findings": [],
+  "segments": [
+   [
+    "doc",
+    0,
+    111
+   ],
+   [
+    "p-2485cf44ea82",
+    0,
+    111
+   ],
+   [
+    "s-c977dbe78522",
+    0,
+    2
+   ],
+   [
+    "s-5c37c1d03d90",
+    3,
+    111
+   ]
+  ]
+ },
+ "asd-ste100|tests/fixtures/asd-ste100/clean-technical-draft.md|markus": {
+  "findings": [],
+  "segments": [
+   [
+    "doc",
+    0,
+    68
+   ],
+   [
+    "p-4a2bcf28640d",
+    0,
+    68
+   ],
+   [
+    "s-be6af2d4f451",
+    0,
+    24
+   ],
+   [
+    "s-e19f9dd4a4ed",
+    25,
+    47
+   ],
+   [
+    "s-493938fe1ac4",
+    48,
+    68
+   ]
+  ]
+ },
+ "asd-ste100|tests/fixtures/asd-ste100/clean-technical-draft.md|text": {
+  "findings": [],
+  "segments": [
+   [
+    "doc",
+    0,
+    68
+   ],
+   [
+    "p-4a2bcf28640d",
+    0,
+    68
+   ],
+   [
+    "s-be6af2d4f451",
+    0,
+    24
+   ],
+   [
+    "s-e19f9dd4a4ed",
+    25,
+    47
+   ],
+   [
+    "s-493938fe1ac4",
+    48,
+    68
+   ]
+  ]
+ },
+ "asd-ste100|tests/fixtures/asd-ste100/gold/must-fail/gold-structure.md|markus": {
+  "findings": [
+   {
+    "detectorId": "procedure",
+    "excerpt": "Insert the new filter into the filter housing of the tray enclosure of the plastic panel surface of the unit level",
+    "id": "f-dbc9084a4e8ca701",
+    "message": "Sentence has 21 words; the limit is 20.",
+    "policyId": "ste-sentence-length",
+    "severity": "warn",
+    "span": {
+     "end": 139,
+     "start": 25
+    }
+   },
+   {
+    "detectorId": "multiple-instructions",
+    "excerpt": "Press the power button and wait for the indicator.",
+    "id": "f-32e7ac18eba4692b",
+    "message": "Write one instruction per step.",
+    "policyId": "ste-one-instruction",
+    "severity": "warn",
+    "span": {
+     "end": 194,
+     "start": 144
+    }
+   }
+  ],
+  "segments": [
+   [
+    "doc",
+    0,
+    194
+   ],
+   [
+    "p-b20b8c6b94ed",
+    2,
+    20
+   ],
+   [
+    "s-b20b8c6b94ed",
+    2,
+    20
+   ],
+   [
+    "p-3c2212dbbba7",
+    25,
+    139
+   ],
+   [
+    "s-3c2212dbbba7",
+    25,
+    139
+   ],
+   [
+    "p-7642c15a6a2d",
+    144,
+    194
+   ],
+   [
+    "s-7642c15a6a2d",
+    144,
+    194
+   ]
+  ]
+ },
+ "asd-ste100|tests/fixtures/asd-ste100/gold/must-fail/gold-structure.md|text": {
+  "findings": [
+   {
+    "detectorId": "missing-article",
+    "excerpt": "Filter",
+    "id": "f-476e252687a50519",
+    "message": "Put an article (a, an, the) or another determiner before 'Filter'.",
+    "policyId": "ste-articles",
+    "severity": "info",
+    "span": {
+     "end": 8,
+     "start": 2
+    }
+   }
+  ],
+  "segments": [
+   [
+    "doc",
+    0,
+    194
+   ],
+   [
+    "p-2b741fcd4cf9",
+    0,
+    20
+   ],
+   [
+    "s-2b741fcd4cf9",
+    0,
+    20
+   ],
+   [
+    "p-a92c4c37ddbc",
+    22,
+    139
+   ],
+   [
+    "s-c977dbe78522",
+    22,
+    24
+   ],
+   [
+    "s-3c2212dbbba7",
+    25,
+    139
+   ],
+   [
+    "p-9ff1f270b03d",
+    141,
+    194
+   ],
+   [
+    "s-6bc54f13bea5",
+    141,
+    143
+   ],
+   [
+    "s-7642c15a6a2d",
+    144,
+    194
+   ]
+  ]
+ },
+ "asd-ste100|tests/fixtures/asd-ste100/gold/must-fail/gold-vocabulary.md|markus": {
+  "findings": [
+   {
+    "detectorId": "utilize",
+    "excerpt": "Utilize",
+    "id": "f-8c0260b04f0a59e7",
+    "message": "Approved words only",
+    "policyId": "ste-approved-words",
+    "replacement": "use",
+    "severity": "warn",
+    "span": {
+     "end": 7,
+     "start": 0
+    }
+   },
+   {
+    "detectorId": "purchase",
+    "excerpt": "Purchase",
+    "id": "f-ce104a449fe495f0",
+    "message": "Approved words only",
+    "policyId": "ste-approved-words",
+    "replacement": "buy",
+    "severity": "warn",
+    "span": {
+     "end": 36,
+     "start": 28
+    }
+   }
+  ],
+  "segments": [
+   [
+    "doc",
+    0,
+    52
+   ],
+   [
+    "p-1b80dd1271ad",
+    0,
+    52
+   ],
+   [
+    "s-fefc2b3d94cc",
+    0,
+    27
+   ],
+   [
+    "s-33050c6b0e42",
+    28,
+    52
+   ]
+  ]
+ },
+ "asd-ste100|tests/fixtures/asd-ste100/gold/must-fail/gold-vocabulary.md|text": {
+  "findings": [
+   {
+    "detectorId": "utilize",
+    "excerpt": "Utilize",
+    "id": "f-8c0260b04f0a59e7",
+    "message": "Approved words only",
+    "policyId": "ste-approved-words",
+    "replacement": "use",
+    "severity": "warn",
+    "span": {
+     "end": 7,
+     "start": 0
+    }
+   },
+   {
+    "detectorId": "purchase",
+    "excerpt": "Purchase",
+    "id": "f-ce104a449fe495f0",
+    "message": "Approved words only",
+    "policyId": "ste-approved-words",
+    "replacement": "buy",
+    "severity": "warn",
+    "span": {
+     "end": 36,
+     "start": 28
+    }
+   }
+  ],
+  "segments": [
+   [
+    "doc",
+    0,
+    52
+   ],
+   [
+    "p-1b80dd1271ad",
+    0,
+    52
+   ],
+   [
+    "s-fefc2b3d94cc",
+    0,
+    27
+   ],
+   [
+    "s-33050c6b0e42",
+    28,
+    52
+   ]
+  ]
+ },
+ "asd-ste100|tests/fixtures/asd-ste100/gold/must-fail/gold-voice.md|markus": {
+  "findings": [
+   {
+    "detectorId": "passive-voice",
+    "excerpt": "The filter is replaced by the operator.",
+    "id": "f-431d2e1fee14c5ed",
+    "message": "Sentence uses passive voice.",
+    "policyId": "ste-active-voice",
+    "severity": "warn",
+    "span": {
+     "end": 39,
+     "start": 0
+    }
+   },
+   {
+    "detectorId": "ing-form",
+    "excerpt": "Inserting",
+    "id": "f-79c6b4e6a582f74c",
+    "message": "'Inserting' is an -ing form; use a simple verb or a noun.",
+    "policyId": "ste-no-ing",
+    "severity": "warn",
+    "span": {
+     "end": 49,
+     "start": 40
+    }
+   },
+   {
+    "detectorId": "missing-article",
+    "excerpt": "Filter",
+    "id": "f-76f6c0b3a70788f4",
+    "message": "Put an article (a, an, the) or another determiner before 'Filter'.",
+    "policyId": "ste-articles",
+    "severity": "info",
+    "span": {
+     "end": 82,
+     "start": 76
+    }
+   }
+  ],
+  "segments": [
+   [
+    "doc",
+    0,
+    102
+   ],
+   [
+    "p-3ef4eea990d3",
+    0,
+    102
+   ],
+   [
+    "s-1da229a9e556",
+    0,
+    39
+   ],
+   [
+    "s-165907e3752a",
+    40,
+    75
+   ],
+   [
+    "s-25d2659ad97b",
+    76,
+    102
+   ]
+  ]
+ },
+ "asd-ste100|tests/fixtures/asd-ste100/gold/must-fail/gold-voice.md|text": {
+  "findings": [
+   {
+    "detectorId": "passive-voice",
+    "excerpt": "The filter is replaced by the operator.",
+    "id": "f-431d2e1fee14c5ed",
+    "message": "Sentence uses passive voice.",
+    "policyId": "ste-active-voice",
+    "severity": "warn",
+    "span": {
+     "end": 39,
+     "start": 0
+    }
+   },
+   {
+    "detectorId": "ing-form",
+    "excerpt": "Inserting",
+    "id": "f-79c6b4e6a582f74c",
+    "message": "'Inserting' is an -ing form; use a simple verb or a noun.",
+    "policyId": "ste-no-ing",
+    "severity": "warn",
+    "span": {
+     "end": 49,
+     "start": 40
+    }
+   },
+   {
+    "detectorId": "missing-article",
+    "excerpt": "Filter",
+    "id": "f-76f6c0b3a70788f4",
+    "message": "Put an article (a, an, the) or another determiner before 'Filter'.",
+    "policyId": "ste-articles",
+    "severity": "info",
+    "span": {
+     "end": 82,
+     "start": 76
+    }
+   }
+  ],
+  "segments": [
+   [
+    "doc",
+    0,
+    102
+   ],
+   [
+    "p-3ef4eea990d3",
+    0,
+    102
+   ],
+   [
+    "s-1da229a9e556",
+    0,
+    39
+   ],
+   [
+    "s-165907e3752a",
+    40,
+    75
+   ],
+   [
+    "s-25d2659ad97b",
+    76,
+    102
+   ]
+  ]
+ },
+ "asd-ste100|tests/fixtures/asd-ste100/gold/must-pass/gold-clean-description.md|markus": {
+  "findings": [],
+  "segments": [
+   [
+    "doc",
+    0,
+    96
+   ],
+   [
+    "p-b9b70721f727",
+    0,
+    96
+   ],
+   [
+    "s-0c8c33358c90",
+    0,
+    35
+   ],
+   [
+    "s-45580527d7ea",
+    36,
+    96
+   ]
+  ]
+ },
+ "asd-ste100|tests/fixtures/asd-ste100/gold/must-pass/gold-clean-description.md|text": {
+  "findings": [],
+  "segments": [
+   [
+    "doc",
+    0,
+    96
+   ],
+   [
+    "p-b9b70721f727",
+    0,
+    96
+   ],
+   [
+    "s-0c8c33358c90",
+    0,
+    35
+   ],
+   [
+    "s-45580527d7ea",
+    36,
+    96
+   ]
+  ]
+ },
+ "asd-ste100|tests/fixtures/asd-ste100/gold/must-pass/gold-clean-procedure.md|markus": {
+  "findings": [],
+  "segments": [
+   [
+    "doc",
+    0,
+    162
+   ],
+   [
+    "p-b20b8c6b94ed",
+    2,
+    20
+   ],
+   [
+    "s-b20b8c6b94ed",
+    2,
+    20
+   ],
+   [
+    "p-feafdf189938",
+    25,
+    48
+   ],
+   [
+    "s-feafdf189938",
+    25,
+    48
+   ],
+   [
+    "p-0c3c76b95a08",
+    52,
+    75
+   ],
+   [
+    "s-0c3c76b95a08",
+    52,
+    75
+   ],
+   [
+    "p-be6af2d4f451",
+    79,
+    103
+   ],
+   [
+    "s-be6af2d4f451",
+    79,
+    103
+   ],
+   [
+    "p-e19f9dd4a4ed",
+    107,
+    129
+   ],
+   [
+    "s-e19f9dd4a4ed",
+    107,
+    129
+   ],
+   [
+    "p-a5a84e883bf3",
+    133,
+    162
+   ],
+   [
+    "s-a5a84e883bf3",
+    133,
+    162
+   ]
+  ]
+ },
+ "asd-ste100|tests/fixtures/asd-ste100/gold/must-pass/gold-clean-procedure.md|text": {
+  "findings": [
+   {
+    "detectorId": "missing-article",
+    "excerpt": "Filter",
+    "id": "f-476e252687a50519",
+    "message": "Put an article (a, an, the) or another determiner before 'Filter'.",
+    "policyId": "ste-articles",
+    "severity": "info",
+    "span": {
+     "end": 8,
+     "start": 2
+    }
+   },
+   {
+    "detectorId": "sentences",
+    "excerpt": "1. Press the power button.\n2. Wait for the indicator.\n3. Remove the filter cover.\n4. Insert the new filter.\n5. Press the power button again.",
+    "id": "f-a145b39ea96dfc8d",
+    "message": "Paragraph has 10 sentences; the limit is 6.",
+    "policyId": "ste-paragraph-length",
+    "severity": "info",
+    "span": {
+     "end": 162,
+     "start": 22
+    }
+   }
+  ],
+  "segments": [
+   [
+    "doc",
+    0,
+    162
+   ],
+   [
+    "p-2b741fcd4cf9",
+    0,
+    20
+   ],
+   [
+    "s-2b741fcd4cf9",
+    0,
+    20
+   ],
+   [
+    "p-24130c57e970",
+    22,
+    162
+   ],
+   [
+    "s-c977dbe78522",
+    22,
+    24
+   ],
+   [
+    "s-feafdf189938",
+    25,
+    48
+   ],
+   [
+    "s-6bc54f13bea5",
+    49,
+    51
+   ],
+   [
+    "s-0c3c76b95a08",
+    52,
+    75
+   ],
+   [
+    "s-267c23695b6e",
+    76,
+    78
+   ],
+   [
+    "s-be6af2d4f451",
+    79,
+    103
+   ],
+   [
+    "s-23f663630e2f",
+    104,
+    106
+   ],
+   [
+    "s-e19f9dd4a4ed",
+    107,
+    129
+   ],
+   [
+    "s-540dd397b2d3",
+    130,
+    132
+   ],
+   [
+    "s-a5a84e883bf3",
+    133,
+    162
+   ]
+  ]
+ },
+ "asd-ste100|tests/fixtures/asd-ste100/multi-meaning-draft.md|markus": {
+  "findings": [
+   {
+    "detectorId": "one-meaning",
+    "excerpt": "check",
+    "id": "f-62e5df035785135d",
+    "message": "Use 'check' only as a verb.",
+    "policyId": "ste-one-meaning",
+    "severity": "warn",
+    "span": {
+     "end": 14,
+     "start": 9
+    }
+   },
+   {
+    "detectorId": "one-meaning",
+    "excerpt": "follow",
+    "id": "f-fce40d74dcabc650",
+    "message": "Use 'follow' only as a verb.",
+    "policyId": "ste-one-meaning",
+    "severity": "warn",
+    "span": {
+     "end": 38,
+     "start": 32
+    }
+   }
+  ],
+  "segments": [
+   [
+    "doc",
+    0,
+    66
+   ],
+   [
+    "p-8302a097439c",
+    0,
+    66
+   ],
+   [
+    "s-756228febe38",
+    0,
+    27
+   ],
+   [
+    "s-e80aaf0fb390",
+    28,
+    66
+   ]
+  ]
+ },
+ "asd-ste100|tests/fixtures/asd-ste100/multi-meaning-draft.md|text": {
+  "findings": [
+   {
+    "detectorId": "one-meaning",
+    "excerpt": "check",
+    "id": "f-62e5df035785135d",
+    "message": "Use 'check' only as a verb.",
+    "policyId": "ste-one-meaning",
+    "severity": "warn",
+    "span": {
+     "end": 14,
+     "start": 9
+    }
+   },
+   {
+    "detectorId": "one-meaning",
+    "excerpt": "follow",
+    "id": "f-fce40d74dcabc650",
+    "message": "Use 'follow' only as a verb.",
+    "policyId": "ste-one-meaning",
+    "severity": "warn",
+    "span": {
+     "end": 38,
+     "start": 32
+    }
+   }
+  ],
+  "segments": [
+   [
+    "doc",
+    0,
+    66
+   ],
+   [
+    "p-8302a097439c",
+    0,
+    66
+   ],
+   [
+    "s-756228febe38",
+    0,
+    27
+   ],
+   [
+    "s-e80aaf0fb390",
+    28,
+    66
+   ]
+  ]
+ },
+ "asd-ste100|tests/fixtures/asd-ste100/non-imperative-draft.md|markus": {
+  "findings": [],
+  "segments": [
+   [
+    "doc",
+    0,
+    43
+   ],
+   [
+    "p-cf3cd686800b",
+    0,
+    43
+   ],
+   [
+    "s-cf3cd686800b",
+    0,
+    43
+   ]
+  ]
+ },
+ "asd-ste100|tests/fixtures/asd-ste100/non-imperative-draft.md|text": {
+  "findings": [],
+  "segments": [
+   [
+    "doc",
+    0,
+    43
+   ],
+   [
+    "p-cf3cd686800b",
+    0,
+    43
+   ],
+   [
+    "s-cf3cd686800b",
+    0,
+    43
+   ]
+  ]
+ },
+ "asd-ste100|tests/fixtures/asd-ste100/technical-ing-draft.md|markus": {
+  "findings": [],
+  "segments": [
+   [
+    "doc",
+    0,
+    34
+   ],
+   [
+    "p-3fc2b6b29607",
+    0,
+    34
+   ],
+   [
+    "s-3fc2b6b29607",
+    0,
+    34
+   ]
+  ]
+ },
+ "asd-ste100|tests/fixtures/asd-ste100/technical-ing-draft.md|text": {
+  "findings": [],
+  "segments": [
+   [
+    "doc",
+    0,
+    34
+   ],
+   [
+    "p-3fc2b6b29607",
+    0,
+    34
+   ],
+   [
+    "s-3fc2b6b29607",
+    0,
+    34
+   ]
+  ]
+ },
+ "asd-ste100|tests/fixtures/asd-ste100/two-instructions-draft.md|markus": {
+  "findings": [
+   {
+    "detectorId": "multiple-instructions",
+    "excerpt": "Press the power button and wait for the indicator.",
+    "id": "f-32e7ac18eba4692b",
+    "message": "Write one instruction per step.",
+    "policyId": "ste-one-instruction",
+    "severity": "warn",
+    "span": {
+     "end": 50,
+     "start": 0
+    }
+   }
+  ],
+  "segments": [
+   [
+    "doc",
+    0,
+    50
+   ],
+   [
+    "p-7642c15a6a2d",
+    0,
+    50
+   ],
+   [
+    "s-7642c15a6a2d",
+    0,
+    50
+   ]
+  ]
+ },
+ "asd-ste100|tests/fixtures/asd-ste100/two-instructions-draft.md|text": {
+  "findings": [
+   {
+    "detectorId": "multiple-instructions",
+    "excerpt": "Press the power button and wait for the indicator.",
+    "id": "f-32e7ac18eba4692b",
+    "message": "Write one instruction per step.",
+    "policyId": "ste-one-instruction",
+    "severity": "warn",
+    "span": {
+     "end": 50,
+     "start": 0
+    }
+   }
+  ],
+  "segments": [
+   [
+    "doc",
+    0,
+    50
+   ],
+   [
+    "p-7642c15a6a2d",
+    0,
+    50
+   ],
+   [
+    "s-7642c15a6a2d",
+    0,
+    50
+   ]
+  ]
+ },
+ "asd-ste100|tests/fixtures/builtin-checks/redundancy-blockquote-mixed.md|markus": {
+  "findings": [
+   {
+    "detectorId": "ing-form",
+    "excerpt": "Closing",
+    "id": "f-43b3491c945c9619",
+    "message": "'Closing' is an -ing form; use a simple verb or a noun.",
+    "policyId": "ste-no-ing",
+    "severity": "warn",
+    "span": {
+     "end": 180,
+     "start": 173
+    }
+   },
+   {
+    "detectorId": "ing-form",
+    "excerpt": "phrasing",
+    "id": "f-e03d1b56f62b44fd",
+    "message": "'phrasing' is an -ing form; use a simple verb or a noun.",
+    "policyId": "ste-no-ing",
+    "severity": "warn",
+    "span": {
+     "end": 217,
+     "start": 209
+    }
+   }
+  ],
+  "segments": [
+   [
+    "doc",
+    0,
+    224
+   ],
+   [
+    "p-70926b276cb3",
+    0,
+    92
+   ],
+   [
+    "s-70926b276cb3",
+    0,
+    92
+   ],
+   [
+    "p-0857f9c16a6a",
+    173,
+    223
+   ],
+   [
+    "s-0857f9c16a6a",
+    173,
+    223
+   ]
+  ]
+ },
+ "asd-ste100|tests/fixtures/builtin-checks/redundancy-blockquote-mixed.md|text": {
+  "findings": [
+   {
+    "detectorId": "ing-form",
+    "excerpt": "Closing",
+    "id": "f-43b3491c945c9619",
+    "message": "'Closing' is an -ing form; use a simple verb or a noun.",
+    "policyId": "ste-no-ing",
+    "severity": "warn",
+    "span": {
+     "end": 180,
+     "start": 173
+    }
+   },
+   {
+    "detectorId": "ing-form",
+    "excerpt": "phrasing",
+    "id": "f-e03d1b56f62b44fd",
+    "message": "'phrasing' is an -ing form; use a simple verb or a noun.",
+    "policyId": "ste-no-ing",
+    "severity": "warn",
+    "span": {
+     "end": 217,
+     "start": 209
+    }
+   }
+  ],
+  "segments": [
+   [
+    "doc",
+    0,
+    224
+   ],
+   [
+    "p-70926b276cb3",
+    0,
+    92
+   ],
+   [
+    "s-70926b276cb3",
+    0,
+    92
+   ],
+   [
+    "p-5d77ddc764da",
+    94,
+    171
+   ],
+   [
+    "s-5d77ddc764da",
+    94,
+    171
+   ],
+   [
+    "p-0857f9c16a6a",
+    173,
+    223
+   ],
+   [
+    "s-0857f9c16a6a",
+    173,
+    223
+   ]
+  ]
+ },
+ "asd-ste100|tests/fixtures/builtin-checks/redundancy-blockquote-refrain.md|markus": {
+  "findings": [
+   {
+    "detectorId": "ing-form",
+    "excerpt": "wording",
+    "id": "f-e1cc7dcf62cdb551",
+    "message": "'wording' is an -ing form; use a simple verb or a noun.",
+    "policyId": "ste-no-ing",
+    "severity": "warn",
+    "span": {
+     "end": 42,
+     "start": 35
+    }
+   },
+   {
+    "detectorId": "ing-form",
+    "excerpt": "Closing",
+    "id": "f-43b3491c945c9619",
+    "message": "'Closing' is an -ing form; use a simple verb or a noun.",
+    "policyId": "ste-no-ing",
+    "severity": "warn",
+    "span": {
+     "end": 159,
+     "start": 152
+    }
+   },
+   {
+    "detectorId": "ing-form",
+    "excerpt": "phrasing",
+    "id": "f-e03d1b56f62b44fd",
+    "message": "'phrasing' is an -ing form; use a simple verb or a noun.",
+    "policyId": "ste-no-ing",
+    "severity": "warn",
+    "span": {
+     "end": 196,
+     "start": 188
+    }
+   }
+  ],
+  "segments": [
+   [
+    "doc",
+    0,
+    203
+   ],
+   [
+    "p-c9bf5c8190d6",
+    0,
+    67
+   ],
+   [
+    "s-c9bf5c8190d6",
+    0,
+    67
+   ],
+   [
+    "p-0857f9c16a6a",
+    152,
+    202
+   ],
+   [
+    "s-0857f9c16a6a",
+    152,
+    202
+   ]
+  ]
+ },
+ "asd-ste100|tests/fixtures/builtin-checks/redundancy-blockquote-refrain.md|text": {
+  "findings": [
+   {
+    "detectorId": "ing-form",
+    "excerpt": "wording",
+    "id": "f-e1cc7dcf62cdb551",
+    "message": "'wording' is an -ing form; use a simple verb or a noun.",
+    "policyId": "ste-no-ing",
+    "severity": "warn",
+    "span": {
+     "end": 42,
+     "start": 35
+    }
+   },
+   {
+    "detectorId": "ing-form",
+    "excerpt": "Closing",
+    "id": "f-43b3491c945c9619",
+    "message": "'Closing' is an -ing form; use a simple verb or a noun.",
+    "policyId": "ste-no-ing",
+    "severity": "warn",
+    "span": {
+     "end": 159,
+     "start": 152
+    }
+   },
+   {
+    "detectorId": "ing-form",
+    "excerpt": "phrasing",
+    "id": "f-e03d1b56f62b44fd",
+    "message": "'phrasing' is an -ing form; use a simple verb or a noun.",
+    "policyId": "ste-no-ing",
+    "severity": "warn",
+    "span": {
+     "end": 196,
+     "start": 188
+    }
+   }
+  ],
+  "segments": [
+   [
+    "doc",
+    0,
+    203
+   ],
+   [
+    "p-c9bf5c8190d6",
+    0,
+    67
+   ],
+   [
+    "s-c9bf5c8190d6",
+    0,
+    67
+   ],
+   [
+    "p-2f9a50a78062",
+    69,
+    150
+   ],
+   [
+    "s-2f9a50a78062",
+    69,
+    150
+   ],
+   [
+    "p-0857f9c16a6a",
+    152,
+    202
+   ],
+   [
+    "s-0857f9c16a6a",
+    152,
+    202
+   ]
+  ]
+ },
+ "asd-ste100|tests/fixtures/builtin-checks/redundancy-body-prose.md|markus": {
+  "findings": [],
+  "segments": [
+   [
+    "doc",
+    0,
+    179
+   ],
+   [
+    "p-70926b276cb3",
+    0,
+    92
+   ],
+   [
+    "s-70926b276cb3",
+    0,
+    92
+   ],
+   [
+    "p-a2eec3b45e6e",
+    94,
+    178
+   ],
+   [
+    "s-a2eec3b45e6e",
+    94,
+    178
+   ]
+  ]
+ },
+ "asd-ste100|tests/fixtures/builtin-checks/redundancy-body-prose.md|text": {
+  "findings": [],
+  "segments": [
+   [
+    "doc",
+    0,
+    179
+   ],
+   [
+    "p-70926b276cb3",
+    0,
+    92
+   ],
+   [
+    "s-70926b276cb3",
+    0,
+    92
+   ],
+   [
+    "p-a2eec3b45e6e",
+    94,
+    178
+   ],
+   [
+    "s-a2eec3b45e6e",
+    94,
+    178
+   ]
+  ]
+ },
+ "asd-ste100|tests/fixtures/builtin-checks/redundancy-image-alts.md|markus": {
+  "findings": [
+   {
+    "detectorId": "ing-form",
+    "excerpt": "repeating",
+    "id": "f-f12438ab844ed452",
+    "message": "'repeating' is an -ing form; use a simple verb or a noun.",
+    "policyId": "ste-no-ing",
+    "severity": "warn",
+    "span": {
+     "end": 148,
+     "start": 139
+    }
+   }
+  ],
+  "segments": [
+   [
+    "doc",
+    0,
+    229
+   ],
+   [
+    "p-64dcb873101e",
+    0,
+    49
+   ],
+   [
+    "s-64dcb873101e",
+    0,
+    49
+   ],
+   [
+    "p-51801588e9b9",
+    51,
+    104
+   ],
+   [
+    "s-51801588e9b9",
+    51,
+    104
+   ],
+   [
+    "p-cc1c799bbc75",
+    106,
+    173
+   ],
+   [
+    "s-cc1c799bbc75",
+    106,
+    173
+   ],
+   [
+    "p-51801588e9b9-2",
+    175,
+    228
+   ],
+   [
+    "s-51801588e9b9-2",
+    175,
+    228
+   ]
+  ]
+ },
+ "asd-ste100|tests/fixtures/builtin-checks/redundancy-image-alts.md|text": {
+  "findings": [
+   {
+    "detectorId": "ing-form",
+    "excerpt": "repeating",
+    "id": "f-f12438ab844ed452",
+    "message": "'repeating' is an -ing form; use a simple verb or a noun.",
+    "policyId": "ste-no-ing",
+    "severity": "warn",
+    "span": {
+     "end": 148,
+     "start": 139
+    }
+   }
+  ],
+  "segments": [
+   [
+    "doc",
+    0,
+    229
+   ],
+   [
+    "p-64dcb873101e",
+    0,
+    49
+   ],
+   [
+    "s-64dcb873101e",
+    0,
+    49
+   ],
+   [
+    "p-51801588e9b9",
+    51,
+    104
+   ],
+   [
+    "s-51801588e9b9",
+    51,
+    104
+   ],
+   [
+    "p-cc1c799bbc75",
+    106,
+    173
+   ],
+   [
+    "s-cc1c799bbc75",
+    106,
+    173
+   ],
+   [
+    "p-51801588e9b9-2",
+    175,
+    228
+   ],
+   [
+    "s-51801588e9b9-2",
+    175,
+    228
+   ]
+  ]
+ },
+ "asd-ste100|tests/fixtures/builtin-checks/redundancy-italic-pull-quote.md|markus": {
+  "findings": [
+   {
+    "detectorId": "ing-form",
+    "excerpt": "interrupting",
+    "id": "f-1cfa0dc178551353",
+    "message": "'interrupting' is an -ing form; use a simple verb or a noun.",
+    "policyId": "ste-no-ing",
+    "severity": "warn",
+    "span": {
+     "end": 41,
+     "start": 29
+    }
+   },
+   {
+    "detectorId": "ing-form",
+    "excerpt": "speaking",
+    "id": "f-7c2846b02b9147ae",
+    "message": "'speaking' is an -ing form; use a simple verb or a noun.",
+    "policyId": "ste-no-ing",
+    "severity": "warn",
+    "span": {
+     "end": 67,
+     "start": 59
+    }
+   }
+  ],
+  "segments": [
+   [
+    "doc",
+    0,
+    498
+   ],
+   [
+    "p-fc24cd261079",
+    0,
+    68
+   ],
+   [
+    "s-fc24cd261079",
+    0,
+    68
+   ],
+   [
+    "p-ff8616cd5a76",
+    70,
+    233
+   ],
+   [
+    "s-c761863cba42",
+    70,
+    184
+   ],
+   [
+    "s-2cf829c32ad2",
+    185,
+    233
+   ],
+   [
+    "p-ca0ff4d2fb89",
+    295,
+    438
+   ],
+   [
+    "s-60d6c07dedda",
+    295,
+    390
+   ],
+   [
+    "s-6178b55c2131",
+    391,
+    438
+   ],
+   [
+    "p-fe61663d10ec",
+    444,
+    497
+   ],
+   [
+    "s-fe61663d10ec",
+    444,
+    497
+   ]
+  ]
+ },
+ "asd-ste100|tests/fixtures/builtin-checks/redundancy-italic-pull-quote.md|text": {
+  "findings": [
+   {
+    "detectorId": "ing-form",
+    "excerpt": "interrupting",
+    "id": "f-1cfa0dc178551353",
+    "message": "'interrupting' is an -ing form; use a simple verb or a noun.",
+    "policyId": "ste-no-ing",
+    "severity": "warn",
+    "span": {
+     "end": 41,
+     "start": 29
+    }
+   },
+   {
+    "detectorId": "ing-form",
+    "excerpt": "speaking",
+    "id": "f-7c2846b02b9147ae",
+    "message": "'speaking' is an -ing form; use a simple verb or a noun.",
+    "policyId": "ste-no-ing",
+    "severity": "warn",
+    "span": {
+     "end": 67,
+     "start": 59
+    }
+   }
+  ],
+  "segments": [
+   [
+    "doc",
+    0,
+    498
+   ],
+   [
+    "p-fc24cd261079",
+    0,
+    68
+   ],
+   [
+    "s-fc24cd261079",
+    0,
+    68
+   ],
+   [
+    "p-ff8616cd5a76",
+    70,
+    233
+   ],
+   [
+    "s-c761863cba42",
+    70,
+    184
+   ],
+   [
+    "s-2cf829c32ad2",
+    185,
+    233
+   ],
+   [
+    "p-12fad3ebda60",
+    235,
+    442
+   ],
+   [
+    "s-f3dbca21f421",
+    235,
+    390
+   ],
+   [
+    "s-12a58d49346a",
+    391,
+    442
+   ],
+   [
+    "p-fe61663d10ec",
+    444,
+    497
+   ],
+   [
+    "s-fe61663d10ec",
+    444,
+    497
+   ]
+  ]
+ },
+ "plain-language|features/fixtures/multilingual/en.md|markus": {
+  "findings": [
+   {
+    "detectorId": "flesch-kincaid",
+    "excerpt": "",
+    "id": "f-5181cc4104ed7396",
+    "message": "Reads at Flesch-Kincaid grade 9.1; the target is grade 8 or lower.",
+    "policyId": "pl-reading-level",
+    "severity": "info",
+    "span": {
+     "end": 945,
+     "start": 0
+    }
+   },
+   {
+    "detectorId": "undefined-acronym",
+    "excerpt": "ETH",
+    "id": "f-f98b4d91f4246bf0",
+    "message": "Define ETH the first time you use it.",
+    "policyId": "pl-define-abbreviations",
+    "severity": "info",
+    "span": {
+     "end": 201,
+     "start": 198
+    }
+   },
+   {
+    "detectorId": "passive-voice",
+    "excerpt": "The company did not say how many of the crashes were reported to police.",
+    "id": "f-dcf0849b98db501e",
+    "message": "Sentence uses passive voice.",
+    "policyId": "pl-active-voice",
+    "severity": "info",
+    "span": {
+     "end": 549,
+     "start": 477
+    }
+   }
+  ],
+  "segments": [
+   [
+    "doc",
+    0,
+    945
+   ],
+   [
+    "p-6d50a962ea9d",
+    2,
+    45
+   ],
+   [
+    "s-6d50a962ea9d",
+    2,
+    45
+   ],
+   [
+    "p-7171f693272f",
+    47,
+    295
+   ],
+   [
+    "s-0168e05bac80",
+    47,
+    182
+   ],
+   [
+    "s-ae86b1e634d8",
+    183,
+    295
+   ],
+   [
+    "p-9a883d3beb35",
+    297,
+    549
+   ],
+   [
+    "s-dfcadfa6fcf0",
+    297,
+    415
+   ],
+   [
+    "s-ea164f678044",
+    416,
+    476
+   ],
+   [
+    "s-42d5f89b1a03",
+    477,
+    549
+   ],
+   [
+    "p-acd0babdcdff",
+    551,
+    799
+   ],
+   [
+    "s-e939b72bf517",
+    551,
+    631
+   ],
+   [
+    "s-c66ab891ab4c",
+    632,
+    751
+   ],
+   [
+    "s-74a2c525e4aa",
+    752,
+    799
+   ],
+   [
+    "p-acca39d5c364",
+    801,
+    944
+   ],
+   [
+    "s-9a65c9bb5cc5",
+    801,
+    878
+   ],
+   [
+    "s-fdd287ceccd5",
+    879,
+    944
+   ]
+  ]
+ },
+ "plain-language|features/fixtures/multilingual/en.md|text": {
+  "findings": [
+   {
+    "detectorId": "flesch-kincaid",
+    "excerpt": "",
+    "id": "f-5181cc4104ed7396",
+    "message": "Reads at Flesch-Kincaid grade 9.1; the target is grade 8 or lower.",
+    "policyId": "pl-reading-level",
+    "severity": "info",
+    "span": {
+     "end": 945,
+     "start": 0
+    }
+   },
+   {
+    "detectorId": "undefined-acronym",
+    "excerpt": "ETH",
+    "id": "f-f98b4d91f4246bf0",
+    "message": "Define ETH the first time you use it.",
+    "policyId": "pl-define-abbreviations",
+    "severity": "info",
+    "span": {
+     "end": 201,
+     "start": 198
+    }
+   },
+   {
+    "detectorId": "passive-voice",
+    "excerpt": "The company did not say how many of the crashes were reported to police.",
+    "id": "f-dcf0849b98db501e",
+    "message": "Sentence uses passive voice.",
+    "policyId": "pl-active-voice",
+    "severity": "info",
+    "span": {
+     "end": 549,
+     "start": 477
+    }
+   }
+  ],
+  "segments": [
+   [
+    "doc",
+    0,
+    945
+   ],
+   [
+    "p-e8bd5589c8c5",
+    0,
+    45
+   ],
+   [
+    "s-e8bd5589c8c5",
+    0,
+    45
+   ],
+   [
+    "p-7171f693272f",
+    47,
+    295
+   ],
+   [
+    "s-0168e05bac80",
+    47,
+    182
+   ],
+   [
+    "s-ae86b1e634d8",
+    183,
+    295
+   ],
+   [
+    "p-9a883d3beb35",
+    297,
+    549
+   ],
+   [
+    "s-dfcadfa6fcf0",
+    297,
+    415
+   ],
+   [
+    "s-ea164f678044",
+    416,
+    476
+   ],
+   [
+    "s-42d5f89b1a03",
+    477,
+    549
+   ],
+   [
+    "p-acd0babdcdff",
+    551,
+    799
+   ],
+   [
+    "s-e939b72bf517",
+    551,
+    631
+   ],
+   [
+    "s-c66ab891ab4c",
+    632,
+    751
+   ],
+   [
+    "s-74a2c525e4aa",
+    752,
+    799
+   ],
+   [
+    "p-acca39d5c364",
+    801,
+    944
+   ],
+   [
+    "s-9a65c9bb5cc5",
+    801,
+    878
+   ],
+   [
+    "s-fdd287ceccd5",
+    879,
+    944
+   ]
+  ]
+ },
+ "plain-language|features/fixtures/policy-pack/reference-samples/sample-five.md|markus": {
+  "findings": [],
+  "segments": [
+   [
+    "doc",
+    0,
+    73
+   ],
+   [
+    "p-dd2420395064",
+    0,
+    72
+   ],
+   [
+    "s-473bfd491ac9",
+    0,
+    30
+   ],
+   [
+    "s-52182645fff7",
+    31,
+    72
+   ]
+  ]
+ },
+ "plain-language|features/fixtures/policy-pack/reference-samples/sample-five.md|text": {
+  "findings": [],
+  "segments": [
+   [
+    "doc",
+    0,
+    73
+   ],
+   [
+    "p-dd2420395064",
+    0,
+    72
+   ],
+   [
+    "s-473bfd491ac9",
+    0,
+    30
+   ],
+   [
+    "s-52182645fff7",
+    31,
+    72
+   ]
+  ]
+ },
+ "plain-language|features/fixtures/policy-pack/reference-samples/sample-four.md|markus": {
+  "findings": [],
+  "segments": [
+   [
+    "doc",
+    0,
+    87
+   ],
+   [
+    "p-8b6493e47a4c",
+    0,
+    86
+   ],
+   [
+    "s-604e77f95bde",
+    0,
+    33
+   ],
+   [
+    "s-44df68e569ef",
+    34,
+    86
+   ]
+  ]
+ },
+ "plain-language|features/fixtures/policy-pack/reference-samples/sample-four.md|text": {
+  "findings": [],
+  "segments": [
+   [
+    "doc",
+    0,
+    87
+   ],
+   [
+    "p-8b6493e47a4c",
+    0,
+    86
+   ],
+   [
+    "s-604e77f95bde",
+    0,
+    33
+   ],
+   [
+    "s-44df68e569ef",
+    34,
+    86
+   ]
+  ]
+ },
+ "plain-language|features/fixtures/policy-pack/reference-samples/sample-one.md|markus": {
+  "findings": [],
+  "segments": [
+   [
+    "doc",
+    0,
+    89
+   ],
+   [
+    "p-585682226e8d",
+    0,
+    88
+   ],
+   [
+    "s-499fc0c2ce50",
+    0,
+    43
+   ],
+   [
+    "s-8b6840f3a083",
+    44,
+    88
+   ]
+  ]
+ },
+ "plain-language|features/fixtures/policy-pack/reference-samples/sample-one.md|text": {
+  "findings": [],
+  "segments": [
+   [
+    "doc",
+    0,
+    89
+   ],
+   [
+    "p-585682226e8d",
+    0,
+    88
+   ],
+   [
+    "s-499fc0c2ce50",
+    0,
+    43
+   ],
+   [
+    "s-8b6840f3a083",
+    44,
+    88
+   ]
+  ]
+ },
+ "plain-language|features/fixtures/policy-pack/reference-samples/sample-three.md|markus": {
+  "findings": [],
+  "segments": [
+   [
+    "doc",
+    0,
+    79
+   ],
+   [
+    "p-f177a8ed0025",
+    0,
+    78
+   ],
+   [
+    "s-73e4f6a36ed9",
+    0,
+    37
+   ],
+   [
+    "s-58d1731d66a9",
+    38,
+    78
+   ]
+  ]
+ },
+ "plain-language|features/fixtures/policy-pack/reference-samples/sample-three.md|text": {
+  "findings": [],
+  "segments": [
+   [
+    "doc",
+    0,
+    79
+   ],
+   [
+    "p-f177a8ed0025",
+    0,
+    78
+   ],
+   [
+    "s-73e4f6a36ed9",
+    0,
+    37
+   ],
+   [
+    "s-58d1731d66a9",
+    38,
+    78
+   ]
+  ]
+ },
+ "plain-language|features/fixtures/policy-pack/reference-samples/sample-two.md|markus": {
+  "findings": [],
+  "segments": [
+   [
+    "doc",
+    0,
+    87
+   ],
+   [
+    "p-4055f2cccf88",
+    0,
+    86
+   ],
+   [
+    "s-ed9251272b37",
+    0,
+    43
+   ],
+   [
+    "s-6fba61820dad",
+    44,
+    86
+   ]
+  ]
+ },
+ "plain-language|features/fixtures/policy-pack/reference-samples/sample-two.md|text": {
+  "findings": [],
+  "segments": [
+   [
+    "doc",
+    0,
+    87
+   ],
+   [
+    "p-4055f2cccf88",
+    0,
+    86
+   ],
+   [
+    "s-ed9251272b37",
+    0,
+    43
+   ],
+   [
+    "s-6fba61820dad",
+    44,
+    86
+   ]
+  ]
+ },
+ "plain-language|tests/fixtures/asd-ste100/article-clean-draft.md|markus": {
+  "findings": [],
+  "segments": [
+   [
+    "doc",
+    0,
+    30
+   ],
+   [
+    "p-8731034ab4bd",
+    0,
+    30
+   ],
+   [
+    "s-8731034ab4bd",
+    0,
+    30
+   ]
+  ]
+ },
+ "plain-language|tests/fixtures/asd-ste100/article-clean-draft.md|text": {
+  "findings": [],
+  "segments": [
+   [
+    "doc",
+    0,
+    30
+   ],
+   [
+    "p-8731034ab4bd",
+    0,
+    30
+   ],
+   [
+    "s-8731034ab4bd",
+    0,
+    30
+   ]
+  ]
+ },
+ "plain-language|tests/fixtures/asd-ste100/at-limit-description-draft.md|markus": {
+  "findings": [],
+  "segments": [
+   [
+    "doc",
+    0,
+    129
+   ],
+   [
+    "p-b18198be5505",
+    0,
+    129
+   ],
+   [
+    "s-b18198be5505",
+    0,
+    129
+   ]
+  ]
+ },
+ "plain-language|tests/fixtures/asd-ste100/at-limit-description-draft.md|text": {
+  "findings": [],
+  "segments": [
+   [
+    "doc",
+    0,
+    129
+   ],
+   [
+    "p-b18198be5505",
+    0,
+    129
+   ],
+   [
+    "s-b18198be5505",
+    0,
+    129
+   ]
+  ]
+ },
+ "plain-language|tests/fixtures/asd-ste100/at-limit-procedure-draft.md|markus": {
+  "findings": [],
+  "segments": [
+   [
+    "doc",
+    0,
+    111
+   ],
+   [
+    "p-5c37c1d03d90",
+    3,
+    111
+   ],
+   [
+    "s-5c37c1d03d90",
+    3,
+    111
+   ]
+  ]
+ },
+ "plain-language|tests/fixtures/asd-ste100/at-limit-procedure-draft.md|text": {
+  "findings": [],
+  "segments": [
+   [
+    "doc",
+    0,
+    111
+   ],
+   [
+    "p-2485cf44ea82",
+    0,
+    111
+   ],
+   [
+    "s-c977dbe78522",
+    0,
+    2
+   ],
+   [
+    "s-5c37c1d03d90",
+    3,
+    111
+   ]
+  ]
+ },
+ "plain-language|tests/fixtures/asd-ste100/clean-technical-draft.md|markus": {
+  "findings": [],
+  "segments": [
+   [
+    "doc",
+    0,
+    68
+   ],
+   [
+    "p-4a2bcf28640d",
+    0,
+    68
+   ],
+   [
+    "s-be6af2d4f451",
+    0,
+    24
+   ],
+   [
+    "s-e19f9dd4a4ed",
+    25,
+    47
+   ],
+   [
+    "s-493938fe1ac4",
+    48,
+    68
+   ]
+  ]
+ },
+ "plain-language|tests/fixtures/asd-ste100/clean-technical-draft.md|text": {
+  "findings": [],
+  "segments": [
+   [
+    "doc",
+    0,
+    68
+   ],
+   [
+    "p-4a2bcf28640d",
+    0,
+    68
+   ],
+   [
+    "s-be6af2d4f451",
+    0,
+    24
+   ],
+   [
+    "s-e19f9dd4a4ed",
+    25,
+    47
+   ],
+   [
+    "s-493938fe1ac4",
+    48,
+    68
+   ]
+  ]
+ },
+ "plain-language|tests/fixtures/asd-ste100/gold/must-fail/gold-structure.md|markus": {
+  "findings": [],
+  "segments": [
+   [
+    "doc",
+    0,
+    194
+   ],
+   [
+    "p-b20b8c6b94ed",
+    2,
+    20
+   ],
+   [
+    "s-b20b8c6b94ed",
+    2,
+    20
+   ],
+   [
+    "p-3c2212dbbba7",
+    25,
+    139
+   ],
+   [
+    "s-3c2212dbbba7",
+    25,
+    139
+   ],
+   [
+    "p-7642c15a6a2d",
+    144,
+    194
+   ],
+   [
+    "s-7642c15a6a2d",
+    144,
+    194
+   ]
+  ]
+ },
+ "plain-language|tests/fixtures/asd-ste100/gold/must-fail/gold-structure.md|text": {
+  "findings": [],
+  "segments": [
+   [
+    "doc",
+    0,
+    194
+   ],
+   [
+    "p-2b741fcd4cf9",
+    0,
+    20
+   ],
+   [
+    "s-2b741fcd4cf9",
+    0,
+    20
+   ],
+   [
+    "p-a92c4c37ddbc",
+    22,
+    139
+   ],
+   [
+    "s-c977dbe78522",
+    22,
+    24
+   ],
+   [
+    "s-3c2212dbbba7",
+    25,
+    139
+   ],
+   [
+    "p-9ff1f270b03d",
+    141,
+    194
+   ],
+   [
+    "s-6bc54f13bea5",
+    141,
+    143
+   ],
+   [
+    "s-7642c15a6a2d",
+    144,
+    194
+   ]
+  ]
+ },
+ "plain-language|tests/fixtures/asd-ste100/gold/must-fail/gold-vocabulary.md|markus": {
+  "findings": [
+   {
+    "detectorId": "utilize",
+    "excerpt": "Utilize",
+    "id": "f-921929e3930e9eee",
+    "message": "Use simple words and phrases",
+    "policyId": "pl-simple-words",
+    "replacement": "use",
+    "severity": "info",
+    "span": {
+     "end": 7,
+     "start": 0
+    }
+   },
+   {
+    "detectorId": "purchase",
+    "excerpt": "Purchase",
+    "id": "f-64b5bb7c5f7c8aeb",
+    "message": "Use simple words and phrases",
+    "policyId": "pl-simple-words",
+    "replacement": "buy",
+    "severity": "info",
+    "span": {
+     "end": 36,
+     "start": 28
+    }
+   }
+  ],
+  "segments": [
+   [
+    "doc",
+    0,
+    52
+   ],
+   [
+    "p-1b80dd1271ad",
+    0,
+    52
+   ],
+   [
+    "s-fefc2b3d94cc",
+    0,
+    27
+   ],
+   [
+    "s-33050c6b0e42",
+    28,
+    52
+   ]
+  ]
+ },
+ "plain-language|tests/fixtures/asd-ste100/gold/must-fail/gold-vocabulary.md|text": {
+  "findings": [
+   {
+    "detectorId": "utilize",
+    "excerpt": "Utilize",
+    "id": "f-921929e3930e9eee",
+    "message": "Use simple words and phrases",
+    "policyId": "pl-simple-words",
+    "replacement": "use",
+    "severity": "info",
+    "span": {
+     "end": 7,
+     "start": 0
+    }
+   },
+   {
+    "detectorId": "purchase",
+    "excerpt": "Purchase",
+    "id": "f-64b5bb7c5f7c8aeb",
+    "message": "Use simple words and phrases",
+    "policyId": "pl-simple-words",
+    "replacement": "buy",
+    "severity": "info",
+    "span": {
+     "end": 36,
+     "start": 28
+    }
+   }
+  ],
+  "segments": [
+   [
+    "doc",
+    0,
+    52
+   ],
+   [
+    "p-1b80dd1271ad",
+    0,
+    52
+   ],
+   [
+    "s-fefc2b3d94cc",
+    0,
+    27
+   ],
+   [
+    "s-33050c6b0e42",
+    28,
+    52
+   ]
+  ]
+ },
+ "plain-language|tests/fixtures/asd-ste100/gold/must-fail/gold-voice.md|markus": {
+  "findings": [
+   {
+    "detectorId": "passive-voice",
+    "excerpt": "The filter is replaced by the operator.",
+    "id": "f-4011ae62cf17c60b",
+    "message": "Sentence uses passive voice.",
+    "policyId": "pl-active-voice",
+    "severity": "info",
+    "span": {
+     "end": 39,
+     "start": 0
+    }
+   }
+  ],
+  "segments": [
+   [
+    "doc",
+    0,
+    102
+   ],
+   [
+    "p-3ef4eea990d3",
+    0,
+    102
+   ],
+   [
+    "s-1da229a9e556",
+    0,
+    39
+   ],
+   [
+    "s-165907e3752a",
+    40,
+    75
+   ],
+   [
+    "s-25d2659ad97b",
+    76,
+    102
+   ]
+  ]
+ },
+ "plain-language|tests/fixtures/asd-ste100/gold/must-fail/gold-voice.md|text": {
+  "findings": [
+   {
+    "detectorId": "passive-voice",
+    "excerpt": "The filter is replaced by the operator.",
+    "id": "f-4011ae62cf17c60b",
+    "message": "Sentence uses passive voice.",
+    "policyId": "pl-active-voice",
+    "severity": "info",
+    "span": {
+     "end": 39,
+     "start": 0
+    }
+   }
+  ],
+  "segments": [
+   [
+    "doc",
+    0,
+    102
+   ],
+   [
+    "p-3ef4eea990d3",
+    0,
+    102
+   ],
+   [
+    "s-1da229a9e556",
+    0,
+    39
+   ],
+   [
+    "s-165907e3752a",
+    40,
+    75
+   ],
+   [
+    "s-25d2659ad97b",
+    76,
+    102
+   ]
+  ]
+ },
+ "plain-language|tests/fixtures/asd-ste100/gold/must-pass/gold-clean-description.md|markus": {
+  "findings": [],
+  "segments": [
+   [
+    "doc",
+    0,
+    96
+   ],
+   [
+    "p-b9b70721f727",
+    0,
+    96
+   ],
+   [
+    "s-0c8c33358c90",
+    0,
+    35
+   ],
+   [
+    "s-45580527d7ea",
+    36,
+    96
+   ]
+  ]
+ },
+ "plain-language|tests/fixtures/asd-ste100/gold/must-pass/gold-clean-description.md|text": {
+  "findings": [],
+  "segments": [
+   [
+    "doc",
+    0,
+    96
+   ],
+   [
+    "p-b9b70721f727",
+    0,
+    96
+   ],
+   [
+    "s-0c8c33358c90",
+    0,
+    35
+   ],
+   [
+    "s-45580527d7ea",
+    36,
+    96
+   ]
+  ]
+ },
+ "plain-language|tests/fixtures/asd-ste100/gold/must-pass/gold-clean-procedure.md|markus": {
+  "findings": [],
+  "segments": [
+   [
+    "doc",
+    0,
+    162
+   ],
+   [
+    "p-b20b8c6b94ed",
+    2,
+    20
+   ],
+   [
+    "s-b20b8c6b94ed",
+    2,
+    20
+   ],
+   [
+    "p-feafdf189938",
+    25,
+    48
+   ],
+   [
+    "s-feafdf189938",
+    25,
+    48
+   ],
+   [
+    "p-0c3c76b95a08",
+    52,
+    75
+   ],
+   [
+    "s-0c3c76b95a08",
+    52,
+    75
+   ],
+   [
+    "p-be6af2d4f451",
+    79,
+    103
+   ],
+   [
+    "s-be6af2d4f451",
+    79,
+    103
+   ],
+   [
+    "p-e19f9dd4a4ed",
+    107,
+    129
+   ],
+   [
+    "s-e19f9dd4a4ed",
+    107,
+    129
+   ],
+   [
+    "p-a5a84e883bf3",
+    133,
+    162
+   ],
+   [
+    "s-a5a84e883bf3",
+    133,
+    162
+   ]
+  ]
+ },
+ "plain-language|tests/fixtures/asd-ste100/gold/must-pass/gold-clean-procedure.md|text": {
+  "findings": [
+   {
+    "detectorId": "length",
+    "excerpt": "1. Press the power button.\n2. Wait for the indicator.\n3. Remove the filter cover.\n4. Insert the new filter.\n5. Press the power button again.",
+    "id": "f-2ad9ed99bb4961fd",
+    "message": "Paragraph has 10 sentences; the limit is 7.",
+    "policyId": "pl-short-paragraphs",
+    "severity": "info",
+    "span": {
+     "end": 162,
+     "start": 22
+    }
+   }
+  ],
+  "segments": [
+   [
+    "doc",
+    0,
+    162
+   ],
+   [
+    "p-2b741fcd4cf9",
+    0,
+    20
+   ],
+   [
+    "s-2b741fcd4cf9",
+    0,
+    20
+   ],
+   [
+    "p-24130c57e970",
+    22,
+    162
+   ],
+   [
+    "s-c977dbe78522",
+    22,
+    24
+   ],
+   [
+    "s-feafdf189938",
+    25,
+    48
+   ],
+   [
+    "s-6bc54f13bea5",
+    49,
+    51
+   ],
+   [
+    "s-0c3c76b95a08",
+    52,
+    75
+   ],
+   [
+    "s-267c23695b6e",
+    76,
+    78
+   ],
+   [
+    "s-be6af2d4f451",
+    79,
+    103
+   ],
+   [
+    "s-23f663630e2f",
+    104,
+    106
+   ],
+   [
+    "s-e19f9dd4a4ed",
+    107,
+    129
+   ],
+   [
+    "s-540dd397b2d3",
+    130,
+    132
+   ],
+   [
+    "s-a5a84e883bf3",
+    133,
+    162
+   ]
+  ]
+ },
+ "plain-language|tests/fixtures/asd-ste100/multi-meaning-draft.md|markus": {
+  "findings": [],
+  "segments": [
+   [
+    "doc",
+    0,
+    66
+   ],
+   [
+    "p-8302a097439c",
+    0,
+    66
+   ],
+   [
+    "s-756228febe38",
+    0,
+    27
+   ],
+   [
+    "s-e80aaf0fb390",
+    28,
+    66
+   ]
+  ]
+ },
+ "plain-language|tests/fixtures/asd-ste100/multi-meaning-draft.md|text": {
+  "findings": [],
+  "segments": [
+   [
+    "doc",
+    0,
+    66
+   ],
+   [
+    "p-8302a097439c",
+    0,
+    66
+   ],
+   [
+    "s-756228febe38",
+    0,
+    27
+   ],
+   [
+    "s-e80aaf0fb390",
+    28,
+    66
+   ]
+  ]
+ },
+ "plain-language|tests/fixtures/asd-ste100/non-imperative-draft.md|markus": {
+  "findings": [],
+  "segments": [
+   [
+    "doc",
+    0,
+    43
+   ],
+   [
+    "p-cf3cd686800b",
+    0,
+    43
+   ],
+   [
+    "s-cf3cd686800b",
+    0,
+    43
+   ]
+  ]
+ },
+ "plain-language|tests/fixtures/asd-ste100/non-imperative-draft.md|text": {
+  "findings": [],
+  "segments": [
+   [
+    "doc",
+    0,
+    43
+   ],
+   [
+    "p-cf3cd686800b",
+    0,
+    43
+   ],
+   [
+    "s-cf3cd686800b",
+    0,
+    43
+   ]
+  ]
+ },
+ "plain-language|tests/fixtures/asd-ste100/technical-ing-draft.md|markus": {
+  "findings": [],
+  "segments": [
+   [
+    "doc",
+    0,
+    34
+   ],
+   [
+    "p-3fc2b6b29607",
+    0,
+    34
+   ],
+   [
+    "s-3fc2b6b29607",
+    0,
+    34
+   ]
+  ]
+ },
+ "plain-language|tests/fixtures/asd-ste100/technical-ing-draft.md|text": {
+  "findings": [],
+  "segments": [
+   [
+    "doc",
+    0,
+    34
+   ],
+   [
+    "p-3fc2b6b29607",
+    0,
+    34
+   ],
+   [
+    "s-3fc2b6b29607",
+    0,
+    34
+   ]
+  ]
+ },
+ "plain-language|tests/fixtures/asd-ste100/two-instructions-draft.md|markus": {
+  "findings": [],
+  "segments": [
+   [
+    "doc",
+    0,
+    50
+   ],
+   [
+    "p-7642c15a6a2d",
+    0,
+    50
+   ],
+   [
+    "s-7642c15a6a2d",
+    0,
+    50
+   ]
+  ]
+ },
+ "plain-language|tests/fixtures/asd-ste100/two-instructions-draft.md|text": {
+  "findings": [],
+  "segments": [
+   [
+    "doc",
+    0,
+    50
+   ],
+   [
+    "p-7642c15a6a2d",
+    0,
+    50
+   ],
+   [
+    "s-7642c15a6a2d",
+    0,
+    50
+   ]
+  ]
+ },
+ "plain-language|tests/fixtures/builtin-checks/redundancy-blockquote-mixed.md|markus": {
+  "findings": [],
+  "segments": [
+   [
+    "doc",
+    0,
+    224
+   ],
+   [
+    "p-70926b276cb3",
+    0,
+    92
+   ],
+   [
+    "s-70926b276cb3",
+    0,
+    92
+   ],
+   [
+    "p-0857f9c16a6a",
+    173,
+    223
+   ],
+   [
+    "s-0857f9c16a6a",
+    173,
+    223
+   ]
+  ]
+ },
+ "plain-language|tests/fixtures/builtin-checks/redundancy-blockquote-mixed.md|text": {
+  "findings": [],
+  "segments": [
+   [
+    "doc",
+    0,
+    224
+   ],
+   [
+    "p-70926b276cb3",
+    0,
+    92
+   ],
+   [
+    "s-70926b276cb3",
+    0,
+    92
+   ],
+   [
+    "p-5d77ddc764da",
+    94,
+    171
+   ],
+   [
+    "s-5d77ddc764da",
+    94,
+    171
+   ],
+   [
+    "p-0857f9c16a6a",
+    173,
+    223
+   ],
+   [
+    "s-0857f9c16a6a",
+    173,
+    223
+   ]
+  ]
+ },
+ "plain-language|tests/fixtures/builtin-checks/redundancy-blockquote-refrain.md|markus": {
+  "findings": [],
+  "segments": [
+   [
+    "doc",
+    0,
+    203
+   ],
+   [
+    "p-c9bf5c8190d6",
+    0,
+    67
+   ],
+   [
+    "s-c9bf5c8190d6",
+    0,
+    67
+   ],
+   [
+    "p-0857f9c16a6a",
+    152,
+    202
+   ],
+   [
+    "s-0857f9c16a6a",
+    152,
+    202
+   ]
+  ]
+ },
+ "plain-language|tests/fixtures/builtin-checks/redundancy-blockquote-refrain.md|text": {
+  "findings": [],
+  "segments": [
+   [
+    "doc",
+    0,
+    203
+   ],
+   [
+    "p-c9bf5c8190d6",
+    0,
+    67
+   ],
+   [
+    "s-c9bf5c8190d6",
+    0,
+    67
+   ],
+   [
+    "p-2f9a50a78062",
+    69,
+    150
+   ],
+   [
+    "s-2f9a50a78062",
+    69,
+    150
+   ],
+   [
+    "p-0857f9c16a6a",
+    152,
+    202
+   ],
+   [
+    "s-0857f9c16a6a",
+    152,
+    202
+   ]
+  ]
+ },
+ "plain-language|tests/fixtures/builtin-checks/redundancy-body-prose.md|markus": {
+  "findings": [],
+  "segments": [
+   [
+    "doc",
+    0,
+    179
+   ],
+   [
+    "p-70926b276cb3",
+    0,
+    92
+   ],
+   [
+    "s-70926b276cb3",
+    0,
+    92
+   ],
+   [
+    "p-a2eec3b45e6e",
+    94,
+    178
+   ],
+   [
+    "s-a2eec3b45e6e",
+    94,
+    178
+   ]
+  ]
+ },
+ "plain-language|tests/fixtures/builtin-checks/redundancy-body-prose.md|text": {
+  "findings": [],
+  "segments": [
+   [
+    "doc",
+    0,
+    179
+   ],
+   [
+    "p-70926b276cb3",
+    0,
+    92
+   ],
+   [
+    "s-70926b276cb3",
+    0,
+    92
+   ],
+   [
+    "p-a2eec3b45e6e",
+    94,
+    178
+   ],
+   [
+    "s-a2eec3b45e6e",
+    94,
+    178
+   ]
+  ]
+ },
+ "plain-language|tests/fixtures/builtin-checks/redundancy-image-alts.md|markus": {
+  "findings": [],
+  "segments": [
+   [
+    "doc",
+    0,
+    229
+   ],
+   [
+    "p-64dcb873101e",
+    0,
+    49
+   ],
+   [
+    "s-64dcb873101e",
+    0,
+    49
+   ],
+   [
+    "p-51801588e9b9",
+    51,
+    104
+   ],
+   [
+    "s-51801588e9b9",
+    51,
+    104
+   ],
+   [
+    "p-cc1c799bbc75",
+    106,
+    173
+   ],
+   [
+    "s-cc1c799bbc75",
+    106,
+    173
+   ],
+   [
+    "p-51801588e9b9-2",
+    175,
+    228
+   ],
+   [
+    "s-51801588e9b9-2",
+    175,
+    228
+   ]
+  ]
+ },
+ "plain-language|tests/fixtures/builtin-checks/redundancy-image-alts.md|text": {
+  "findings": [],
+  "segments": [
+   [
+    "doc",
+    0,
+    229
+   ],
+   [
+    "p-64dcb873101e",
+    0,
+    49
+   ],
+   [
+    "s-64dcb873101e",
+    0,
+    49
+   ],
+   [
+    "p-51801588e9b9",
+    51,
+    104
+   ],
+   [
+    "s-51801588e9b9",
+    51,
+    104
+   ],
+   [
+    "p-cc1c799bbc75",
+    106,
+    173
+   ],
+   [
+    "s-cc1c799bbc75",
+    106,
+    173
+   ],
+   [
+    "p-51801588e9b9-2",
+    175,
+    228
+   ],
+   [
+    "s-51801588e9b9-2",
+    175,
+    228
+   ]
+  ]
+ },
+ "plain-language|tests/fixtures/builtin-checks/redundancy-italic-pull-quote.md|markus": {
+  "findings": [],
+  "segments": [
+   [
+    "doc",
+    0,
+    498
+   ],
+   [
+    "p-fc24cd261079",
+    0,
+    68
+   ],
+   [
+    "s-fc24cd261079",
+    0,
+    68
+   ],
+   [
+    "p-ff8616cd5a76",
+    70,
+    233
+   ],
+   [
+    "s-c761863cba42",
+    70,
+    184
+   ],
+   [
+    "s-2cf829c32ad2",
+    185,
+    233
+   ],
+   [
+    "p-ca0ff4d2fb89",
+    295,
+    438
+   ],
+   [
+    "s-60d6c07dedda",
+    295,
+    390
+   ],
+   [
+    "s-6178b55c2131",
+    391,
+    438
+   ],
+   [
+    "p-fe61663d10ec",
+    444,
+    497
+   ],
+   [
+    "s-fe61663d10ec",
+    444,
+    497
+   ]
+  ]
+ },
+ "plain-language|tests/fixtures/builtin-checks/redundancy-italic-pull-quote.md|text": {
+  "findings": [],
+  "segments": [
+   [
+    "doc",
+    0,
+    498
+   ],
+   [
+    "p-fc24cd261079",
+    0,
+    68
+   ],
+   [
+    "s-fc24cd261079",
+    0,
+    68
+   ],
+   [
+    "p-ff8616cd5a76",
+    70,
+    233
+   ],
+   [
+    "s-c761863cba42",
+    70,
+    184
+   ],
+   [
+    "s-2cf829c32ad2",
+    185,
+    233
+   ],
+   [
+    "p-12fad3ebda60",
+    235,
+    442
+   ],
+   [
+    "s-f3dbca21f421",
+    235,
+    390
+   ],
+   [
+    "s-12a58d49346a",
+    391,
+    442
+   ],
+   [
+    "p-fe61663d10ec",
+    444,
+    497
+   ],
+   [
+    "s-fe61663d10ec",
+    444,
+    497
+   ]
+  ]
+ }
+}

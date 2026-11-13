@@ -36,6 +36,7 @@ def step_rules_pack(context):
     context.rules_pack = {
         "schemaVersion": 1,
         "packId": "rules-example",
+        "language": "en",
         "version": "1",
         "policies": [
             {
@@ -72,12 +73,12 @@ def step_detector_blocks(context, detector_id, block):
 
 
 def _run_check(context, text: str) -> dict:
-    return check({"schemaVersion": 1, "content": {"format": "markus", "text": text}, "pack": context.rules_pack})
+    return check({"schemaVersion": 1, "content": {"format": "markus", "language": "en", "text": text}, "pack": context.rules_pack})
 
 
 @when("the document is checked")
 def step_document_checked(context):
-    context.check_request = {"schemaVersion": 1, "content": {"format": "markus", "text": context.document_text}, "pack": context.rules_pack}
+    context.check_request = {"schemaVersion": 1, "content": {"format": "markus", "language": "en", "text": context.document_text}, "pack": context.rules_pack}
     context.check_error = None
     context.check_result = _run_check(context, context.document_text)
 
@@ -173,7 +174,7 @@ def step_builtin_valid(context):
 
 
 def _check_with_builtin(context, text: str) -> dict:
-    return check({"schemaVersion": 1, "content": {"format": "text", "text": text}, "pack": context.builtin_payload})
+    return check({"schemaVersion": 1, "content": {"format": "text", "language": "en", "text": text}, "pack": context.builtin_payload})
 
 
 @then("every policy's violating examples produce a finding for that policy")
