@@ -1,0 +1,20 @@
+{
+  "id": "LIM-0b4aa46b-2875-4c64-a83c-784b090ba99e",
+  "title": "Typography and number forms per language, fixed by code",
+  "description": "As a copy editor, I want a translated page to use its own language's punctuation and number forms, fixed by code, so mechanical slips never reach a reader and never need a model.\n\nDesign: sections 1.4 (typography is normative and mechanical: GB/T 15834-2011, the common copywriting guidelines, zhlint and AutoCorrect agree) and 2.3. Chinese and Spanish typography packs are built together (Ryan 2026-11-13). Each rule has a deterministic fix. Spacing between Chinese and Latin text or digits is a house choice, default one space. Quotation marks, ellipsis, dashes, number grouping and date forms come from CLDR plus the pack. Target-locale conventions of naming and register belong in the pack and the per-language glossary, never in code.\n\n```gherkin\nFeature: A translated page uses its own language's punctuation and numbers\n  Scenario: Half-width punctuation in Chinese is found and fixed\n    Given a Chinese sentence ending with \".\" and using straight double quotes\n    When Humanus checks it with the Chinese typography pack\n    Then each mark is reported with its replacement\n    And applying the replacements gives \"。\" and \"“ ”\"\n\n  Scenario: English number words left in Chinese are reported\n    Given the Chinese text \"低 68 percent，约 50 million 英里\"\n    When Humanus checks it\n    Then \"68 percent\" is reported with \"68%\"\n    And \"50 million\" is reported with \"5000 万\"\n\n  Scenario: Spanish uses its own marks and number forms\n    Given the Spanish text 'Dijo \"no\" y pagó 1,250.50 dólares'\n    When Humanus checks it with the Spanish typography pack\n    Then the straight quotes are reported with their Spanish replacements\n    And \"1,250.50\" is reported with \"1250,50\"\n\n  Scenario: A fix is deterministic and re-checking it finds nothing\n    Given a Chinese draft whose typography findings were all applied\n    When Humanus checks it again\n    Then no typography finding is reported\n```",
+  "type": "story",
+  "status": "open",
+  "priority": 2,
+  "assignee": null,
+  "creator": null,
+  "parent": null,
+  "labels": [],
+  "dependencies": [],
+  "comments": [],
+  "created_at": "2026-11-13T14:31:09.269636Z",
+  "updated_at": "2026-11-13T14:31:09.269659Z",
+  "closed_at": null,
+  "right_now_summary": null,
+  "right_now_updated_at": null,
+  "custom": {}
+}

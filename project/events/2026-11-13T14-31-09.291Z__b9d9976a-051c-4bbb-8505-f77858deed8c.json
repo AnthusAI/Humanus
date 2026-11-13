@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "event_id": "b9d9976a-051c-4bbb-8505-f77858deed8c",
+  "issue_id": "LIM-dc8e3568-0a08-4a29-89a0-7cb342fdba4a",
+  "event_type": "issue_created",
+  "occurred_at": "2026-11-13T14:31:09.291Z",
+  "actor_id": "home",
+  "payload": {
+    "title": "Source-against-translation checks",
+    "description": "As an editor, I want automatic checks that read the English block and its translation together, so a translation that changes a number, drops a link or loses a hedge is caught by code before any person looks.\n\nDesign: section 2.5. New `check` request shape with an optional `source` (text, language, block alignment). Rules lane: `parity` detectors for numbers, dates and units compared as parsed values, names and do-not-translate terms, links, citation keys, images, Markus structure, quotations, code, block coverage and length ratio. Judgment lane: a bilingual judge marking spans with MQM categories, quoting both sides (code confirms the quotes exist); a block counts as clean only when repeated passes agree. Faithfulness findings at `error` hold publication; monolingual findings never do.\n\nRyan 2026-11-13: respect the target locale's conventions (naming, register, press norms) through the per-language glossary and pack, but never omit or alter a factual claim. Parity therefore accepts an approved localized form of a name and rejects a dropped or changed claim. This is automated evaluation only: no native-reader panel anywhere in this story. Back-translation is a reading aid, never a check input or a gate.\n\n```gherkin\nFeature: A translation says what the original says\n  Scenario: The same date written two ways matches\n    Given the source block says \"in December 2025\"\n    And the translated block says \"2025 年 12 月\"\n    When Humanus compares them\n    Then no number finding is reported\n\n  Scenario: A changed number is an error\n    Given the source block says \"68 percent\"\n    And the translated block says \"86%\"\n    When Humanus compares them\n    Then an error finding names both values\n\n  Scenario Outline: What must survive translation unchanged\n    Given a source block with <thing>\n    And a translated block without it\n    When Humanus compares them\n    Then an error finding names the missing <thing>\n\n    Examples:\n      | thing                        |\n      | a link                       |\n      | a citation key               |\n      | a do-not-translate name      |\n      | a quotation                  |\n      | a code span                  |\n\n  Scenario: A glossary term must be used\n    Given the glossary says \"disclosure\" is \"披露\" in Chinese\n    And the translated block uses \"泄露\"\n    When Humanus compares them\n    Then a terminology finding offers \"披露\"\n\n  Scenario: A locale's naming convention is respected without dropping the claim\n    Given the glossary gives the approved Chinese form of an organisation's name\n    And the translated block uses the approved form and keeps every claim of the source sentence\n    When Humanus compares them\n    Then no finding is reported\n\n  Scenario: A dropped hedge is a faithfulness error\n    Given the source block says \"may have leaked\"\n    And the translated block says \"leaked\" with no hedge\n    When the bilingual judge reads both blocks in repeated passes that agree\n    Then an error finding quotes both sides and names the changed certainty\n```",
+    "issue_type": "story",
+    "status": "open",
+    "priority": 2,
+    "assignee": null,
+    "parent": null,
+    "labels": []
+  }
+}

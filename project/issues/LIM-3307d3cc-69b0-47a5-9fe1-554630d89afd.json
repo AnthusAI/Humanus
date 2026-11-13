@@ -1,0 +1,20 @@
+{
+  "id": "LIM-3307d3cc-69b0-47a5-9fe1-554630d89afd",
+  "title": "Language-neutral detectors replace English built-ins",
+  "description": "As a policy author, I want rules written once with the language supplying its own words and units, so Spanish and Chinese packs are data and not branches in the engine.\n\nDesign: sections 2.2 and 2.3. Replaces the English-only built-ins (`passive_voice`, `overused_words`, `contrast_cap`, `list_shaped_prose`, length checks) with generic, parameterised detectors: `phrase` (word or substring matching by language), `regex` with a boundary token, `frame`, `density` against a per-language native baseline, `run`, `length`, `typography`. A rule the language cannot run is named in the coverage report, never skipped silently. If a language needs something the detectors cannot say, add a new generic detector, never a language branch.\n\nRyan 2026-11-13: a rule may drive rewrites (not only advise) once it is about 9 in 10 correct on held-out examples, measured per language, as a starting bar. A policy therefore carries its measured precision per language, and below the bar it only advises.\n\n```gherkin\nFeature: Rules are written once and take their words from the language\n  Scenario: A density rule compares with what native writers do\n    Given the Chinese language pack records how often native news uses the passive marker \"被\"\n    And a policy that flags a paragraph using it far more often than that\n    When Humanus checks a paragraph with five \"被\" in eighty characters\n    Then the paragraph is reported with the measured rate and the native rate\n\n  Scenario: A frame is found across a gap inside one sentence\n    Given a policy for the frame \"不是 … 而是\"\n    When Humanus checks \"这不是一次简单的实验，而是一场深刻的变革。\"\n    Then the frame is reported once, from \"不是\" to \"而是\"\n\n  Scenario: A rule the language cannot run is named, not skipped in silence\n    Given a policy that needs word classes\n    And a language pack without a tagger\n    When Humanus checks a draft\n    Then the coverage report names the policy as not run and says why\n\n  Scenario: A rule drives rewrites only once it is right about nine times in ten\n    Given a Chinese policy whose measured precision on held-out examples is 0.93\n    And a Spanish policy whose measured precision on held-out examples is 0.78\n    When Humanus offers fixes for a draft in each language\n    Then the Chinese finding is marked as allowed to drive a rewrite\n    And the Spanish finding is advice only\n    And the precision is measured and stored per language, never shared between languages\n```",
+  "type": "story",
+  "status": "open",
+  "priority": 2,
+  "assignee": null,
+  "creator": null,
+  "parent": null,
+  "labels": [],
+  "dependencies": [],
+  "comments": [],
+  "created_at": "2026-11-13T14:31:09.248315Z",
+  "updated_at": "2026-11-13T14:31:09.248341Z",
+  "closed_at": null,
+  "right_now_summary": null,
+  "right_now_updated_at": null,
+  "custom": {}
+}

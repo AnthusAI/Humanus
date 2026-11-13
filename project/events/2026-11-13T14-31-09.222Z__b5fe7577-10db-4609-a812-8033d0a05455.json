@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "event_id": "b5fe7577-10db-4609-a812-8033d0a05455",
+  "issue_id": "LIM-8354547c-42a6-4182-97cd-33dc664f4400",
+  "event_type": "issue_created",
+  "occurred_at": "2026-11-13T14:31:09.222Z",
+  "actor_id": "home",
+  "payload": {
+    "title": "Humanus knows what language it is reading",
+    "description": "As a copy editor checking a page in Spanish or Chinese, I want Humanus to read that language as itself, and to say plainly when it cannot read a language at all, so a clean result means the page was actually checked.\n\nDesign: ~/Projects/papyrus-multilingual-humanus-design.md sections 1 and 2 (experiment: Humanus 0.34.0 finds 17 tells in a sloppy English sample and 0 in its Chinese translation; the sentence splitter, the phrase boundary rule and every word count assume English). Ryan 2026-11-13: build the Spanish (es) and Simplified Chinese (zh-Hans) packs together.\n\nScope: a Language interface the core calls (sentence boundaries, tokens, unit of length, quotation spans, phrase matching mode); `language` required on a pack and stated on a check request; English moved into an `en` pack with no change in results; segmentation data for `es` and `zh-Hans`. Pure slice: no model, no network, no backend.\n\n```gherkin\nFeature: Humanus knows what language it is reading\n  A copy editor checking a Chinese or Spanish page needs Humanus to read it as that language,\n  and to say so plainly when it cannot read a language at all.\n\n  Scenario: A Chinese paragraph is split into its sentences\n    Given a draft in Simplified Chinese with three sentences ending in \"。\", \"！\" and \"？\"\n    When Humanus checks it with a Chinese policy pack\n    Then the result has three sentence segments\n    And each sentence keeps its closing quotation mark\n\n  Scenario: A Spanish paragraph is split into its sentences\n    Given a draft in Spanish with an inverted question \"¿Qué cambió?\" and an exclamation \"¡Nada!\"\n    When Humanus checks it with a Spanish policy pack\n    Then each sentence is its own segment\n\n  Scenario: A phrase is found in the middle of running Chinese text\n    Given a Chinese policy that lists the phrase \"至关重要\"\n    And a draft that says \"这一研究具有至关重要的意义\"\n    When Humanus checks the draft\n    Then the phrase is reported at its exact position\n\n  Scenario: A language with no language pack is refused\n    Given a draft whose language is Korean\n    When Humanus checks it\n    Then the check is refused and the message names the missing language\n    And no findings are returned as if the draft were clean\n\n  Scenario: English results do not change\n    Given the English drafts in the regression suite\n    When Humanus checks them with the English starter packs\n    Then every finding is the same as before the language layer\n```",
+    "issue_type": "story",
+    "status": "open",
+    "priority": 2,
+    "assignee": null,
+    "parent": null,
+    "labels": []
+  }
+}
