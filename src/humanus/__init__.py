@@ -9,7 +9,7 @@ also carries a ``source`` checks the content as a translation of it. The JSON Sc
 ``humanus/schemas`` are the contract (``load_schema``).
 """
 
-__version__ = "0.35.0"
+__version__ = "0.36.0"
 
 from .bilingual_judge import BilingualJudge, judge_prompt
 from .calibration import apply_calibration, calibrate

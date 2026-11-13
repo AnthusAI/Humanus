@@ -1,6 +1,36 @@
 # CHANGELOG
 
 
+## v0.36.0 (2026-11-13)
+
+### Features
+
+- Check a translation against its source (parity and judge lanes)
+  ([`4f6a4a9`](https://github.com/AnthusAI/Humanus/commit/4f6a4a9471760aadd91b26a999eb3e776337cbb0))
+
+A check request may now carry `source` (text, format, language) and an optional `glossary` for the
+  content's language. The policy pack's new `parity` detectors compare the two texts by code and its
+  `judge` detectors ask a caller-supplied bilingual judge about each block. Their findings have
+  category "faithfulness", a span in both texts and a replacement when the repair is certain.
+
+- Parity checks: structure, links, citations, code, directives (only translatable attributes may
+  change, so a translated credit is restored), numbers read as values with each language pack's
+  forms, words, scales and months, ISO dates kept as written, names, glossary terms, quotations,
+  emphasis that still renders, hedges and attributions, sentence count. - Block-by-block checks need
+  the blocks to line up; when they do not, the structure finding says where and the rest are
+  reported as not run. - Judge lane: judge_prompt builds the system and user messages and the answer
+  schema; quotes are verified against the text; a problem every pass reports is a violation, one
+  only some passes report is for review. Humanus calls no model; without a judge the lane reports
+  unavailable. - Language packs gain number forms and hedge, certainty and attribution word lists
+  (versions 1.1.0). English results are unchanged apart from the language pack version. - Starter
+  pack translation-faithfulness; Gherkin in features/translation-faithfulness.feature, including the
+  translation experiment's defects.
+
+Kanbus LIM-dc8e35.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+
+
 ## v0.35.0 (2026-11-13)
 
 ### Continuous Integration
