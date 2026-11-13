@@ -1,6 +1,61 @@
 # CHANGELOG
 
 
+## v0.35.0 (2026-11-13)
+
+### Continuous Integration
+
+- Drop the limatus compatibility package; Limatus is Humanus
+  ([`e6b6eb1`](https://github.com/AnthusAI/Humanus/commit/e6b6eb1d0075a18de2b26471929ba74683d4e3e4))
+
+Removes shim/limatus, its release build step (PyPI refused it on every release since 0.33.1) and the
+  README note. pip install limatus stays at the last version published under that name.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+
+- Remove the limatus build step and README note (completes #55)
+  ([`db87751`](https://github.com/AnthusAI/Humanus/commit/db87751cf10b3146c08824b255cd0174168b2e10))
+
+#55 deleted shim/limatus but its workflow and README edits were left out; without this the release
+  job would try to build the deleted shim.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+
+### Features
+
+- Humanus reads a language (language packs for en, es, es-419, zh-Hans)
+  ([`9f26e40`](https://github.com/AnthusAI/Humanus/commit/9f26e40bcb1c50cd0d827a77ce847c6a6cefbb1e))
+
+Every check request now states its content's language and every policy pack the language its
+  policies are written for (or "*"). Humanus reads the text with that language's pack: sentence
+  boundaries (Chinese 。！？, Spanish ¿…? ¡…!), the unit of length (characters in Chinese), phrase
+  matching (substring for scripts without spaces), quotation marks, the built-in checks the language
+  can run, word classes, native baseline rates and typography data. English moved into an `en` pack
+  with no change in any finding.
+
+- A language with no pack is refused with an error naming it; a pack written for another language is
+  refused. Tags match exactly or by a documented alias (zh-CN -> zh-Hans); es-AR is refused, not
+  read as es. - Regional variants are overlays: es-419 on es (quotation marks, CLDR number forms). A
+  base-language pack applies to its variants, never the reverse. - New generic built-ins: frame,
+  density (Poisson test against the pack's native rate) and typography (seven named rules with
+  deterministic fixes). - Detectors a language cannot run are listed in lanes.rules.notRun with the
+  reason. Policies may carry an evidence grade (measured, normative, folk). - Starter packs:
+  typography-zh-hans, typography-es, ai-writing-tells-zh-hans, translationese-zh-hans,
+  ai-writing-tells-es, word-choice-es-419 (all advice).
+
+Kanbus: LIM-835454, LIM-0b4aa4, LIM-3307d3 (first part).
+
+BREAKING CHANGE: check and suggest requests require content.language, and policy packs require
+  language; there is no default language.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+
+### Breaking Changes
+
+- Check and suggest requests require content.language, and policy packs require language; there is
+  no default language.
+
+
 ## v0.34.0 (2026-10-31)
 
 ### Documentation

@@ -8,7 +8,7 @@ content's language, which a shipped language pack must serve. The JSON Schemas u
 ``humanus/schemas`` are the contract (``load_schema``).
 """
 
-__version__ = "0.34.0"
+__version__ = "0.35.0"
 
 from .calibration import apply_calibration, calibrate
 from .check import CheckRequestValidationError, check
