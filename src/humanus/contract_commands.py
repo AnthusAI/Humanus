@@ -26,6 +26,8 @@ def contract_check(flags: list[str]) -> int:
     parser.add_argument("--pack", help="policy pack JSON/YAML file (with --draft)")
     parser.add_argument("--format", default="markus", choices=["markus", "markdown", "text"])
     parser.add_argument("--language", help="BCP 47 tag of the draft's language, e.g. en, es-419, zh-Hans (with --draft)")
+    parser.add_argument("--source", help="the text the draft was translated from, to check it as a translation (with --draft)")
+    parser.add_argument("--source-language", help="BCP 47 tag of the source's language (with --source)")
     parser.add_argument("--output", help="write the result here instead of stdout")
     args = parser.parse_args(flags)
 
@@ -37,6 +39,10 @@ def contract_check(flags: list[str]) -> int:
             "content": {"format": args.format, "language": args.language, "text": Path(args.draft).read_text(encoding="utf-8")},
             "pack": _read_structured(Path(args.pack)),
         }
+        if args.source or args.source_language:
+            if not (args.source and args.source_language):
+                parser.error("--source and --source-language go together")
+            request["source"] = {"format": args.format, "language": args.source_language, "text": Path(args.source).read_text(encoding="utf-8")}
     else:
         parser.error("give --request, or --draft with --pack and --language")
     _emit(check(request), args.output)

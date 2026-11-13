@@ -58,6 +58,8 @@ rewrite suggestions and drafted questions (`gpt-6-luna` by default).
 humanus pack builtin ai-writing-tells > pack.json      # a starter pack to edit
 humanus pack import --profile style-profile.yml > pack.json   # or convert a legacy style profile
 humanus check --draft draft.md --pack pack.json --language en   # findings, segments, lanes (check-result-v1)
+humanus pack builtin translation-faithfulness > faithful.json
+humanus check --draft es.md --language es-419 --source en.md --source-language en --pack faithful.json   # a translation against its source
 humanus suggest --request suggest-request.json         # rewrite options for a finding or selection
 humanus draft-questions --request draft-request.json   # classifier detectors for a prose policy
 humanus calibrate --labels labels.json                 # calibration from editors' decisions
@@ -80,7 +82,7 @@ callers in any language validate against the same files.
 | Schema | Purpose |
 | --- | --- |
 | `policy-pack-v1` | Policies: prose guidance, severity (`info`/`warn`/`error`), examples, rewrite guidance and detectors — `rules` (`regex`, `phrase`, `builtin`) or `classifier` (a zero-shot question at sentence, paragraph or document scope, with threshold, review band and optional calibration) |
-| `check-request-v1` / `check-result-v1` | Content (`markus`, `markdown` or `text`, with its `language`) plus a pack in; the language pack used, segments, protected regions, findings, coverage and lane status out |
+| `check-request-v1` / `check-result-v1` | Content (`markus`, `markdown` or `text`, with its `language`) plus a pack in, and for a translation its `source` and an optional `glossary`; the language pack used, segments, protected regions, findings, coverage and lane status out |
 | `finding-v1` | One located problem, with an id that is stable across rescans |
 | `suggest-request-v1` / `suggest-result-v1` | Rewrite options for a finding (rewritten as its sentence) or an editor's selection |
 | `draft-questions-request-v1` / `draft-questions-result-v1` | Classifier detectors drafted from a prose policy |
@@ -133,6 +135,62 @@ rule: `punctuation-width`, `quotation-marks`, `ellipsis`,
 `space-beside-full-width`, `latin-spacing`, `number-words`, `number-format`).
 Length checks count in the language's unit.
 
+## Translations: source against target
+
+A check request may carry the text the content was translated from:
+`source` (`text`, `format`, `language`, each required) and, optionally, a
+`glossary` for the content's language. The pack's **parity** detectors then
+compare the two texts by code and its **judge** detectors ask a bilingual
+model judge about each block. Their findings carry `category: "faithfulness"`,
+a `span` in the translation and a `source.span` in the source, and a
+`replacement` when the repair is certain. In the design, a faithfulness finding
+at `error` holds publication; monolingual findings never do.
+
+```python
+result = check({
+    "schemaVersion": 1,
+    "content": {"format": "markus", "language": "zh-Hans", "text": translation},
+    "source": {"format": "markus", "language": "en", "text": english},
+    "glossary": {"language": "zh-Hans", "entries": [
+        {"term": "disclosure", "translations": ["披露"]},
+        {"term": "ETH Zurich", "translations": ["苏黎世联邦理工学院"]},
+        {"term": "Hugging Face", "doNotTranslate": True},
+    ]},
+    "pack": builtin_pack("translation-faithfulness"),
+}, bilingual_judge=my_judge)   # optional; Humanus calls no model itself
+```
+
+The `translation-faithfulness` starter pack (language `"*"`) holds one policy
+per check:
+
+| Parity check | What must match |
+| --- | --- |
+| `structure` | The same blocks in the same order: paragraphs, headings by level, list items, table cells, block quotes, code, directives |
+| `links`, `citations`, `code` | Link and image targets, citation keys, inline code, code blocks and raw HTML, byte for byte |
+| `directives` | Directive names and attributes; only the attributes in `params.translatable` (the pack lists `alt`, `caption`, `title`) and a `[label]` may change, so a translated `credit` is restored |
+| `numbers` | Every value, read with each language pack's number forms, words, scales and months: `50 million` = `5000 万`, `December 2025` = `2025 年 12 月`, `1,200` = `1.200`. A changed value names both sides and offers the source's value in the target's form |
+| `iso_dates` | A `YYYY-MM-DD` date (a byline) kept as written (`warn`) |
+| `names` | Names (capitalized words, acronyms, `OpenAI`, `GPT-6`) unchanged unless the glossary approves a local form |
+| `glossary` | Each glossary term in an approved form; a do-not-translate term unchanged |
+| `quotations` | No quoted passage lost (more quotation marks is a convention, not a defect) |
+| `emphasis` | Emphasis that renders in the source renders in the translation; a closer stuck to the next word gets a space, or a full-width mark moves outside it |
+| `hedges`, `attributions` | Per block, no fewer hedges or attributions and no added certainty, by each language pack's word lists (`warn` until measured) |
+| `sentence_count` | A block with fewer sentences than its source is pointed out (`info`) |
+
+Block-by-block checks need the blocks to line up. When they do not, the
+`structure` finding says where they part and each block-by-block check is
+listed in `lanes.parity.notRun` with that reason. The **judge** lane builds a
+prompt per block (`humanus.bilingual_judge.judge_prompt`: system and user
+messages and the JSON Schema of the answer), asks the caller's judge
+`passes` times, checks that every quote is in the text it quotes (`rejected`
+counts the ones that are not) and reports a problem every pass found as a
+violation and one only some passes found for review. Without a judge the lane
+reports `unavailable`. Back-translation is not an input to any check.
+
+A request missing either language, a source in a language with no pack, a
+glossary for another language, a faithfulness pack without a source and a
+source with nothing to compare it are all refused.
+
 ## Lanes
 
 - **Rules** (deterministic): phrase and regex detectors run on prose only;
@@ -167,6 +225,7 @@ Length checks count in the language's unit.
     small advisory starter sets (all `info`), each policy marked with its
     `evidence` grade (`measured`, `normative` or `folk`).
   - `word-choice-es-419`: Latin American word choice (computadora, falla).
+  - `translation-faithfulness`: source-against-translation checks (see above).
 
   See `humanus/packs/NOTICE.md` for sources and licenses.
 - **Classifier** (TypeSafe Jev, zero-shot): one request per segment carries

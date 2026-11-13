@@ -1,7 +1,7 @@
 # Simplified Chinese language pack. Serves zh-Hans and the regions written in
 # Simplified characters (zh-CN, zh-SG, zh-MY); never Traditional (zh-Hant).
 tag: zh-Hans
-version: "1.0.0"
+version: "1.1.0"
 name: Simplified Chinese
 aliases: [zh-CN, zh-SG, zh-MY]
 
@@ -37,6 +37,37 @@ builtins: [no_emojis, sentence_length, average_sentence_length, paragraph_length
 
 lexicons:
   passiveMarkers: [被]
+  # For source-against-translation checks (see the en pack). Chinese is
+  # matched anywhere in running text, so a short entry also matches inside
+  # longer words (约 in 约束, 近 in 最近). The hedge list is generous on
+  # purpose: as a translation's list, an extra match can only hide a dropped
+  # hedge in an unrelated word, never invent one. The certainty list is strict
+  # (一定 is left out: 一定程度 means "to some extent").
+  hedges: [
+    可能, 或许, 也许, 大概, 恐怕, 似乎, 看来, 看似, 看起来, 好像, 据称, 据报道, 据悉, 估计, 估算, 约, 左右, 近, 将近,
+    几乎, 差不多, 疑似, 涉嫌, 或将, 推测, 怀疑, 未必,
+  ]
+  certainty: [肯定, 显然, 无疑, 毫无疑问, 必然, 必定]
+  attribution: [表示, 声称, 称, 说, 据, 指出, 写道, 报道, 认为, 透露, 介绍, 提到, 坦言, 强调]
+
+# What a proper name looks like: in Chinese text, the names that must
+# survive translation are written in Latin letters (Hugging Face, METR).
+names: latin-runs
+
+# How numbers are read back as values. Large numbers are counted in 万 and
+# 亿; Chinese numerals (三, 两百, 二〇二六) are read too, but only to confirm
+# a value written in digits on the other side.
+numbers:
+  decimal: '.'
+  group: ','
+  minimumGroupingDigits: 1
+  alsoRead: []
+  scales: {千: 1000, 万: 10000, 亿: 100000000, 万亿: 1000000000000}
+  words: {}
+  months: []
+  numerals:
+    digits: {零: 0, 〇: 0, 一: 1, 二: 2, 两: 2, 三: 3, 四: 4, 五: 5, 六: 6, 七: 7, 八: 8, 九: 9}
+    units: {十: 10, 百: 100, 千: 1000, 万: 10000, 亿: 100000000}
 
 tagger: null
 

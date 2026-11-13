@@ -76,6 +76,42 @@
         }
       }
     },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "hash",
+        "length",
+        "language"
+      ],
+      "description": "The source text a translation was compared with, when the request carried one.",
+      "properties": {
+        "hash": {
+          "type": "string",
+          "pattern": "^sha256:[0-9a-f]{64}$"
+        },
+        "length": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "language": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "tag",
+            "version"
+          ],
+          "properties": {
+            "tag": {
+              "type": "string"
+            },
+            "version": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
     "segments": {
       "type": "array",
       "items": {
@@ -142,8 +178,15 @@
         },
         "classifier": {
           "$ref": "#/$defs/laneStatus"
+        },
+        "parity": {
+          "$ref": "#/$defs/laneStatus"
+        },
+        "judge": {
+          "$ref": "#/$defs/laneStatus"
         }
-      }
+      },
+      "description": "parity and judge appear only when the request carries a source."
     },
     "usage": {
       "type": "object",
@@ -288,7 +331,7 @@
         },
         "notRun": {
           "type": "array",
-          "description": "Rules detectors that did not run because the content's language pack lacks what they need, each with the reason.",
+          "description": "Detectors that did not run, each with the reason: the content's language pack lacks what they need, or (parity) the source and translation blocks do not line up.",
           "items": {
             "type": "object",
             "additionalProperties": false,
@@ -309,6 +352,11 @@
               }
             }
           }
+        },
+        "rejected": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Judge answers dropped because a quoted span is not in the text it claims to quote."
         }
       }
     }

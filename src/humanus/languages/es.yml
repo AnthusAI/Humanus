@@ -1,6 +1,6 @@
 # Spanish language pack. Serves es and every regional Spanish (es-ES, es-MX, es-419, ...).
 tag: es
-version: "1.0.0"
+version: "1.1.0"
 name: Spanish
 aliases: []
 
@@ -28,7 +28,52 @@ quotations:
 
 builtins: [no_emojis, sentence_length, average_sentence_length, paragraph_length, frame, density, typography]
 
-lexicons: {}
+lexicons:
+  # For source-against-translation checks (see the en pack).
+  hedges: [
+    puede, pueden, podría, podrían, pudo, pudieron, quizá, quizás, tal vez, acaso, posiblemente, probablemente,
+    probable, al parecer, aparentemente, parece, parecen, parecía, parecían, pareció, supuestamente, presuntamente,
+    presunto, presunta, presuntos, presuntas, supuesto, supuesta, supuestos, supuestas,
+    calcula, calculan, calculó, calcularon, estima, estiman, estimó, estimaron, estimado, estimados,
+    estimada, estimadas, aproximadamente,
+    alrededor de, cerca de, casi, unos, unas, sospecha, sospechoso,
+  ]
+  certainty: [definitivamente, ciertamente, claramente, indudablemente, sin duda, sin lugar a dudas, obviamente, seguramente]
+  attribution: [
+    dice, dicen, dijo, dijeron, afirma, afirman, afirmó, afirmaron, según, señala, señalan, señaló, señalaron,
+    informa, informan, informó, informaron, sostiene, sostienen, asegura, aseguran, aseguró, escribe, escribió,
+    explica, explicó, indica, indican, indicó, declaró, contó,
+  ]
+
+names: capitalized
+
+# CLDR "es": decimal comma, a point between thousands, no grouping in a
+# four-digit number. An English form carried over by a translation (1,250.5)
+# is also read, so a value in the wrong form is a typography finding, not a
+# changed number.
+numbers:
+  decimal: ','
+  group: '.'
+  minimumGroupingDigits: 2
+  alsoRead:
+    - {decimal: '.', group: ','}
+  scales: {
+    mil: 1000, millón: 1000000, millones: 1000000, mil millones: 1000000000,
+    billón: 1000000000000, billones: 1000000000000,
+  }
+  words: {
+    cero: 0, uno: 1, una: 1, dos: 2, tres: 3, cuatro: 4, cinco: 5, seis: 6, siete: 7, ocho: 8, nueve: 9,
+    diez: 10, once: 11, doce: 12, trece: 13, catorce: 14, quince: 15, dieciséis: 16, diecisiete: 17,
+    dieciocho: 18, diecinueve: 19, veinte: 20, treinta: 30, cuarenta: 40, cincuenta: 50, sesenta: 60,
+    setenta: 70, ochenta: 80, noventa: 90, cien: 100, ciento: 100, doscientos: 200, doscientas: 200,
+    trescientos: 300, trescientas: 300, cuatrocientos: 400, cuatrocientas: 400, quinientos: 500, quinientas: 500,
+    seiscientos: 600, seiscientas: 600, setecientos: 700, setecientas: 700, ochocientos: 800, ochocientas: 800,
+    novecientos: 900, novecientas: 900, docena: 12, media: 0.5, medio: 0.5,
+    mitad: 0.5, primero: 1, primera: 1, primer: 1, segundo: 2, segunda: 2, tercero: 3, tercera: 3, tercer: 3,
+    cuarto: 4, cuarta: 4, quinto: 5, quinta: 5, ambos: 2, ambas: 2, doble: 2, par: 2,
+  }
+  months: [enero, febrero, marzo, abril, mayo, junio, julio, agosto, septiembre, octubre, noviembre, diciembre]
+  numerals: null
 
 tagger: null
 

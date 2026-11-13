@@ -1,7 +1,7 @@
 # Latin American Spanish: an overlay on the es pack. Only what differs is here.
 base: es
 tag: es-419
-version: "1.0.0"
+version: "1.1.0"
 name: Latin American Spanish
 
 typography:
@@ -12,3 +12,12 @@ typography:
   # CLDR (es-419): decimal point and a comma between thousands, the same as
   # English, so a number carried over from English is already in local form.
   numbers: null
+
+# CLDR (es-419) reading form: decimal point and a comma between thousands. A
+# Spanish form carried over (1.250,5) is read too.
+numbers:
+  decimal: '.'
+  group: ','
+  minimumGroupingDigits: 1
+  alsoRead:
+    - {decimal: ',', group: '.'}

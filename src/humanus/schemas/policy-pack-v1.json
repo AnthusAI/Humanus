@@ -69,7 +69,9 @@
         { "$ref": "#/$defs/regexDetector" },
         { "$ref": "#/$defs/phraseDetector" },
         { "$ref": "#/$defs/builtinDetector" },
-        { "$ref": "#/$defs/classifierDetector" }
+        { "$ref": "#/$defs/classifierDetector" },
+        { "$ref": "#/$defs/parityDetector" },
+        { "$ref": "#/$defs/judgeDetector" }
       ]
     },
     "detectorBase": {
@@ -519,6 +521,63 @@
           }
         }
       ]
+    },
+    "parityDetector": {
+      "description": "A deterministic comparison of the content (a translation) with the check request's source text. Runs only on a request that carries a source; its findings are faithfulness defects.",
+      "type": "object",
+      "unevaluatedProperties": false,
+      "required": ["lane", "check"],
+      "properties": {
+        "lane": { "const": "parity" },
+        "check": {
+          "enum": [
+            "structure", "links", "citations", "code", "directives", "numbers", "iso_dates", "names",
+            "glossary", "quotations", "emphasis", "hedges", "attributions", "sentence_count"
+          ]
+        },
+        "params": { "type": "object" }
+      },
+      "allOf": [
+        { "$ref": "#/$defs/detectorBase" },
+        {
+          "if": { "properties": { "check": { "const": "directives" } } },
+          "then": {
+            "required": ["params"],
+            "properties": {
+              "params": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["translatable"],
+                "description": "Directive attributes whose values a translator translates (alt, caption, title ...). Every other attribute (src, layout, credit ...) must be byte-identical to the source.",
+                "properties": { "translatable": { "type": "array", "uniqueItems": true, "items": { "type": "string", "minLength": 1 } } }
+              }
+            }
+          },
+          "else": { "properties": { "params": { "type": "object", "maxProperties": 0 } } }
+        }
+      ]
+    },
+    "judgeDetector": {
+      "description": "A bilingual model judge reads each source block beside its translation and marks spans by MQM category, quoting both sides; code confirms each quote is in the text. Runs only on a request that carries a source, with a judge supplied by the caller.",
+      "type": "object",
+      "unevaluatedProperties": false,
+      "required": ["lane", "passes"],
+      "properties": {
+        "lane": { "const": "judge" },
+        "passes": {
+          "type": "integer",
+          "minimum": 2,
+          "description": "Independent passes over each block. A problem every pass reports is a violation; one that only some passes report is for review, so a block is clean only when the passes agree."
+        },
+        "categories": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "enum": ["mistranslation", "omission", "addition", "certainty-changed", "terminology", "attribution-changed"] },
+          "default": ["mistranslation", "omission", "addition", "certainty-changed", "terminology", "attribution-changed"]
+        }
+      },
+      "allOf": [{ "$ref": "#/$defs/detectorBase" }]
     },
     "referenceSample": {
       "type": "object",

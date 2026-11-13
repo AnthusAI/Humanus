@@ -1,7 +1,7 @@
 # English language pack. Everything here is what Humanus assumed about every
 # text before it had language packs; moving it into data changed no result.
 tag: en
-version: "1.0.0"
+version: "1.1.0"
 name: English
 aliases: []
 
@@ -59,6 +59,53 @@ lexicons:
     themselves, then, there, these, they, this, those, through, to, too, under, until, up, very, was, we, were,
     what, when, where, which, while, who, whom, why, will, with, would, you, your, yours, yourself, yourselves,
   ]
+
+  # Capitalized words that are not names, for the names check.
+  # Nationality and language adjectives are capitalized in English and
+  # translated like any adjective.
+  notNames: [
+    I, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday,
+    American, British, English, Chinese, Japanese, Korean, Dutch, French, German, Spanish, Italian, Portuguese,
+    Russian, Ukrainian, Indian, Israeli, Iranian, Canadian, Mexican, Brazilian, Australian, European, African,
+    Asian, Latin, Arab, Arabic, Hindi, Mandarin, Cantonese, Swiss, Swedish, Norwegian, Danish, Finnish, Polish,
+    Irish, Scottish, Welsh, Taiwanese,
+  ]
+  # For source-against-translation checks. A hedge softens a claim, a
+  # certainty word hardens one, an attribution says whose claim it is; a
+  # translation keeps as many of each as its source. Kept narrow on purpose:
+  # "could", "about" and "around" are left out because they are more often
+  # ability or a preposition than a hedge.
+  hedges: [
+    may, might, possibly, perhaps, maybe, likely, unlikely, probably, apparently, reportedly, allegedly,
+    appear to, appears to, appeared to, seem to, seems to, seemed to, estimate, estimates, estimated,
+    approximately, roughly, nearly, almost, suspected,
+  ]
+  certainty: [definitely, certainly, clearly, undoubtedly, obviously, without doubt, no doubt, surely]
+  attribution: [says, said, according to, claims, claimed, reports, reported, argues, argued]
+
+# What a proper name looks like: "capitalized" means a capitalized word that
+# does not open a sentence, a run of capitalized words, an acronym, or a word
+# with a capital or digit inside it (OpenAI, GPT-6).
+names: capitalized
+
+# How numbers are written (CLDR "en") and read back as values, so the same
+# value written two ways matches across languages. Words and month names are
+# read too, but only to confirm a value written in digits on the other side.
+numbers:
+  decimal: '.'
+  group: ','
+  minimumGroupingDigits: 1
+  alsoRead: []
+  scales: {hundred: 100, thousand: 1000, million: 1000000, billion: 1000000000, trillion: 1000000000000}
+  words: {
+    zero: 0, one: 1, two: 2, three: 3, four: 4, five: 5, six: 6, seven: 7, eight: 8, nine: 9, ten: 10,
+    eleven: 11, twelve: 12, thirteen: 13, fourteen: 14, fifteen: 15, sixteen: 16, seventeen: 17, eighteen: 18,
+    nineteen: 19, twenty: 20, thirty: 30, forty: 40, fifty: 50, sixty: 60, seventy: 70, eighty: 80, ninety: 90,
+    dozen: 12, half: 0.5, first: 1, second: 2, third: 3, fourth: 4, fifth: 5, sixth: 6,
+    seventh: 7, eighth: 8, ninth: 9, tenth: 10, once: 1, twice: 2, single: 1, both: 2, pair: 2,
+  }
+  months: [January, February, March, April, May, June, July, August, September, October, November, December]
+  numerals: null
 
 # Part-of-speech tagger: none yet.
 tagger: null

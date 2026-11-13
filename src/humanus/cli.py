@@ -1,12 +1,12 @@
 """Humanus CLI entry point.
 
-    humanus check --request <check-request.json> | --draft <file> --pack <policy-pack.yml> --language <tag> [--format markus|markdown|text] [--output FILE]
+    humanus check --request <check-request.json> | --draft <file> --pack <policy-pack.yml> --language <tag> [--source <file> --source-language <tag>] [--format markus|markdown|text] [--output FILE]
     humanus suggest --request <suggest-request.json>          (rewrite options; needs OPENAI_API_KEY)
     humanus draft-questions --request <draft-questions-request.json>
     humanus calibrate --labels <feedback-labels.json>          (per-detector calibration from editor decisions)
     humanus pack import --profile <style-profile.yml> [--version V] [--output FILE]
     humanus pack validate <policy-pack.yml>
-    humanus pack builtin [name]   (list or print starter packs, e.g. ai-writing-tells, asd-ste100, plain-language)
+    humanus pack builtin [name]   (list or print starter packs, e.g. ai-writing-tells, asd-ste100, plain-language, translation-faithfulness)
     humanus schema <name>         (print a contract JSON Schema)
     humanus usability scan --page FILE.html --profile FILE.yml [--output findings.json]
     humanus skill                 (print the packaged Agent Skill for agents)

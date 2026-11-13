@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://humanus.anth.us/schemas/check-request-v1.json",
   "title": "CheckRequest",
-  "description": "Check one document against a policy pack.",
+  "description": "Check one document against a policy pack; with a source, also check it as a translation of that source.",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -16,6 +16,13 @@
     },
     "content": {
       "$ref": "#/$defs/content"
+    },
+    "source": {
+      "$ref": "#/$defs/content",
+      "description": "The text the content was translated from, with its own language and the content's format. Only parity and judge detectors read it; its findings are faithfulness defects with a span in both texts."
+    },
+    "glossary": {
+      "$ref": "#/$defs/glossary"
     },
     "pack": {
       "$ref": "policy-pack-v1.json"
@@ -40,6 +47,16 @@
             "classifier": {
               "type": "boolean",
               "default": true
+            },
+            "parity": {
+              "type": "boolean",
+              "default": true,
+              "description": "Deterministic source-against-translation checks (needs a source)."
+            },
+            "judge": {
+              "type": "boolean",
+              "default": true,
+              "description": "The bilingual judge (needs a source and a judge supplied by the caller)."
             }
           }
         },
@@ -132,6 +149,81 @@
           "type": "string"
         }
       }
+    },
+    "glossary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "language",
+        "entries"
+      ],
+      "description": "Approved renderings and do-not-translate terms for the content's language, from the publication's glossary. Only parity detectors read it.",
+      "properties": {
+        "language": {
+          "type": "string",
+          "minLength": 1,
+          "description": "BCP 47 tag of the language the entries are for; it must be the content's language (or the base language of the content's regional variant)."
+        },
+        "entries": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/glossaryEntry"
+          }
+        }
+      }
+    },
+    "glossaryEntry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "term"
+      ],
+      "description": "A source-language term and how it must appear in the translation: in one of its approved forms, or unchanged.",
+      "properties": {
+        "term": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The term as the source writes it."
+        },
+        "translations": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "description": "Approved forms in the content's language; the first is the one offered as the fix. A name's approved local form goes here (and the original too, when either is acceptable)."
+        },
+        "doNotTranslate": {
+          "const": true,
+          "description": "The term must appear unchanged."
+        },
+        "caseSensitive": {
+          "type": "boolean",
+          "default": false
+        },
+        "note": {
+          "type": "string"
+        }
+      },
+      "oneOf": [
+        {
+          "required": [
+            "translations"
+          ]
+        },
+        {
+          "required": [
+            "doNotTranslate"
+          ]
+        }
+      ]
     }
+  },
+  "dependentRequired": {
+    "glossary": [
+      "source"
+    ]
   }
 }

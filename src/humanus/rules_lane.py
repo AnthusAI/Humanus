@@ -18,7 +18,7 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass, replace
-from typing import Iterable
+from typing import Any, Iterable, Mapping
 
 from .builtin_checks import BUILTIN_CHECKS, Match
 from .languages import LanguageCannotRun
@@ -47,6 +47,8 @@ class Hit:
     status: str = "violation"
     probability: float | None = None
     raw_probability: float | None = None
+    source_span: tuple[int, int] | None = None  # parity and judge lanes: where the finding is in the source text
+    judgment: Mapping[str, Any] | None = None  # judge lane: the bilingual judge's reading behind the finding
 
 
 def run_rules_lane(document: SegmentedDocument, pack: PolicyPack) -> tuple[list[Hit], int, list[dict[str, str]]]:
