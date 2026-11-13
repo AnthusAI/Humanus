@@ -11,11 +11,13 @@ from bisect import bisect_left, bisect_right
 from itertools import accumulate
 from typing import Any, Mapping
 
+from .bilingual_judge import BilingualJudge, run_judge_lane
 from .contracts import ContractValidationError, validate_payload
 from .classifier_lane import ClassifierCache, DecisionModel, default_decision_model, process_cache, run_classifier_lane
 from .finding_ids import finding_id
 from .languages import Language, UnsupportedLanguageError, resolve_language
-from .policy_pack import ANY_LANGUAGE, PolicyPack, PolicyPackValidationError, load_policy_pack
+from .parity import Bitext, GlossaryEntry, run_parity_lane
+from .policy_pack import ANY_LANGUAGE, BILINGUAL_LANES, PolicyPack, PolicyPackValidationError, load_policy_pack
 from .rules_lane import Hit, run_rules_lane
 from .segmentation import ProtectedRegion, Segment, SegmentedDocument, normalize_text, plain_text, segment_document
 
@@ -34,12 +36,18 @@ def check(
     *,
     decision_model: DecisionModel | None | object = _DEFAULT,
     classifier_cache: ClassifierCache | None = None,
+    bilingual_judge: BilingualJudge | None = None,
 ) -> dict[str, Any]:
     """Check ``request["content"]`` against ``request["pack"]``.
 
     ``decision_model`` defaults to Jev when ``TYPESAFE_API_KEY`` is set; pass
     ``None`` to run without one. ``classifier_cache`` defaults to a cache shared
     by every check in this process.
+
+    With ``request["source"]`` the content is also checked as a translation of
+    that source: the pack's parity detectors compare the two texts, and its
+    judge detectors ask ``bilingual_judge`` (supplied by the caller; Humanus
+    has no default judge) about each block.
     """
     validate_payload(REQUEST_SCHEMA, request, CheckRequestValidationError)
     try:
@@ -50,8 +58,10 @@ def check(
 
     content = request["content"]
     language = reading_language(content["language"], pack, REQUEST_SCHEMA, CheckRequestValidationError)
-    document = segment_document(content["text"], content["format"], language=language, tables=request.get("options", {}).get("tables", True))
+    tables = request.get("options", {}).get("tables", True)
+    document = segment_document(content["text"], content["format"], language=language, tables=tables)
     lane_options = request.get("options", {}).get("lanes", {})
+    bitext = _bitext(request, pack, document, tables, lane_options)
     lanes: dict[str, Any] = {}
     hits: list[Hit] = []
 
@@ -85,7 +95,73 @@ def check(
     else:
         lanes["classifier"] = {"status": "disabled"}
 
-    return _annotate(document, pack, hits, lanes, coverage, usage)
+    if bitext is not None:
+        if lane_options.get("parity", True):
+            parity_hits, detectors, not_run = run_parity_lane(bitext, pack)
+            hits.extend(parity_hits)
+            lanes["parity"] = {"status": "ran", "detectors": detectors}
+            if not_run:
+                lanes["parity"]["notRun"] = not_run
+        else:
+            lanes["parity"] = {"status": "disabled"}
+        if lane_options.get("judge", True):
+            judge_hits, lanes["judge"] = run_judge_lane(bitext, pack, bilingual_judge)
+            hits.extend(judge_hits)
+        else:
+            lanes["judge"] = {"status": "disabled"}
+
+    return _annotate(document, pack, hits, lanes, coverage, usage, bitext.source if bitext is not None else None)
+
+
+def _bitext(request: Mapping[str, Any], pack: PolicyPack, document: SegmentedDocument, tables: bool, lane_options: Mapping[str, Any]) -> Bitext | None:
+    """The source a translation is checked against, read in its own language; None for an ordinary check.
+
+    A pack that compares translations needs a source, and a source needs a
+    pack that compares it: either alone is refused, never silently ignored.
+    """
+    source = request.get("source")
+    if source is None:
+        if pack.compares_translations:
+            raise CheckRequestValidationError(
+                REQUEST_SCHEMA,
+                f"policy pack '{pack.pack_id}' has parity or judge detectors, which compare a translation with its source, "
+                "but the request has no source (text, format and language)",
+                "source",
+            )
+        return None
+    if lane_options.get("parity", True) or lane_options.get("judge", True):
+        if not pack.compares_translations:
+            raise CheckRequestValidationError(
+                REQUEST_SCHEMA,
+                f"the request has a source but policy pack '{pack.pack_id}' has no parity or judge detector to compare it with",
+                "source",
+            )
+    if source["format"] != request["content"]["format"]:
+        raise CheckRequestValidationError(
+            REQUEST_SCHEMA, f"the source is '{source['format']}' but the content is '{request['content']['format']}'; a translation keeps its source's format", "source/format"
+        )
+    try:
+        source_language = resolve_language(source["language"])
+    except UnsupportedLanguageError as exc:
+        raise CheckRequestValidationError(REQUEST_SCHEMA, str(exc), "source/language") from exc
+    glossary = request.get("glossary")
+    entries: tuple[GlossaryEntry, ...] = ()
+    if glossary is not None:
+        try:
+            glossary_language = resolve_language(glossary["language"])
+        except UnsupportedLanguageError as exc:
+            raise CheckRequestValidationError(REQUEST_SCHEMA, str(exc), "glossary/language") from exc
+        if glossary_language.tag not in {document.language.tag, document.language.base}:
+            raise CheckRequestValidationError(
+                REQUEST_SCHEMA,
+                f"the glossary is for '{glossary['language']}' but the content is '{request['content']['language']}'",
+                "glossary/language",
+            )
+        entries = tuple(
+            GlossaryEntry(entry["term"], tuple(entry.get("translations", ())), entry.get("caseSensitive", False)) for entry in glossary["entries"]
+        )
+    source_document = segment_document(source["text"], source["format"], language=source_language, tables=tables)
+    return Bitext(source_document, document, source["format"], entries)
 
 
 def reading_language(
@@ -119,8 +195,10 @@ def _annotate(
     lanes: dict[str, Any],
     coverage: list[dict[str, Any]],
     usage: dict[str, int],
+    source: SegmentedDocument | None = None,
 ) -> dict[str, Any]:
     to_utf16 = Utf16Offsets(document.text)
+    source_utf16 = Utf16Offsets(source.text) if source is not None else None
     result = {
         "schemaVersion": 1,
         "offsetUnit": "utf16",
@@ -130,12 +208,22 @@ def _annotate(
         },
         "pack": {"packId": pack.pack_id, "version": pack.version},
         "language": {"tag": document.language.tag, "version": document.language.version},
-        "segments": [_segment_payload(segment, to_utf16) for segment in document.segments],
-        "protected": [_region_payload(region, to_utf16) for region in document.protected],
-        "findings": _finding_payloads(document, hits, to_utf16),
-        "coverage": coverage,
-        "lanes": lanes,
     }
+    if source is not None:
+        result["source"] = {
+            "hash": "sha256:" + hashlib.sha256(source.text.encode("utf-8")).hexdigest(),
+            "length": source_utf16(len(source.text)),
+            "language": {"tag": source.language.tag, "version": source.language.version},
+        }
+    result.update(
+        {
+            "segments": [_segment_payload(segment, to_utf16) for segment in document.segments],
+            "protected": [_region_payload(region, to_utf16) for region in document.protected],
+            "findings": _finding_payloads(document, hits, to_utf16, source, source_utf16),
+            "coverage": coverage,
+            "lanes": lanes,
+        }
+    )
     if usage:
         result["usage"] = usage
     return result
@@ -158,15 +246,25 @@ def _segment_payload(segment: Segment, to_utf16: "Utf16Offsets") -> dict[str, An
     return payload
 
 
-def _finding_payloads(document: SegmentedDocument, hits: list[Hit], to_utf16: "Utf16Offsets") -> list[dict[str, Any]]:
+def _finding_payloads(
+    document: SegmentedDocument,
+    hits: list[Hit],
+    to_utf16: "Utf16Offsets",
+    source: SegmentedDocument | None = None,
+    source_utf16: "Utf16Offsets | None" = None,
+) -> list[dict[str, Any]]:
     locate = SegmentLocator(document)
     occurrences: dict[tuple[str, str, str, str], int] = {}
     findings: list[dict[str, Any]] = []
     for hit in sorted(hits, key=lambda h: (h.start, h.end, h.policy.id, h.detector.id)):
         segment = hit.segment or locate(hit.start, hit.end)
         whole_document = segment.kind == "document"
-        excerpt = "" if whole_document else document.text[hit.start : hit.end]
-        key = (hit.policy.id, hit.detector.id, segment.id, normalize_text(excerpt))
+        bilingual = hit.detector.lane in BILINGUAL_LANES
+        # A faithfulness finding may sit in a directive attribute (outside every segment); it still quotes its span.
+        excerpt = document.text[hit.start : hit.end] if bilingual or not whole_document else ""
+        source_excerpt = source.text[hit.source_span[0] : hit.source_span[1]] if bilingual else ""
+        identity = f"{excerpt}\x1e{source_excerpt}" if bilingual else excerpt
+        key = (hit.policy.id, hit.detector.id, segment.id, normalize_text(identity))
         occurrence = occurrences.get(key, 0)
         occurrences[key] = occurrence + 1
         finding: dict[str, Any] = {
@@ -174,7 +272,7 @@ def _finding_payloads(document: SegmentedDocument, hits: list[Hit], to_utf16: "U
                 policy_id=hit.policy.id,
                 detector_id=hit.detector.id,
                 segment_text=None if whole_document else segment.source,
-                excerpt=excerpt,
+                excerpt=identity,
                 occurrence=occurrence,
             ),
             "policyId": hit.policy.id,
@@ -195,6 +293,14 @@ def _finding_payloads(document: SegmentedDocument, hits: list[Hit], to_utf16: "U
             finding["rawProbability"] = hit.raw_probability
         if hit.replacement is not None:
             finding["replacement"] = hit.replacement
+        if bilingual:
+            finding["category"] = "faithfulness"
+            finding["source"] = {
+                "span": {"start": source_utf16(hit.source_span[0]), "end": source_utf16(hit.source_span[1])},
+                "excerpt": source_excerpt,
+            }
+        if hit.judgment is not None:
+            finding["judgment"] = dict(hit.judgment)
         findings.append(finding)
     return findings
 

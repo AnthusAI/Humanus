@@ -1,0 +1,156 @@
+# Source-against-translation checks. Send this pack with a check request that
+# carries the source text: the content is the translation. The comparisons
+# are code; how each language writes numbers, which words hedge a claim and
+# what a name looks like come from the two language packs. Findings at error
+# severity are faithfulness defects that hold publication.
+schemaVersion: 1
+packId: translation-faithfulness
+version: "1.0.0"
+title: Translation faithfulness
+language: "*"
+guidance: >-
+  A translation says what its source says: the same structure, links,
+  citations, code and directives; every number and date with the same value
+  (written the target language's way); every name unchanged unless the
+  glossary approves a local form; every glossary term in its approved
+  rendering; every quotation, hedge and attribution kept. Local conventions of
+  naming, register and number format are welcome; a dropped or changed claim
+  never is.
+policies:
+  - id: structure
+    version: 1
+    title: Same structure as the source
+    severity: error
+    evidence: {grade: normative, note: "A translation is block-aligned with its source; the alignment is what later edits and corrections are keyed by."}
+    guidance: The translation has the same blocks (paragraphs, headings by level, list items, table cells, block quotes, code, directives) in the same order as the source.
+    detectors:
+      - {id: structure, lane: parity, check: structure}
+  - id: links
+    version: 1
+    title: Link targets unchanged
+    severity: error
+    evidence: {grade: normative}
+    guidance: Every link and image target in the source appears in the translation, byte for byte, and the translation adds none.
+    detectors:
+      - {id: links, lane: parity, check: links}
+  - id: citations
+    version: 1
+    title: Citation keys unchanged
+    severity: error
+    evidence: {grade: normative}
+    guidance: Every citation key ([@key]) in the source appears in the translation unchanged.
+    detectors:
+      - {id: citations, lane: parity, check: citations}
+  - id: code
+    version: 1
+    title: Code unchanged
+    severity: error
+    evidence: {grade: normative}
+    guidance: Inline code, code blocks and raw HTML are byte-identical in the translation.
+    detectors:
+      - {id: code, lane: parity, check: code}
+  - id: directives
+    version: 1
+    title: Directives and their fixed attributes unchanged
+    severity: error
+    evidence:
+      grade: normative
+      note: "The translation experiment of 2026-11-13 translated the credit attribute in 5 of 8 outputs."
+    guidance: >-
+      Every Markus directive keeps its name, order and attributes. Only the
+      reader-facing text attributes are translated (alt, caption, title and a
+      directive's [label]); every other attribute, credit included, stays as
+      the source has it.
+    detectors:
+      - {id: directives, lane: parity, check: directives, params: {translatable: [alt, caption, title]}}
+  - id: numbers
+    version: 1
+    title: Every number keeps its value
+    severity: error
+    evidence: {grade: normative, note: "Values are compared, not strings: 50 million = 5000 万, December 2025 = 2025 年 12 月, 1,200 = 1.200."}
+    guidance: >-
+      Every number, percentage, amount and date in the source has the same
+      value in the translation, written the target language's way. A changed,
+      dropped or added value is a defect; a local number or date format is not.
+    detectors:
+      - {id: numbers, lane: parity, check: numbers}
+  - id: iso-dates
+    version: 1
+    title: Fixed-format dates kept as written
+    severity: warn
+    evidence: {grade: normative, note: "The translation experiment rewrote a byline's 2026-11-13 as a long Spanish date in one of eight outputs."}
+    guidance: A date the source writes as YYYY-MM-DD (a byline, a log line) is a fixed format; the translation keeps it as written.
+    detectors:
+      - {id: iso-dates, lane: parity, check: iso_dates}
+  - id: names
+    version: 1
+    title: Names unchanged
+    severity: error
+    evidence: {grade: folk, note: "A name is found by its shape (capitalized words, acronyms, OpenAI, GPT-6). Not yet measured on labelled translations."}
+    guidance: >-
+      Names of people, organisations, products and places stay as written,
+      unless the glossary gives an approved local form (a place or an
+      organisation with an established name in the target language).
+    detectors:
+      - {id: names, lane: parity, check: names}
+  - id: glossary
+    version: 1
+    title: Glossary terms in their approved form
+    severity: error
+    evidence: {grade: normative}
+    guidance: A term the glossary covers appears in one of its approved renderings, and a do-not-translate term appears unchanged.
+    detectors:
+      - {id: glossary, lane: parity, check: glossary}
+  - id: quotations
+    version: 1
+    title: Quotations kept
+    severity: error
+    evidence: {grade: folk}
+    guidance: Every quoted passage in the source is still a quotation in the translation.
+    detectors:
+      - {id: quotations, lane: parity, check: quotations}
+  - id: emphasis
+    version: 1
+    title: Emphasis still renders
+    severity: error
+    evidence: {grade: normative, sources: ["CommonMark 0.31 emphasis rules (left- and right-flanking delimiter runs)"], note: "The translation experiment wrote **7 月 9 日：**Hugging Face, which does not render."}
+    guidance: Emphasis the source renders also renders in the translation; a closing marker after punctuation needs a space or the punctuation moved outside it.
+    detectors:
+      - {id: emphasis, lane: parity, check: emphasis}
+  - id: hedges
+    version: 1
+    title: Hedges kept, no certainty added
+    severity: warn
+    evidence: {grade: folk, note: "Counts each language pack's hedge and certainty words per block. On the eight outputs of the 2026-11-13 translation experiment its few findings were word-sense mismatches (permission 'may'), not lost hedges, so it warns until measured; the bilingual judge's certainty-changed category is the holding check."}
+    guidance: The translation keeps every hedge of the source (may, reportedly, roughly) and adds no certainty (clearly, proves) the source does not express.
+    detectors:
+      - {id: hedges, lane: parity, check: hedges}
+  - id: attributions
+    version: 1
+    title: Attributions kept
+    severity: warn
+    evidence: {grade: folk, note: "Counts each language pack's attribution words per block. On the eight outputs of the 2026-11-13 translation experiment its findings were restructured attributions, not lost ones, so it warns until measured; the bilingual judge's attribution-changed category is the holding check."}
+    guidance: Every attribution in the source (says, according to) keeps its counterpart in the translation, so each claim stays someone's claim.
+    detectors:
+      - {id: attributions, lane: parity, check: attributions}
+  - id: sentence-count
+    version: 1
+    title: Sentence count
+    severity: info
+    evidence: {grade: folk, note: "A translator may join or split sentences; a difference is a pointer to look for an omission, never a defect by itself."}
+    guidance: A block whose translation has fewer sentences than its source may have lost one; look at it. (More sentences is a translator's split and is not reported.)
+    detectors:
+      - {id: sentence-count, lane: parity, check: sentence_count}
+  - id: bilingual-judge
+    version: 1
+    title: A bilingual judge finds no meaning change
+    severity: error
+    evidence: {grade: folk, note: "A model's reading, not yet measured against labelled translations. Its quotes are verified by code and a block is clean only when the passes agree."}
+    guidance: >-
+      Read each source block beside its translation. Report only places where
+      the translation does not say what the source says: a mistranslation, an
+      omission, an addition, a changed certainty, a wrong term or a changed
+      attribution. Local conventions of naming, register and format are not
+      problems.
+    detectors:
+      - {id: bilingual-judge, lane: judge, passes: 2}

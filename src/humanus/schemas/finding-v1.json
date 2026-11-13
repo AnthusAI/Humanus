@@ -37,7 +37,9 @@
     "lane": {
       "enum": [
         "rules",
-        "classifier"
+        "classifier",
+        "parity",
+        "judge"
       ]
     },
     "severity": {
@@ -100,6 +102,81 @@
     "excerptText": {
       "type": "string",
       "description": "The excerpt as a reader sees it, inline markup removed; locates the finding in a rendered preview."
+    },
+    "category": {
+      "enum": [
+        "faithfulness"
+      ],
+      "description": "faithfulness: the translation does not say what its source says (parity and judge lanes). At error severity it holds publication."
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "span",
+        "excerpt"
+      ],
+      "description": "Where the finding is in the source text (offsets into the request's source, in the same unit as span).",
+      "properties": {
+        "span": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "start",
+            "end"
+          ],
+          "properties": {
+            "start": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "end": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        },
+        "excerpt": {
+          "type": "string"
+        }
+      }
+    },
+    "judgment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "category",
+        "passes",
+        "agreeing"
+      ],
+      "description": "The bilingual judge's reading behind a judge-lane finding.",
+      "properties": {
+        "category": {
+          "enum": [
+            "mistranslation",
+            "omission",
+            "addition",
+            "certainty-changed",
+            "terminology",
+            "attribution-changed"
+          ]
+        },
+        "passes": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "agreeing": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Passes that reported this problem; fewer than passes makes the finding status review."
+        },
+        "explanations": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
     }
   }
 }

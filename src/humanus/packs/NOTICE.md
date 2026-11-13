@@ -65,3 +65,10 @@ Real Academia Española and CLDR for Spanish forms, the Chinese Wikipedia page
 on AI-generated text and corpus studies of translated Chinese (Xiao and Dai
 2014; Kong and Macken 2025) for the advisory patterns. No text was copied from
 those sources beyond the short words and phrases the rules look for.
+
+## Translation faithfulness starter pack
+
+`translation-faithfulness` was written for Humanus from the Papyrus multilingual
+design (section 2.5) and the defects found by the translation experiment of
+2026-11-13. The number forms in the language packs follow CLDR; the emphasis
+rule follows the CommonMark 0.31 specification.

@@ -87,7 +87,37 @@ class ClassifierDetector:
     kind: str = field(default="classifier", init=False)
 
 
-Detector = Union[RegexDetector, PhraseDetector, BuiltinDetector, ClassifierDetector]
+@dataclass(frozen=True)
+class ParityDetector:
+    """A deterministic comparison of a translation with its source (links, numbers, names ...)."""
+
+    id: str
+    check: str
+    params: Mapping[str, Any] = field(default_factory=dict)
+    message: str | None = None
+    blocks: tuple[str, ...] | None = None
+    lane: str = field(default="parity", init=False)
+    kind: str = field(default="parity", init=False)
+
+
+@dataclass(frozen=True)
+class JudgeDetector:
+    """A bilingual judge's reading of each source block against its translation, by MQM category."""
+
+    id: str
+    passes: int
+    categories: tuple[str, ...]
+    message: str | None = None
+    blocks: tuple[str, ...] | None = None
+    lane: str = field(default="judge", init=False)
+    kind: str = field(default="judge", init=False)
+
+
+Detector = Union[RegexDetector, PhraseDetector, BuiltinDetector, ClassifierDetector, ParityDetector, JudgeDetector]
+
+# Lanes that compare a translation with its source; their findings are faithfulness defects.
+BILINGUAL_LANES = frozenset({"parity", "judge"})
+JUDGE_CATEGORIES = ("mistranslation", "omission", "addition", "certainty-changed", "terminology", "attribution-changed")
 
 
 @dataclass(frozen=True)
@@ -124,6 +154,11 @@ class PolicyPack:
     title: str | None = None
     guidance: str | None = None
     reference_samples: tuple[ReferenceSample, ...] = ()
+
+    @property
+    def compares_translations(self) -> bool:
+        """Whether any enabled policy has a detector that reads a source text beside the content."""
+        return any(d.lane in BILINGUAL_LANES for p in self.enabled_policies for d in p.detectors)
 
     def policy(self, policy_id: str) -> Policy:
         for policy in self.policies:
@@ -216,6 +251,10 @@ def _parse_detector(raw: Mapping[str, Any]) -> Detector:
             calibration=raw.get("calibration"),
             **common,
         )
+    if raw["lane"] == "parity":
+        return ParityDetector(check=raw["check"], params=dict(raw.get("params", {})), **common)
+    if raw["lane"] == "judge":
+        return JudgeDetector(passes=raw["passes"], categories=tuple(raw.get("categories", JUDGE_CATEGORIES)), **common)
     if raw["kind"] == "regex":
         return RegexDetector(
             pattern=raw["pattern"],
@@ -261,6 +300,8 @@ def _check_semantics(pack: PolicyPack) -> None:
                         _fail(f"regex '{pattern}' does not compile: {exc}", f"{location}/{key}")
             if isinstance(detector, ClassifierDetector):
                 _check_classifier(detector, location)
+            if isinstance(detector, (ParityDetector, JudgeDetector)) and detector.blocks is not None:
+                _fail(f"a {detector.lane} detector compares the whole source and translation block by block; 'blocks' does not apply", f"{location}/blocks")
 
 
 def _check_classifier(detector: ClassifierDetector, location: str) -> None:

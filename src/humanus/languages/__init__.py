@@ -65,6 +65,8 @@ class Language:
     tagger: str | None
     baseline: Mapping[str, Any]
     typography: Mapping[str, Any]
+    numbers: Mapping[str, Any]  # how numbers are written and read back as values (CLDR forms, words, scales, months)
+    names: str | None  # what a proper name looks like in this language's text: capitalized | latin-runs
 
     @cached_property
     def _units(self) -> re.Pattern[str]:
@@ -98,6 +100,17 @@ class Language:
         if not self.tagger:
             raise LanguageCannotRun(f"the {self.tag} language pack has no part-of-speech tagger, so word classes by tag are unavailable")
         return self.tagger
+
+    def number_data(self, *keys: str) -> tuple[Any, ...]:
+        missing = [key for key in keys if key not in self.numbers]
+        if missing:
+            raise LanguageCannotRun(f"the {self.tag} language pack has no number data for {', '.join(missing)}")
+        return tuple(self.numbers[key] for key in keys)
+
+    def name_shape(self) -> str:
+        if not self.names:
+            raise LanguageCannotRun(f"the {self.tag} language pack does not say what a proper name looks like")
+        return self.names
 
     def typography_data(self, *keys: str) -> tuple[Any, ...]:
         missing = [key for key in keys if key not in self.typography]
@@ -199,4 +212,6 @@ def _load(tag: str) -> Language:
         tagger=raw["tagger"],
         baseline=raw["baseline"],
         typography=raw["typography"],
+        numbers=raw["numbers"],
+        names=raw["names"],
     )

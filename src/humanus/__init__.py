@@ -4,12 +4,14 @@ A caller sends content and a policy pack; ``check`` returns where the content
 breaks the pack's policies, ``suggest`` offers rewrites for a finding or any
 selection, ``draft_questions`` helps write classifier detectors, and
 ``calibrate`` learns from editors' decisions. Every request states its
-content's language, which a shipped language pack must serve. The JSON Schemas under
+content's language, which a shipped language pack must serve; a request that
+also carries a ``source`` checks the content as a translation of it. The JSON Schemas under
 ``humanus/schemas`` are the contract (``load_schema``).
 """
 
 __version__ = "0.35.0"
 
+from .bilingual_judge import BilingualJudge, judge_prompt
 from .calibration import apply_calibration, calibrate
 from .check import CheckRequestValidationError, check
 from .contracts import ContractValidationError, load_schema, validate_payload
@@ -22,6 +24,7 @@ from .style_profile_import import StyleProfileImportError, policy_pack_from_styl
 from .suggest import SuggestRequestValidationError, SuggestUnavailableError, draft_questions, suggest
 
 __all__ = [
+    "BilingualJudge",
     "CheckRequestValidationError",
     "ContractValidationError",
     "Language",
@@ -39,6 +42,7 @@ __all__ = [
     "check",
     "draft_questions",
     "finding_id",
+    "judge_prompt",
     "list_builtin_packs",
     "list_languages",
     "load_policy_pack",
