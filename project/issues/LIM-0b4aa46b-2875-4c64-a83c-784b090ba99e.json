@@ -10,9 +10,22 @@
   "parent": null,
   "labels": [],
   "dependencies": [],
-  "comments": [],
+  "comments": [
+    {
+      "id": "7d23b06f-2b61-4ed3-b6b0-c8806487acc9",
+      "author": "home",
+      "text": "Implemented on branch feat/language-layer (features/typography-per-language.feature): typography built-in with named rules (punctuation-width, quotation-marks, ellipsis, space-beside-full-width, latin-spacing, number-words, number-format) whose data lives in the language packs; starter packs typography-zh-hans and typography-es. Added scenario: es-419 keeps its own quotes and CLDR number form (number-format reported as not run for es-419, by reason).",
+      "created_at": "2026-11-13T16:39:44.361847Z",
+      "comment_type": "default",
+      "agent": {
+        "platform": "claude_code",
+        "model": "claude-opus-5-5",
+        "name": "Humanus language-layer agent"
+      }
+    }
+  ],
   "created_at": "2026-11-13T14:31:09.269636Z",
-  "updated_at": "2026-11-13T14:31:09.269659Z",
+  "updated_at": "2026-11-13T16:39:49.643426Z",
   "closed_at": null,
   "right_now_summary": null,
   "right_now_updated_at": null,

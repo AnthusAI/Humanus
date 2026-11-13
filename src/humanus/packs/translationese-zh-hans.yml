@@ -1,0 +1,72 @@
+# Chinese translationese (翻译腔): grammatical Chinese that reads as English
+# underneath. Advisory starter set, info severity. The 被 rate is a measured
+# difference between translated and native Chinese; the other patterns are
+# the prescriptive catalogue's candidates, to be measured on our own output.
+schemaVersion: 1
+packId: translationese-zh-hans
+version: "1.0.0"
+title: Chinese translationese
+language: zh-Hans
+guidance: >-
+  按中文的习惯组织句子：少用被动，少用“进行”“作出”加动名词，避免一长串“的”，
+  不用“一个”当冠词，不用“当……的时候”套英语从句。
+policies:
+  - id: passive-density
+    version: 1
+    title: Too many 被 passives
+    severity: info
+    evidence:
+      grade: measured
+      note: Translated Chinese uses significantly more 被 passives than native Chinese. The native rate in the zh-Hans language pack is provisional until computed from a licensed corpus.
+      sources: ["https://eprints.lancs.ac.uk/id/eprint/64330/1/02_Xiao_and_Dai.pdf", "https://arxiv.org/abs/2506.22050"]
+    guidance: 中文少用被动，尤其是不说施事者的“被认为”“被要求”；改成主动句或无主句。
+    detectors:
+      - {id: bei-rate, lane: rules, kind: builtin, check: density, params: {lexicon: passiveMarkers}}
+  - id: de-chains
+    version: 1
+    title: Chains of 的
+    severity: info
+    evidence:
+      grade: measured
+      note: Translated Chinese uses more 的 (Xiao and Dai 2014); the three-in-one-clause threshold is ours and not yet measured.
+      sources: ["https://eprints.lancs.ac.uk/id/eprint/64330/1/02_Xiao_and_Dai.pdf"]
+    guidance: 一个分句里连用三个“的”（同事们的工作的进度）是英语修饰语直译；拆句或改用动词。
+    detectors:
+      - id: three-de
+        lane: rules
+        kind: regex
+        pattern: '的[^，。！？；：、“”\n]{1,8}的[^，。！？；：、“”\n]{1,8}的'
+  - id: weak-verb-nominals
+    version: 1
+    title: Weak verb with a verbal noun
+    severity: info
+    evidence: {grade: folk, note: "Prescriptive catalogue (余光中, 思果); not yet measured."}
+    guidance: “进行分析”“作出决定”“加以研究”把动词变成名词再用虚动词撑着；直接用动词（分析、决定、研究）。
+    detectors:
+      - id: weak-verb
+        lane: rules
+        kind: regex
+        pattern: '(?:进行|作出|做出|加以|予以)了?(?:一[个次项场])?(?:[一-鿿]{0,6}的)?(?:分析|探讨|研究|测试|调查|讨论|评估|处理|改进|说明|解释)'
+  - id: article-yige
+    version: 1
+    title: 一个 used as an article
+    severity: info
+    evidence: {grade: folk, note: "Prescriptive catalogue; not yet measured."}
+    guidance: “作为一个工程师”“进行一个测试”里的“一个”是英语冠词 a 的直译；删去。
+    detectors:
+      - id: as-a
+        lane: rules
+        kind: phrase
+        phrases: [作为一个, 作为一名, 进行一个, 是一个关于]
+  - id: dang-shi-clauses
+    version: 1
+    title: 当……的时候 clauses
+    severity: info
+    evidence: {grade: folk, note: "Prescriptive catalogue; not yet measured."}
+    guidance: “当……的时候”套用英语 when 从句；中文常直接用时间状语或省去。
+    detectors:
+      - id: dang-shihou
+        lane: rules
+        kind: regex
+        # 当 as "when", not inside 当然, 当今, 相当, 应当 and the like.
+        pattern: '(?<![相应适正每充担])当(?![然今前时地年初中代选])[^。！？；\n]{1,25}的时候'

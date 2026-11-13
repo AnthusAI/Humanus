@@ -41,6 +41,7 @@ def step_suggest_pack(context, policy_id, phrase, rewrite):
     context.suggest_pack = {
         "schemaVersion": 1,
         "packId": "suggest-example",
+        "language": "en",
         "version": "1",
         "guidance": "Plain engineering voice.",
         "policies": [
@@ -83,7 +84,7 @@ def step_no_generator(context):
 
 
 def _suggest(context, **target) -> None:
-    request = {"schemaVersion": 1, "content": {"format": "markus", "text": context.draft}, "pack": context.suggest_pack, **target}
+    request = {"schemaVersion": 1, "content": {"format": "markus", "language": "en", "text": context.draft}, "pack": context.suggest_pack, **target}
     context.suggest_error = None
     try:
         context.suggest_result = suggest(request, generator=_generator(context) if getattr(context, "generator", 1) is not None else None)
@@ -99,7 +100,7 @@ def _utf16_span(text: str, needle: str) -> dict:
 
 @when('I ask for rewrites of the "{policy_id}" finding')
 def step_suggest_finding(context, policy_id):
-    result = check({"schemaVersion": 1, "content": {"format": "markus", "text": context.draft}, "pack": context.suggest_pack}, decision_model=None)
+    result = check({"schemaVersion": 1, "content": {"format": "markus", "language": "en", "text": context.draft}, "pack": context.suggest_pack}, decision_model=None)
     context.finding = next(f for f in result["findings"] if f["policyId"] == policy_id)
     _suggest(context, finding=context.finding)
 

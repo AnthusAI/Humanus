@@ -53,7 +53,7 @@ def step_checked_tables_off(context):
     context.check_result = check(
         {
             "schemaVersion": 1,
-            "content": {"format": "markus", "text": context.document_text},
+            "content": {"format": "markus", "language": "en", "text": context.document_text},
             "pack": context.rules_pack,
             "options": {"tables": False},
         }
@@ -64,7 +64,7 @@ def step_checked_tables_off(context):
 def step_checked_builtin(context):
     context.document_text = context.text
     context.check_result = check(
-        {"schemaVersion": 1, "content": {"format": "markus", "text": context.text}, "pack": context.builtin_payload}
+        {"schemaVersion": 1, "content": {"format": "markus", "language": "en", "text": context.text}, "pack": context.builtin_payload}
     )
 
 

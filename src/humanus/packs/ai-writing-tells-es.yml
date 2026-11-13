@@ -1,0 +1,56 @@
+# Spanish AI-writing tells: a small advisory starter set. No Spanish corpus
+# study of these patterns was found; they are the Spanish forms of the English
+# list's stock phrases, so every policy is folk evidence at info severity.
+schemaVersion: 1
+packId: ai-writing-tells-es
+version: "1.0.0"
+title: Spanish AI writing tells
+language: es
+guidance: >-
+  Escribe para un lector al que respetas: di el hecho, nombra la fuente y
+  termina. Quita las muletillas, los arranques de plantilla y los cierres que
+  solo anuncian cómo debe sentirse el lector. Una coincidencia es una señal
+  para mirar mejor, no una prueba; nunca inventes un dato para sustituir lo que
+  quitas.
+policies:
+  - id: filler-openers
+    version: 1
+    title: Filler openers
+    severity: info
+    evidence: {grade: folk, note: "Spanish forms of the English list's filler phrases.", sources: ["https://github.com/conorbronsdon/avoid-ai-writing"]}
+    guidance: '"Cabe destacar que", "Es importante señalar que" y "En el mundo actual" anuncian en lugar de decir; empieza por el hecho.'
+    detectors:
+      - id: filler-phrases
+        lane: rules
+        kind: phrase
+        phrases: [cabe destacar que, cabe señalar que, es importante destacar que, es importante señalar que, en el mundo actual, en la era digital, en el panorama actual]
+  - id: inflated-vocabulary
+    version: 1
+    title: Inflated vocabulary
+    severity: info
+    evidence: {grade: folk, sources: ["https://github.com/conorbronsdon/avoid-ai-writing"]}
+    guidance: '"Desempeña un papel crucial", "un testimonio de", "adentrarse en" y "un rico tapiz" inflan lo que se dice; usa palabras concretas.'
+    detectors:
+      - id: inflated-phrases
+        lane: rules
+        kind: phrase
+        phrases: [desempeña un papel crucial, desempeña un papel fundamental, un testimonio de, se adentra en, adentrarse en, un rico tapiz, panorama complejo]
+  - id: not-only-but
+    version: 1
+    title: '"No solo … sino" frames'
+    severity: info
+    evidence: {grade: folk, sources: ["https://github.com/conorbronsdon/avoid-ai-writing"]}
+    guidance: '"No solo es X, sino Y" levanta una idea que nadie planteó para corregirla; di Y directamente.'
+    detectors:
+      - {id: no-solo-sino, lane: rules, kind: builtin, check: frame, params: {parts: [no solo, sino], maxGap: 12}}
+  - id: generic-conclusions
+    version: 1
+    title: Generic conclusions
+    severity: info
+    evidence: {grade: folk, sources: ["https://github.com/conorbronsdon/avoid-ai-writing"]}
+    guidance: '"Solo el tiempo lo dirá" y "el futuro se presenta prometedor" no informan; termina con el último hecho.'
+    detectors:
+      - id: conclusion-phrases
+        lane: rules
+        kind: phrase
+        phrases: [solo el tiempo lo dirá, sólo el tiempo lo dirá, el futuro se presenta prometedor, el futuro es prometedor, en definitiva]

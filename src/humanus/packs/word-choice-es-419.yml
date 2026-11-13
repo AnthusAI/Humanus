@@ -1,0 +1,32 @@
+# Latin American Spanish word choice: where neutral Latin American usage
+# differs from Spain's. Advice only: each word also has meanings that are
+# right in Latin America (a court's "fallo" is a ruling), so a person decides.
+# Ambiguous words such as "pruebas" (tests or evidence) need judgment, not a
+# rule, and are left to the judgment lane.
+schemaVersion: 1
+packId: word-choice-es-419
+version: "1.0.0"
+title: Latin American Spanish word choice
+language: es-419
+guidance: >-
+  Escribe en español latinoamericano neutro: prefiere la palabra común en
+  América Latina cuando difiere de la de España.
+policies:
+  - id: computadora
+    version: 1
+    title: computadora, not ordenador
+    severity: info
+    evidence: {grade: normative, sources: ["RAE, Diccionario panhispánico de dudas, entry computador"]}
+    guidance: En América Latina se dice "computadora" (o "computador"); "ordenador" es de España.
+    detectors:
+      - {id: ordenador, lane: rules, kind: phrase, phrases: [ordenador], replacement: computadora}
+      - {id: ordenadores, lane: rules, kind: phrase, phrases: [ordenadores], replacement: computadoras}
+  - id: falla
+    version: 1
+    title: falla for a fault, not fallo
+    severity: info
+    evidence: {grade: folk, note: "Regional preference for a technical fault; 'fallo' remains right for a court ruling."}
+    guidance: Para una avería o un error técnico, en América Latina se dice "falla"; en España, "fallo". Un "fallo" judicial es correcto en todas partes.
+    detectors:
+      - {id: fallo, lane: rules, kind: phrase, phrases: [fallo], replacement: falla, exceptions: [fallo judicial, fallo del tribunal, fallo de la corte]}
+      - {id: fallos, lane: rules, kind: phrase, phrases: [fallos], replacement: fallas, exceptions: [fallos judiciales]}

@@ -19,12 +19,12 @@ def _humanus(*args: str) -> subprocess.CompletedProcess[str]:
 
 def test_starter_pack_then_check(tmp_path: Path) -> None:
     assert "humanus pack builtin ai-writing-tells > pack.json" in README
-    assert "humanus check --draft draft.md --pack pack.json" in README
+    assert "humanus check --draft draft.md --pack pack.json --language en" in README
     pack = tmp_path / "pack.json"
     pack.write_text(_humanus("pack", "builtin", "ai-writing-tells").stdout, encoding="utf-8")
     draft = tmp_path / "draft.md"
     draft.write_text("# Notes\n\nCertainly! Our platform is a game-changer. Let's dive in.\n", encoding="utf-8")
-    result = json.loads(_humanus("check", "--draft", str(draft), "--pack", str(pack)).stdout)
+    result = json.loads(_humanus("check", "--draft", str(draft), "--pack", str(pack), "--language", "en").stdout)
     assert result["offsetUnit"] == "utf16"
     assert {f["policyId"] for f in result["findings"]} >= {"chatbot-artifacts"}
 

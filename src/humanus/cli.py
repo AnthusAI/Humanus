@@ -1,6 +1,6 @@
 """Humanus CLI entry point.
 
-    humanus check --request <check-request.json> | --draft <file> --pack <policy-pack.yml> [--format markus|markdown|text] [--output FILE]
+    humanus check --request <check-request.json> | --draft <file> --pack <policy-pack.yml> --language <tag> [--format markus|markdown|text] [--output FILE]
     humanus suggest --request <suggest-request.json>          (rewrite options; needs OPENAI_API_KEY)
     humanus draft-questions --request <draft-questions-request.json>
     humanus calibrate --labels <feedback-labels.json>          (per-detector calibration from editor decisions)

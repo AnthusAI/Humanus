@@ -10,9 +10,22 @@
   "parent": null,
   "labels": [],
   "dependencies": [],
-  "comments": [],
+  "comments": [
+    {
+      "id": "b9030763-5c8a-4f9b-991b-26b313cd1741",
+      "author": "home",
+      "text": "First part implemented on branch feat/language-layer (features/language-neutral-detectors.feature): phrase matching mode from the language (substring for zh-Hans), frame, density against the pack's native baseline (Poisson test; zh-Hans 被 rate is provisional, marked unmeasured), length counted in the language unit (characters for zh), information_density thresholds and function words moved into the en pack, rules the language cannot run listed in lanes.rules.notRun. Policies carry an evidence grade. NOT done yet: the precision bar scenario (9 in 10 per language before a rule may drive rewrites), and generic replacements for the remaining English built-ins (passive_voice, overused_words, contrast_cap, list_shaped_prose, uniform_cadence, redundancy), which stay English-only and are reported as not run elsewhere.",
+      "created_at": "2026-11-13T16:39:44.380629Z",
+      "comment_type": "default",
+      "agent": {
+        "platform": "claude_code",
+        "model": "claude-opus-5-5",
+        "name": "Humanus language-layer agent"
+      }
+    }
+  ],
   "created_at": "2026-11-13T14:31:09.248315Z",
-  "updated_at": "2026-11-13T14:31:09.248341Z",
+  "updated_at": "2026-11-13T16:39:49.660854Z",
   "closed_at": null,
   "right_now_summary": null,
   "right_now_updated_at": null,

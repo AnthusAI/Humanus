@@ -62,7 +62,7 @@ def step_valid_in_pack(context):
         "threshold": 0.8,
         "calibration": context.calibration,
     }
-    load_policy_pack({"schemaVersion": 1, "packId": "p", "version": "1", "policies": [
+    load_policy_pack({"schemaVersion": 1, "packId": "p", "language": "en", "version": "1", "policies": [
         {"id": "claims", "version": 1, "title": "t", "guidance": "g", "severity": "warn", "detectors": [detector]}]})
 
 
@@ -105,7 +105,7 @@ def _calibration_pack(context) -> dict:
     }
     if getattr(context, "detector_calibration", None):
         detector["calibration"] = context.detector_calibration
-    return {"schemaVersion": 1, "packId": "p", "version": "1", "policies": [
+    return {"schemaVersion": 1, "packId": "p", "language": "en", "version": "1", "policies": [
         {"id": "claims", "version": 1, "title": "Claims", "guidance": "Be specific.", "severity": "warn", "detectors": [detector]}]}
 
 
@@ -122,7 +122,7 @@ def step_calibration_map(context):
 @when("the sentence is checked")
 def step_sentence_checked(context):
     context.check_result = check(
-        {"schemaVersion": 1, "content": {"format": "markus", "text": "It is very good."}, "pack": _calibration_pack(context)},
+        {"schemaVersion": 1, "content": {"format": "markus", "language": "en", "text": "It is very good."}, "pack": _calibration_pack(context)},
         decision_model=context.one_model,
         classifier_cache=InMemoryClassifierCache(),
     )
@@ -153,7 +153,7 @@ def step_checked_with_examples(context, sentence):
     context.check_result = check(
         {
             "schemaVersion": 1,
-            "content": {"format": "text", "text": sentence},
+            "content": {"format": "text", "language": "en", "text": sentence},
             "pack": _calibration_pack(context),
             "options": {"classifier": {"examples": context.past_examples, "maxExamplesPerQuestion": context.max_examples}},
         },

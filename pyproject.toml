@@ -38,7 +38,7 @@ build-backend = "setuptools.build_meta"
 where = ["src"]
 
 [tool.setuptools.package-data]
-humanus = ["data/SKILL.md", "schemas/*.json", "packs/*.yml", "packs/*.md"]
+humanus = ["data/SKILL.md", "schemas/*.json", "packs/*.yml", "packs/*.md", "languages/*.yml"]
 
 [tool.semantic_release]
 version_toml = ["pyproject.toml:project.version"]

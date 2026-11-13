@@ -6,6 +6,11 @@ limits, readability, procedure-step shape, acronym definitions and one meaning
 per word. Each check takes its limits and word lists from params, so a policy
 pack sets the numbers its standard prescribes.
 
+Lengths are counted in the document language's unit (words in English and
+Spanish, characters in Chinese); the limit parameters keep their names
+(``maxWords``) whatever the unit. The other checks here are written for
+English, and only the English language pack provides them.
+
 A sentence is a *procedure* sentence when it is in a list item, or when its
 paragraph starts with an imperative verb. Every other sentence is a
 *description* sentence.
@@ -108,19 +113,21 @@ def _word_spans(segment: Segment) -> list[tuple[str, int, int]]:
 def _sentence_length(document, paragraphs, sentences, params):
     limit = params["maxWords"]
     verbs = _verbs(params)
+    language = document.language
     for sentence in _with_topic(sentences, paragraphs, params.get("topic", "any"), verbs):
-        count = len(words(sentence.text))
+        count = len(language.units(sentence.text))
         if count > limit:
-            yield sentence.start, sentence.end, f"Sentence has {count} words; the limit is {limit}.", None
+            yield sentence.start, sentence.end, f"Sentence has {count} {language.unit}s; the limit is {limit}.", None
 
 
 def _average_sentence_length(document, paragraphs, sentences, params):
     if len(sentences) < params.get("minSentences", 1):
         return
-    average = sum(len(words(s.text)) for s in sentences) / len(sentences) if sentences else 0
+    language = document.language
+    average = sum(len(language.units(s.text)) for s in sentences) / len(sentences) if sentences else 0
     limit = params["maxWords"]
     if average > limit:
-        yield 0, len(document.text), f"Sentences average {average:.1f} words; the target is {limit} or fewer.", None
+        yield 0, len(document.text), f"Sentences average {average:.1f} {language.unit}s; the target is {limit} or fewer.", None
 
 
 def _paragraph_length(document, paragraphs, sentences, params):
@@ -129,13 +136,14 @@ def _paragraph_length(document, paragraphs, sentences, params):
         counts[sentence.parent_id] = counts.get(sentence.parent_id, 0) + 1
     max_sentences = params.get("maxSentences")
     max_words = params.get("maxWords")
+    language = document.language
     for paragraph in paragraphs:
         sentence_count = counts.get(paragraph.id, 0)
-        word_count = len(words(paragraph.text))
+        word_count = len(language.units(paragraph.text))
         if max_sentences is not None and sentence_count > max_sentences:
             yield paragraph.start, paragraph.end, f"Paragraph has {sentence_count} sentences; the limit is {max_sentences}.", None
         elif max_words is not None and word_count > max_words:
-            yield paragraph.start, paragraph.end, f"Paragraph has {word_count} words; the limit is {max_words}.", None
+            yield paragraph.start, paragraph.end, f"Paragraph has {word_count} {language.unit}s; the limit is {max_words}.", None
 
 
 def syllables(word: str) -> int:

@@ -1,0 +1,49 @@
+# Spanish language pack. Serves es and every regional Spanish (es-ES, es-MX, es-419, ...).
+tag: es
+version: "1.0.0"
+name: Spanish
+aliases: []
+
+phraseMatching: word
+
+# Words may carry accents and ñ, so a word is any run of letters or digits.
+units:
+  name: word
+  pattern: '[^\W_]+(?:[''’-][^\W_]+)*'
+
+segmentation:
+  terminators: ''
+  spacedTerminators: '.!?…'
+  closers: '"''”’»)]*_'
+  # Inverted marks open a question or an exclamation: "¿Qué cambió? ¡Nada!"
+  openers: '"''“‘«¿¡([*_`'
+  capitalAfter: true
+  abbreviationOpeners: '(["“''‘«¿¡'
+  abbreviations: [sr, sra, srta, dr, dra, ud, uds, d, dña, pág, págs, núm, art, cap, vol, fig, aprox, ej, ee.uu]
+
+quotations:
+  - ['«', '»']
+  - ['“', '”']
+  - ['"', '"']
+
+builtins: [no_emojis, sentence_length, average_sentence_length, paragraph_length, frame, density, typography]
+
+lexicons: {}
+
+tagger: null
+
+baseline: {}
+
+typography:
+  # Real Academia Española: angular quotes first, then “ ”, then ‘ ’.
+  quotes:
+    outer: ['«', '»']
+    inner: ['“', '”']
+  # CLDR (es): decimal comma, a point between thousands, and no grouping in a
+  # four-digit number (1250, but 12.500). "foreign" is the English form a
+  # translation may carry over.
+  numbers:
+    decimal: ','
+    group: '.'
+    minimumGroupingDigits: 2
+    foreign: {decimal: '.', group: ','}

@@ -1,0 +1,14 @@
+# Latin American Spanish: an overlay on the es pack. Only what differs is here.
+base: es
+tag: es-419
+version: "1.0.0"
+name: Latin American Spanish
+
+typography:
+  # The Latin American press writes “ ” for quotations and ‘ ’ inside them.
+  quotes:
+    outer: ['“', '”']
+    inner: ['‘', '’']
+  # CLDR (es-419): decimal point and a comma between thousands, the same as
+  # English, so a number carried over from English is already in local form.
+  numbers: null
