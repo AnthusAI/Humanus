@@ -828,7 +828,7 @@ def _glossary(bitext: Bitext, params: Mapping[str, Any]) -> Iterator[ParityMatch
                 continue
             seen.add(entry.term)
             if _contains(t_text, entry.accepted, target_language, entry.case_sensitive):
-                if not entry.translations or entry.term in entry.accepted or not _contains(t_text, (entry.term,), target_language, True):
+                if not entry.translations or entry.term in entry.accepted or not _kept_loose(s_text, t_text, entry.term, target_language):
                     continue
                 yield (*unit.target, unit.source[0] + start, unit.source[0] + end,
                        f"The translation still has {_quote(entry.term)}; the glossary renders it as {_quote(entry.translations[0])} in {target_language.tag}.", None)
@@ -839,6 +839,25 @@ def _glossary(bitext: Bitext, params: Mapping[str, Any]) -> Iterator[ParityMatch
             else:
                 message = f"{_quote(entry.term)} is on the do-not-translate list; the translation must keep it unchanged."
             yield (*unit.target, unit.source[0] + start, unit.source[0] + end, message, None)
+
+
+def _kept_loose(source: str, target: str, term: str, language: Language) -> bool:
+    """Whether the target still has ``term`` as a word of its own: not inside a name the source also has (``Sakana AI``, ``Death by AI``), which is the pair of words next to it
+    appearing together in the source."""
+    words = [(m.group(), m.start(), m.end()) for m in _WORD.finditer(mask_inline(target))]
+    source_pairs = {(a.lower(), b.lower()) for a, b in zip(re.findall(_WORD, source), re.findall(_WORD, source)[1:])}
+    pattern = language.phrase_pattern((term,), True)
+    for found in pattern.finditer(mask_inline(target)):
+        index = next((i for i, (_, start, end) in enumerate(words) if start <= found.start() < end), None)
+        if index is None:
+            return True
+        before = words[index - 1][0].lower() if index else None
+        after = words[index + 1][0].lower() if index + 1 < len(words) else None
+        here = words[index][0].lower()
+        if (before and (before, here) in source_pairs) or (after and (here, after) in source_pairs):
+            continue
+        return True
+    return False
 
 
 # --- quotations, emphasis, hedges, attributions, sentences --------------------------------
