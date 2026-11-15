@@ -1,6 +1,21 @@
 # CHANGELOG
 
 
+## v0.40.1 (2026-11-15)
+
+### Bug Fixes
+
+- A headline in title case does not make its capitalized words names
+  ([`c368f71`](https://github.com/AnthusAI/Humanus/commit/c368f7139ead43eef164742d21b2f2dad75ba020))
+
+The names check read 'The Red Team Is Moving Into the Build' as names, so a correct translation of a
+  headline added warnings and a repair of a half-English headline was thrown back as worse. A short
+  line with no sentence end inside and mostly capitalized content words is read like a heading: only
+  a word shaped like a name is one.
+
+Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>
+
+
 ## v0.40.0 (2026-11-15)
 
 ### Features
