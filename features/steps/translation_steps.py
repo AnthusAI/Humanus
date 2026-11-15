@@ -20,7 +20,7 @@ PACK = "translation-faithfulness"
 
 
 def _reset(context) -> None:
-    for name in ("tf_glossary", "tf_judge_reports", "tf_result", "tf_error"):
+    for name in ("tf_glossary", "tf_judge_reports", "tf_judge_by_prompt", "tf_notes", "tf_result", "tf_error"):
         setattr(context, name, None)
     context.tf_prompts = []
 
@@ -90,6 +90,21 @@ def step_judge_first_pass(context):
     context.tf_judge_reports = lambda pass_number: issues if pass_number == 1 else []
 
 
+@given("the translation notes:")
+def step_notes(context):
+    context.tf_notes = [row["note"] for row in context.table]
+
+
+PERMISSION = "A rendering these notes permit"
+
+
+@given("a bilingual judge that reports in every pass unless its prompt carries notes that permit the rendering:")
+def step_judge_unless_permitted(context):
+    """A judge that obeys the prompt as a careful model would: it drops a report when the prompt carries the notes and their permission."""
+    issues = _issues(context.table)
+    context.tf_judge_by_prompt = lambda prompt: [] if PERMISSION in prompt["user"] else issues
+
+
 # --- comparing -------------------------------------------------------------------------
 
 
@@ -99,11 +114,16 @@ def _compare(context, pack: dict) -> None:
         request["source"] = context.tf_source
     if context.tf_glossary is not None:
         request["glossary"] = context.tf_glossary
+    if context.tf_notes is not None:
+        request["translationNotes"] = context.tf_notes
+
     def scripted_judge(prompt):
         context.tf_prompts.append(prompt)
+        if context.tf_judge_by_prompt is not None:
+            return {"issues": context.tf_judge_by_prompt(prompt)}
         return {"issues": context.tf_judge_reports(prompt["pass"])}
 
-    judge = scripted_judge if context.tf_judge_reports is not None else None
+    judge = scripted_judge if context.tf_judge_reports is not None or context.tf_judge_by_prompt is not None else None
 
     context.tf_result = None
     context.tf_error = None
@@ -271,6 +291,22 @@ def step_judge_asked(context, count):
         assert context.tf_source["text"].strip() in prompt["user"] and context.tf_content["text"].strip() in prompt["user"]
         assert prompt["responseSchema"]["required"] == ["issues"]
         assert "certainty-changed" in prompt["system"]
+
+
+@then('the judge prompt lists the note "{note}" and says a rendering the notes permit is not a problem')
+def step_prompt_notes(context, note):
+    assert context.tf_prompts, "the judge was never asked"
+    for prompt in context.tf_prompts:
+        assert f"- {note}" in prompt["user"], prompt["user"]
+        assert "is not a problem even when it is not word for word" in prompt["user"]
+        assert "who or what is mocked" in prompt["user"]
+
+
+@then("the judge prompt has no notes section")
+def step_prompt_no_notes(context):
+    assert context.tf_prompts, "the judge was never asked"
+    for prompt in context.tf_prompts:
+        assert "publication's notes" not in prompt["user"] and "who or what is mocked" not in prompt["user"], prompt["user"]
 
 
 @then("the judge lane reports {count:d} rejected answers")

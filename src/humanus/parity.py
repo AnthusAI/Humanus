@@ -95,11 +95,13 @@ class _Directive:
 class Bitext:
     """A source document and its translation, read in their own languages."""
 
-    def __init__(self, source: SegmentedDocument, target: SegmentedDocument, format: str, glossary: tuple[GlossaryEntry, ...] = ()) -> None:
+    def __init__(self, source: SegmentedDocument, target: SegmentedDocument, format: str, glossary: tuple[GlossaryEntry, ...] = (),
+                 notes: tuple[str, ...] = ()) -> None:
         self.source = source
         self.target = target
         self.format = format
         self.glossary = glossary
+        self.notes = notes   # the publication's translation notes: read by the bilingual judge only
 
     @cached_property
     def source_elements(self) -> tuple[_Element, ...]:
