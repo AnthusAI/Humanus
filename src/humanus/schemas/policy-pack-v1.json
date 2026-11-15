@@ -554,7 +554,20 @@
               }
             }
           },
-          "else": { "properties": { "params": { "type": "object", "maxProperties": 0 } } }
+          "else": {
+            "if": { "properties": { "check": { "const": "names" } } },
+            "then": {
+              "properties": {
+                "params": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "description": "kind narrows which missing names are reported: shaped (acronyms, brand shapes, letters with digits) or ordinary (capitalized words); without it, both.",
+                  "properties": { "kind": { "enum": ["shaped", "ordinary"] } }
+                }
+              }
+            },
+            "else": { "properties": { "params": { "type": "object", "maxProperties": 0 } } }
+          }
         }
       ]
     },

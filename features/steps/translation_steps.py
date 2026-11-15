@@ -51,6 +51,11 @@ def step_glossary(context, language, term, translation):
     context.tf_glossary = {"language": language, "entries": [{"term": term, "translations": [translation]}]}
 
 
+@given('the "{language}" glossary keeps "{term}" unchanged')
+def step_glossary_keeps(context, language, term):
+    context.tf_glossary = {"language": language, "entries": [{"term": term, "doNotTranslate": True}]}
+
+
 @given("a translation request whose {side} has no language")
 def step_missing_language(context, side):
     _reset(context)
