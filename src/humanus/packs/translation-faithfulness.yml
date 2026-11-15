@@ -5,14 +5,15 @@
 # severity are faithfulness defects that hold publication.
 schemaVersion: 1
 packId: translation-faithfulness
-version: "1.0.0"
+version: "1.1.0"
 title: Translation faithfulness
 language: "*"
 guidance: >-
   A translation says what its source says: the same structure, links,
   citations, code and directives; every number and date with the same value
   (written the target language's way); every name unchanged unless the
-  glossary approves a local form; every glossary term in its approved
+  glossary approves a local form (acronyms and brand shapes; a capitalized name
+  with a local form is left to the glossary and the judge); every glossary term in its approved
   rendering; every quotation, hedge and attribution kept. Local conventions of
   naming, register and number format are welcome; a dropped or changed claim
   never is.
