@@ -5,7 +5,7 @@
 # severity are faithfulness defects that hold publication.
 schemaVersion: 1
 packId: translation-faithfulness
-version: "1.1.0"
+version: "1.2.0"
 title: Translation faithfulness
 language: "*"
 guidance: >-
@@ -148,6 +148,17 @@ policies:
     guidance: Every attribution in the source (says, according to) keeps its counterpart in the translation, so each claim stays someone's claim.
     detectors:
       - {id: attributions, lane: parity, check: attributions}
+  - id: untranslated
+    version: 1
+    title: No run of the source's words left in a short translation
+    severity: error
+    evidence: {grade: normative, note: "Live translated headlines read 'The Red Team está Moving Into the Build', 'New Problem: Too Much Help' and a Chinese title with the whole English headline in parentheses; a kept block is never re-read by the translator, so only a check can find them."}
+    guidance: >-
+      In a headline, a dek, a blurb or a caption (a unit of forty words or fewer) no run of four or more of the source's own words, or of three with two of
+      the source language's function words, stays in the translation. A short name (Sakana AI, Death by AI), a glossary term, a quotation, code and a link are
+      kept as written.
+    detectors:
+      - {id: untranslated, lane: parity, check: untranslated}
   - id: sentence-count
     version: 1
     title: Sentence count

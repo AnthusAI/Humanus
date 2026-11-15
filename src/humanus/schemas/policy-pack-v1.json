@@ -533,7 +533,7 @@
         "check": {
           "enum": [
             "structure", "links", "citations", "code", "directives", "numbers", "iso_dates", "names",
-            "glossary", "quotations", "emphasis", "hedges", "attributions", "sentence_count"
+            "glossary", "quotations", "emphasis", "hedges", "attributions", "sentence_count", "untranslated"
           ]
         },
         "params": { "type": "object" }
