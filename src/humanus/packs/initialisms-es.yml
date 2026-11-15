@@ -1,0 +1,54 @@
+# Spanish initialisms: English initialisms left unlocalized in Spanish prose
+# where Spanish has its own established form (the letters follow Spanish word
+# order). Language-general: it serves es and every regional Spanish. Only
+# initialisms with an established Spanish form are listed; initialisms Spanish
+# commonly keeps in English (CEO, GPU, LLM, API, PDF) are deliberately absent.
+schemaVersion: 1
+packId: initialisms-es
+version: "1.0.0"
+title: Spanish initialisms
+language: es
+guidance: >-
+  Escribe las siglas en su forma española cuando existe: IA para la inteligencia
+  artificial, ADN, VIH, PIB, OTAN y OMS. Deja en inglés solo los nombres propios
+  de productos y empresas (OpenAI, Gen AI) y las siglas que el español toma
+  sin cambio.
+policies:
+  - id: ia
+    version: 1
+    title: IA, not AI
+    severity: warn
+    evidence: {grade: normative, sources: ["RAE, Diccionario de la lengua española, entry inteligencia artificial (IA)", "Fundeu RAE, recomendación sobre IA frente a AI"]}
+    guidance: En español la inteligencia artificial se abrevia "IA", no "AI". Los nombres propios ingleses (OpenAI, Google AI, Meta AI) se escriben como son.
+    examples:
+      violates: ["un sistema de AI"]
+      complies: ["un sistema de IA", "OpenAI presentó un modelo"]
+    detectors:
+      - id: ai-initialism
+        lane: rules
+        kind: phrase
+        phrases: [AI]
+        caseSensitive: true
+        replacement: IA
+        exceptions:
+          - Gen AI
+          - Google AI
+          - Meta AI
+          - Mistral AI
+          - Stability AI
+          - Scale AI
+          - Character.AI
+          - AI Overviews
+          - AI Mode
+  - id: initialisms
+    version: 1
+    title: Established Spanish forms of English initialisms
+    severity: info
+    evidence: {grade: normative, sources: ["RAE, Diccionario panhispánico de dudas, entries ADN, VIH, PIB, OTAN, OMS"]}
+    guidance: Estas siglas inglesas tienen forma española establecida; úsala en el texto en español.
+    detectors:
+      - {id: dna, lane: rules, kind: phrase, phrases: [DNA], caseSensitive: true, replacement: ADN}
+      - {id: hiv, lane: rules, kind: phrase, phrases: [HIV], caseSensitive: true, replacement: VIH}
+      - {id: gdp, lane: rules, kind: phrase, phrases: [GDP], caseSensitive: true, replacement: PIB}
+      - {id: nato, lane: rules, kind: phrase, phrases: [NATO], caseSensitive: true, replacement: OTAN}
+      - {id: who, lane: rules, kind: phrase, phrases: [WHO], caseSensitive: true, replacement: OMS}

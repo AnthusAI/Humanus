@@ -106,7 +106,8 @@ def _run_detector(document: SegmentedDocument, detector: Detector, exempt_quotat
             excepted = [m.span() for e in exceptions for m in e.finditer(paragraph.source)]
             for match in pattern.finditer(paragraph.source):
                 if match.end() > match.start() and not any(a <= match.start() and match.end() <= b for a, b in excepted):
-                    yield paragraph.start + match.start(), paragraph.start + match.end(), None, None
+                    replacement = match.expand(detector.replacement) if detector.replacement is not None else None
+                    yield paragraph.start + match.start(), paragraph.start + match.end(), None, replacement
     elif isinstance(detector, BuiltinDetector):
         if detector.check not in document.language.builtins:
             raise LanguageCannotRun(f"the {document.language.tag} language pack does not provide the built-in check '{detector.check}'")

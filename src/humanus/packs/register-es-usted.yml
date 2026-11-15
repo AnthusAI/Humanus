@@ -1,0 +1,53 @@
+# Spanish formal register (usted). OPT-IN: a site that writes to its readers
+# as "usted" includes this pack; a site that writes as "tú" simply does not.
+# Register is a per-site choice (the site's writing overlay `tone`), so no tú
+# form is ever flagged by a pack a site did not choose. The rules detector is
+# conservative: it reads only the imperative that opens the text of a link
+# (call-to-action links), where a verb is certain, and never a bare verb form
+# in running prose, where "Lee el periódico" can be a third-person statement.
+schemaVersion: 1
+packId: register-es-usted
+version: "1.0.0"
+title: Spanish formal register (usted)
+language: es
+guidance: >-
+  Trata al lector de usted: usa el imperativo formal (lea, mire, consulte,
+  descargue, haga clic) y los pronombres y posesivos de usted (su, le, se), no
+  los de tú (tu, te). Mantén el mismo trato en todo el texto, incluidos los
+  enlaces y los llamados a la acción.
+policies:
+  - id: usted-imperative-links
+    version: 1
+    title: Formal imperative in links
+    severity: warn
+    evidence: {grade: normative, sources: ["RAE, Nueva gramática de la lengua española, imperative: formal forms of usted (lea, mire, consulte)"]}
+    guidance: Con trato de usted, el llamado a la acción de un enlace va en imperativo formal ("Lea la fuente", no "Lee la fuente").
+    examples:
+      violates: ["[Lee la fuente](https://example.com)"]
+      complies: ["[Lea la fuente](https://example.com)"]
+    detectors:
+      - id: lee
+        lane: rules
+        kind: regex
+        pattern: '(?<=\[)Lee(?=\s+(?:la|el|los|las|un|una|tu|su|este|esta|estos|estas|aquí|ahora|más|todo|todos|todas|nuestro|nuestra)\b)'
+        replacement: Lea
+      - id: mira
+        lane: rules
+        kind: regex
+        pattern: '(?<=\[)Mira(?=\s+(?:la|el|los|las|un|una|tu|su|este|esta|estos|estas|aquí|ahora|más|todo|todos|todas|nuestro|nuestra)\b)'
+        replacement: Mire
+      - id: consulta
+        lane: rules
+        kind: regex
+        pattern: '(?<=\[)Consulta(?=\s+(?:la|el|los|las|un|una|tu|su|este|esta|estos|estas|aquí|ahora|más|todo|todos|todas|nuestro|nuestra)\b)'
+        replacement: Consulte
+      - id: descarga
+        lane: rules
+        kind: regex
+        pattern: '(?<=\[)Descarga(?=\s+(?:la|el|los|las|un|una|tu|su|este|esta|estos|estas|aquí|ahora|más|todo|todos|todas|nuestro|nuestra)\b)'
+        replacement: Descargue
+      - id: haz-clic
+        lane: rules
+        kind: regex
+        pattern: '(?<=\[)Haz(?=\s+(?:clic|click)\b)'
+        replacement: Haga

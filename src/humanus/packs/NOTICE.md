@@ -72,3 +72,11 @@ those sources beyond the short words and phrases the rules look for.
 design (section 2.5) and the defects found by the translation experiment of
 2026-11-13. The number forms in the language packs follow CLDR; the emphasis
 rule follows the CommonMark 0.31 specification.
+
+## Spanish initialisms and formal register starter packs
+
+`initialisms-es` and `register-es-usted` were written for Humanus. The forms
+follow the Real Academia Española (Diccionario de la lengua española,
+Diccionario panhispánico de dudas, Nueva gramática de la lengua española) and
+Fundéu RAE recommendations. No text was copied from those sources beyond the
+short words and phrases the rules look for.
