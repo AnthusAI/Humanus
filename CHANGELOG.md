@@ -1,6 +1,16 @@
 # CHANGELOG
 
 
+## v0.41.1 (2026-11-15)
+
+### Bug Fixes
+
+- A glossary term kept inside a name the source also has is not held
+  ([`57b609b`](https://github.com/AnthusAI/Humanus/commit/57b609bb098134f0887d95deac74390497a614ba))
+
+Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>
+
+
 ## v0.41.0 (2026-11-15)
 
 ### Features
