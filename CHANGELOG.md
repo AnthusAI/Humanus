@@ -1,6 +1,20 @@
 # CHANGELOG
 
 
+## v0.39.0 (2026-11-15)
+
+### Features
+
+- A glossary entry lists variants it also accepts and phrases it does not count in
+  ([`6456434`](https://github.com/AnthusAI/Humanus/commit/64564342c9232c2c128163068289fa273f36567e))
+
+A term with one approved form fired on a natural inflection (computadoras, estadounidense) and on a
+  name that contains it (Chaos Communication Congress for Congress). variants are accepted forms
+  never offered as the fix; exceptIn names the longer source phrases the term does not count in.
+
+Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>
+
+
 ## v0.38.3 (2026-11-15)
 
 ### Bug Fixes
