@@ -158,7 +158,8 @@ def _bitext(request: Mapping[str, Any], pack: PolicyPack, document: SegmentedDoc
                 "glossary/language",
             )
         entries = tuple(
-            GlossaryEntry(entry["term"], tuple(entry.get("translations", ())), entry.get("caseSensitive", False)) for entry in glossary["entries"]
+            GlossaryEntry(entry["term"], tuple(entry.get("translations", ())), entry.get("caseSensitive", False), tuple(entry.get("variants", ())), tuple(entry.get("exceptIn", ())))
+            for entry in glossary["entries"]
         )
     source_document = segment_document(source["text"], source["format"], language=source_language, tables=tables)
     return Bitext(source_document, document, source["format"], entries)

@@ -83,6 +83,63 @@ Feature: A translation says what the original says
     When Humanus compares them
     Then an error "glossary" finding offers "披露"
 
+  Scenario Outline: A glossary entry accepts the inflected forms it lists, and offers only the approved one
+    Given the source in "en":
+      """
+      <source>
+      """
+    And the translation in "es-419":
+      """
+      <translation>
+      """
+    And the "es-419" glossary lists "<term>" as "<approved>" with the variant "<variant>"
+    When Humanus compares them
+    Then no faithfulness finding is reported
+
+    Examples:
+      | source                              | translation                           | term     | approved   | variant       |
+      | One kind of tool goes after computer systems. | Un tipo de herramienta va tras los sistemas de computadoras. | computer | computadora | computadoras |
+      | A U.S. company sued.                | Una empresa estadounidense demandó.   | U.S.     | EE. UU.    | estadounidense |
+
+  Scenario: A glossary entry still fires when the translation uses none of its forms
+    Given the source in "en":
+      """
+      One kind of tool goes after computer systems.
+      """
+    And the translation in "es-419":
+      """
+      Un tipo de herramienta va tras los sistemas informáticos.
+      """
+    And the "es-419" glossary lists "computer" as "computadora" with the variant "computadoras"
+    When Humanus compares them
+    Then an error "glossary" finding offers "computadora"
+
+  Scenario: A term does not count inside a longer name the glossary excepts
+    Given the source in "en":
+      """
+      Volunteers showed the project at the Chaos Communication Congress in 2013.
+      """
+    And the translation in "es-419":
+      """
+      Voluntarios presentaron el proyecto en el Chaos Communication Congress en 2013.
+      """
+    And the "es-419" glossary lists "Congress" as "Congreso" except inside "Chaos Communication Congress"
+    When Humanus compares them
+    Then no "glossary" finding is reported
+
+  Scenario: The same term outside that name still must be translated
+    Given the source in "en":
+      """
+      Congress passed the law.
+      """
+    And the translation in "es-419":
+      """
+      El Parlamento aprobó la ley.
+      """
+    And the "es-419" glossary lists "Congress" as "Congreso" except inside "Chaos Communication Congress"
+    When Humanus compares them
+    Then an error "glossary" finding offers "Congreso"
+
   Scenario: A locale's naming convention is respected without dropping the claim
     Given the source in "en":
       """
