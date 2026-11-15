@@ -1,6 +1,22 @@
 # CHANGELOG
 
 
+## v0.40.0 (2026-11-15)
+
+### Features
+
+- An untranslated run of the source's words in a short translation is an error
+  ([`63f2f6e`](https://github.com/AnthusAI/Humanus/commit/63f2f6e91d015fc8947c08fa2fa5148a556b9c36))
+
+Translated headlines read 'The Red Team está Moving Into the Build' and 'New Problem: Too Much
+  Help'. A short unit (40 words or fewer) that keeps four or more words copied from the source, or
+  three with two source-language function words, is an error; a short name, a glossary term, a
+  quotation and code are kept. A glossary term left in the source's form (AI where the glossary says
+  IA) is also an error. The pack is 1.2.0.
+
+Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>
+
+
 ## v0.39.0 (2026-11-15)
 
 ### Features
