@@ -1,6 +1,21 @@
 # CHANGELOG
 
 
+## v0.38.2 (2026-11-15)
+
+### Bug Fixes
+
+- Numbers straight after a citation, and twentyfold
+  ([`f3b8697`](https://github.com/AnthusAI/Humanus/commit/f3b8697bf3b1c44b66354d02b9e0b6ca9aafdcae))
+
+A citation key is masked before numbers are read, and the mask letters made a number written right
+  after it (`[@key]2005 年`, common in Chinese, which has no spaces) look like part of a word, so the
+  number was reported dropped. Numbers now read the text with the masks filled with spaces. A number
+  word with -fold (twentyfold) is a number, so 20 多倍 matches it.
+
+Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>
+
+
 ## v0.38.1 (2026-11-15)
 
 ### Bug Fixes
