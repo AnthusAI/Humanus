@@ -225,6 +225,12 @@ source with nothing to compare it are all refused.
     small advisory starter sets (all `info`), each policy marked with its
     `evidence` grade (`measured`, `normative` or `folk`).
   - `word-choice-es-419`: Latin American word choice (computadora, falla).
+  - `initialisms-es`: English initialisms left in Spanish prose (AI for IA,
+    DNA, HIV, GDP, NATO, WHO), each with its Spanish form as the replacement.
+  - `register-es-usted`: opt-in formal register. A site that addresses readers
+    as usted includes this pack (it flags a tú imperative opening a link, such
+    as "Lee la fuente", suggesting "Lea la fuente"); a site that writes as tú
+    leaves it out. A regex detector may carry a `replacement` template.
   - `translation-faithfulness`: source-against-translation checks (see above).
 
   See `humanus/packs/NOTICE.md` for sources and licenses.

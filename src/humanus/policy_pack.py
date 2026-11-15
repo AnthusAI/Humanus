@@ -31,6 +31,7 @@ class RegexDetector:
     pattern: str
     ignore_case: bool = False
     exceptions: tuple[str, ...] = ()
+    replacement: str | None = None  # a re.sub template (\\1, \\g<name>); expanded against each match
     message: str | None = None
     blocks: tuple[str, ...] | None = None
     quotations: str | None = None  # exempt | check; None inherits the policy
@@ -261,6 +262,7 @@ def _parse_detector(raw: Mapping[str, Any]) -> Detector:
             quotations=raw.get("quotations"),
             ignore_case=raw.get("ignoreCase", False),
             exceptions=tuple(raw.get("exceptions", ())),
+            replacement=raw.get("replacement"),
             **common,
         )
     if raw["kind"] == "phrase":
@@ -298,6 +300,11 @@ def _check_semantics(pack: PolicyPack) -> None:
                         re.compile(pattern)
                     except re.error as exc:
                         _fail(f"regex '{pattern}' does not compile: {exc}", f"{location}/{key}")
+                if detector.replacement is not None:
+                    try:
+                        re.compile(detector.pattern).sub(detector.replacement, "")
+                    except (re.error, IndexError) as exc:
+                        _fail(f"replacement '{detector.replacement}' does not fit pattern '{detector.pattern}': {exc}", f"{location}/replacement")
             if isinstance(detector, ClassifierDetector):
                 _check_classifier(detector, location)
             if isinstance(detector, (ParityDetector, JudgeDetector)) and detector.blocks is not None:

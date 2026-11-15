@@ -314,3 +314,10 @@ def step_experiment_phrases(context, draft, phrases):
     excerpts = [f["excerpt"] for f in context.ml_experiment[draft]["findings"]]
     missing = [p.strip() for p in phrases.split(",") if p.strip() not in excerpts]
     assert not missing, missing
+
+
+@given('a "{language}" policy whose regex replacement refers to a group the pattern lacks')
+def step_bad_regex_replacement(context, language):
+    context.ml_language = language
+    context.ml_text = "Texto."
+    context.ml_pack = _pack(language, [_policy("bad", {"id": "bad", "lane": "rules", "kind": "regex", "pattern": "Texto", "replacement": "\\1"})])
