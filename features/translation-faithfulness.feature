@@ -195,6 +195,36 @@ Feature: A translation says what the original says
     When Humanus compares them
     Then an error "glossary" finding is reported
 
+  Scenario Outline: A headline in title case does not make its capitalized words names
+    Given the source in "en":
+      """
+      <source>
+      """
+    And the translation in "<language>":
+      """
+      <translation>
+      """
+    When Humanus compares them
+    Then no "names-adapted" finding is reported
+    And no "names" finding is reported
+
+    Examples:
+      | language | source                                | translation                                |
+      | es-419   | The Red Team Is Moving Into the Build | El equipo rojo llega al proceso de compilación |
+      | zh-Hans  | Get Used to the Off Switch            | 习惯关闭开关                               |
+
+  Scenario: A sentence with a capitalized name still has it checked
+    Given the source in "en":
+      """
+      Reporters said Hugging Face fixed the leak. It was reported on Monday.
+      """
+    And the translation in "es-419":
+      """
+      Los reporteros dijeron que la empresa arregló la filtración. Se informó el lunes.
+      """
+    When Humanus compares them
+    Then a warn "names-adapted" finding quotes "Hugging Face" from the source
+
   Scenario: A locale's naming convention is respected without dropping the claim
     Given the source in "en":
       """

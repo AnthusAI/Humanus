@@ -683,7 +683,7 @@ def _names_in(text: str, label: str, language: Language) -> list[tuple[str, int,
     common = {w.lower() for w in language.lexicons.get("functionWords", ())} | {w.lower() for w in language.lexicons.get("notNames", ())}
     common |= {m.lower() for m in language.numbers.get("months", ())}
     starts = {start for start, _ in split_sentences(masked, language)}
-    title_like = label.startswith("heading")
+    title_like = label.startswith("heading") or _title_cased(masked, common)
     names: list[tuple[str, int, int, tuple[str, ...]]] = []
     group: list[re.Match[str]] = []
 
@@ -720,6 +720,16 @@ def _names_in(text: str, label: str, language: Language) -> list[tuple[str, int,
 
 
 _ORDINAL_OR_DECADE = re.compile(r"\d+(?:st|nd|rd|th|s)")
+
+
+def _title_cased(masked: str, common: set[str]) -> bool:
+    """A short line set in title case (a headline, a dek's first line, a caption heading): no sentence ends inside it and most of its content words are capitalized,
+    so a capital proves nothing about a name, as in a heading. ``The Red Team Is Moving Into the Build`` is one; ``Hugging Face said it was fixed`` is not."""
+    text = masked.strip()
+    if not text or len(text.split()) > 20 or re.search(r"[.!?。！？]\s+\S", text) or text.endswith((".", "。")):
+        return False
+    content = [w for w in _WORD.findall(text) if w.lower() not in common and not w.isdigit()]
+    return len(content) >= 3 and sum(1 for w in content if w[0].isupper()) / len(content) >= 0.6
 
 
 def _is_ordinal_or_decade(word: str) -> bool:
