@@ -1,6 +1,20 @@
 # CHANGELOG
 
 
+## v0.38.3 (2026-11-15)
+
+### Bug Fixes
+
+- A link target written as plain text is a links error
+  ([`c59b8d6`](https://github.com/AnthusAI/Humanus/commit/c59b8d6b976ad5f9f02361a1c265e713e7a2abfd))
+
+A translation can carry the address of a link without the link: the brackets and anchor lost, or the
+  address written twice. The links check compared only real link targets, so the doubled address
+  passed. It now also compares the plain-text occurrences of each source link target.
+
+Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>
+
+
 ## v0.38.2 (2026-11-15)
 
 ### Bug Fixes
