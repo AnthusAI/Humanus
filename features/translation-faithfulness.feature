@@ -140,6 +140,61 @@ Feature: A translation says what the original says
     When Humanus compares them
     Then an error "glossary" finding offers "Congreso"
 
+  Scenario Outline: A short translation that keeps a run of the source's own words is an error
+    Given the source in "en":
+      """
+      <source>
+      """
+    And the translation in "<language>":
+      """
+      <translation>
+      """
+    When Humanus compares them
+    Then an error "untranslated" finding is reported
+
+    Examples:
+      | language | source                                                 | translation                                                                          |
+      | es-419   | The Red Team Is Moving Into the Build                  | The Red Team está Moving Into the Build                                              |
+      | es-419   | The Biggest Theft in Human History                     | The Biggest Theft in Human History                                                   |
+      | es-419   | Internet bug hunters have a new problem: too much help | Los Bug Hunters de Internet tienen un New Problem: Too Much Help                    |
+      | es-419   | AI Is Handing Amateur Snoops a Detective's Toolkit     | La IA pone un kit de detective en manos de fisgones (Handing Amateur Snoops a Detective's Toolkit) |
+      | zh-Hans  | Internet bug hunters have a new problem: too much help | Internet 的 Bug Hunters 遇到了 New Problem：Too Much Help                            |
+      | zh-Hans  | The Price of Letting Machines Act for Us               | The Price of Letting Machines Act for Us（让机器替我们行动的代价）                   |
+      | zh-Hans  | Can Your Vibe-Coded Masterpiece Be Copyrighted?        | 你的氛围编程杰作能获得版权吗？（Can Your Vibe-Coded Masterpiece Be Copyrighted？）   |
+      | zh-Hans  | Get Used to the Off Switch                             | Get Used to the Off Switch：习惯关闭开关                                             |
+      | zh-Hans  | AI Is Giving Amateur Hackers a More Dangerous Toolkit  | AI Is Giving Amateur Hackers a More Dangerous Toolkit                                |
+
+  Scenario Outline: A short name, a glossary term or a quotation is kept without a finding
+    Given the source in "en":
+      """
+      <source>
+      """
+    And the translation in "<language>":
+      """
+      <translation>
+      """
+    When Humanus compares them
+    Then no "untranslated" finding is reported
+
+    Examples:
+      | language | source                                                    | translation                                                       |
+      | es-419   | Death by AI needed different models for different players | Death by AI necesitó distintos modelos para distintos jugadores   |
+      | es-419   | Sakana AI scientists ran the experiments                  | Los científicos de Sakana AI realizaron los experimentos          |
+      | zh-Hans  | Death by AI needed different models                       | 《Death by AI》需要不同的模型                                      |
+
+  Scenario: A glossary term left in the source's form is an error
+    Given the source in "en":
+      """
+      Should you give an AI agent access to your computer?
+      """
+    And the translation in "es-419":
+      """
+      ¿Debería darle acceso a su computadora a un agente de AI?
+      """
+    And the "es-419" glossary lists "AI" as "IA" with the variant "IAs"
+    When Humanus compares them
+    Then an error "glossary" finding is reported
+
   Scenario: A locale's naming convention is respected without dropping the claim
     Given the source in "en":
       """

@@ -816,6 +816,10 @@ def _glossary(bitext: Bitext, params: Mapping[str, Any]) -> Iterator[ParityMatch
                 continue
             seen.add(entry.term)
             if _contains(t_text, entry.accepted, target_language, entry.case_sensitive):
+                if not entry.translations or entry.term in entry.accepted or not _contains(t_text, (entry.term,), target_language, True):
+                    continue
+                yield (*unit.target, unit.source[0] + start, unit.source[0] + end,
+                       f"The translation still has {_quote(entry.term)}; the glossary renders it as {_quote(entry.translations[0])} in {target_language.tag}.", None)
                 continue
             if entry.translations:
                 forms = " or ".join(_quote(t) for t in entry.translations)
@@ -965,6 +969,52 @@ def _sentence_count(bitext: Bitext, params: Mapping[str, Any]) -> Iterator[Parit
             yield (*unit.target, *unit.source, f"The source has {s_count} sentences here and the translation only {t_count}: check that no sentence was lost.", None)
 
 
+# --- words of the source left in the translation --------------------------------------
+
+
+_LATIN_WORD = re.compile(r"[A-Za-z][A-Za-z'’-]*")
+UNTRANSLATED_UNIT_WORDS = 40   # a headline, a dek, a blurb, a caption: short text where a copied run is a missed translation, not a quoted name in a paragraph
+
+
+def _untranslated(bitext: Bitext, params: Mapping[str, Any]) -> Iterator[ParityMatch]:
+    """A run of the source's own words left in a short translated unit: four or more consecutive words copied from the source, or three with at least two
+    function words of the source language that the target language does not use (``Moving Into the Build``, ``Too Much Help``, ``Get Used to the Off Switch``).
+    A name of two words or a three-word name with one function word (``Death by AI``, ``Sakana AI``) stays. Glossary terms, quotations, code and links do not
+    count, and the same text is never held in a language that writes the source's script and shares its words."""
+    source_language, target_language = bitext.source.language, bitext.target.language
+    if source_language.tag.split("-")[0] == target_language.tag.split("-")[0]:
+        return
+    source_only = {w.lower() for w in source_language.lexicons.get("functionWords", ())} - {w.lower() for w in target_language.lexicons.get("functionWords", ())}
+    for unit in bitext.units():
+        if not unit.prose:
+            continue
+        s_text, t_text = bitext.source_text(unit), bitext.target_text(unit)
+        if len(s_text.split()) > UNTRANSLATED_UNIT_WORDS:
+            continue
+        s_masked, t_masked = mask_inline(s_text), mask_inline(t_text)
+        exempt = [(m.start(), m.end()) for entry in bitext.glossary for form in (entry.accepted + (entry.term,))
+                  for m in target_language.phrase_pattern((form,), entry.case_sensitive).finditer(t_masked)]
+        exempt += _quotation_spans(t_text, target_language)
+        source_words = [m.group().lower() for m in _LATIN_WORD.finditer(s_masked)]
+        grams = {tuple(source_words[i : i + n]) for n in range(1, len(source_words) + 1) for i in range(len(source_words) - n + 1)}
+        tokens = [m for m in _LATIN_WORD.finditer(t_masked) if not any(a <= m.start() < b for a, b in exempt)]
+        index = 0
+        while index < len(tokens):
+            length = 0
+            while index + length < len(tokens) and tuple(t.group().lower() for t in tokens[index : index + length + 1]) in grams:
+                if length and t_masked[tokens[index + length - 1].end() : tokens[index + length].start()].strip(" \t-,:;()，：（）") != "":
+                    break   # another script or other words stand between them: not one run
+                length += 1
+            run = tokens[index : index + length]
+            foreign = {t.group().lower() for t in run if t.group().lower() in source_only}
+            if (length >= 4 and foreign) or (length == 3 and len(foreign) >= 2):
+                yield (unit.target[0] + run[0].start(), unit.target[0] + run[-1].end(), *unit.source,
+                       f"The translation keeps the source's own words {_quote(' '.join(t.group() for t in run))} instead of translating them.", None)
+                index += length
+            else:
+                index += 1
+
+
 PARITY_CHECKS: dict[str, Callable[[Bitext, Mapping[str, Any]], Iterable[ParityMatch]]] = {
     "structure": _structure,
     "links": _links,
@@ -980,4 +1030,5 @@ PARITY_CHECKS: dict[str, Callable[[Bitext, Mapping[str, Any]], Iterable[ParityMa
     "hedges": _hedges,
     "attributions": _attributions,
     "sentence_count": _sentence_count,
+    "untranslated": _untranslated,
 }
