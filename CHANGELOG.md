@@ -1,6 +1,24 @@
 # CHANGELOG
 
 
+## v0.38.0 (2026-11-15)
+
+### Features
+
+- Name and number checks that read the target language
+  ([`060e8e3`](https://github.com/AnthusAI/Humanus/commit/060e8e33175854a52657a8587541aeb22bfce8be))
+
+The names check splits in two. Names whose shape says they stay as written (acronyms, brand shapes,
+  letters with digits) are still an error when lost; an acronym's plural s may go (PCs is PC).
+  Capitalized names that most languages write their own way (London is 伦敦 and Londres, Federal Trade
+  Commission) are the new names-adapted policy, a warning for the glossary and the bilingual judge,
+  since rules cannot tell an established form from a mistranslation. Ordinals and decades (100th,
+  1960s) are no longer names. A decade written 1980s matches its short form (80年代) and its century
+  with it (20世纪80年代), in the numbers check.
+
+Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>
+
+
 ## v0.37.0 (2026-11-15)
 
 ### Features
