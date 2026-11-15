@@ -225,6 +225,24 @@ Feature: A translation says what the original says
     When Humanus compares them
     Then a warn "names-adapted" finding quotes "Hugging Face" from the source
 
+  Scenario Outline: A glossary term kept inside a name the source also has is not held
+    Given the source in "en":
+      """
+      <source>
+      """
+    And the translation in "es-419":
+      """
+      <translation>
+      """
+    And the "es-419" glossary lists "AI" as "IA" with the variant "IAs"
+    When Humanus compares them
+    Then no "glossary" finding is reported
+
+    Examples:
+      | source                                        | translation                                            |
+      | Sakana AI scientists ran the AI experiments   | Los científicos de Sakana AI hicieron los experimentos de IA |
+      | Death by AI needed models and AI                | Death by AI necesitó modelos e IA                       |
+
   Scenario: A locale's naming convention is respected without dropping the claim
     Given the source in "en":
       """
