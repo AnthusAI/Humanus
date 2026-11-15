@@ -1,6 +1,21 @@
 # CHANGELOG
 
 
+## v0.37.0 (2026-11-15)
+
+### Features
+
+- Spanish initialisms and opt-in usted register packs; regex detector replacement
+  ([`03a3e7e`](https://github.com/AnthusAI/Humanus/commit/03a3e7eca316169c900d649f16acdb13cabf0e9a))
+
+initialisms-es flags AI (IA), DNA, HIV, GDP, NATO, WHO in Spanish prose with product-name
+  exceptions. register-es-usted is an opt-in pack that flags tú imperatives opening a link (Lee la
+  fuente -> Lea la fuente); sites that write as tú do not include it. Regex detectors may carry a
+  replacement template.
+
+Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>
+
+
 ## v0.36.0 (2026-11-13)
 
 ### Features
