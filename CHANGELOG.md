@@ -1,6 +1,22 @@
 # CHANGELOG
 
 
+## v0.41.0 (2026-11-15)
+
+### Features
+
+- The bilingual judge reads the publication's translation notes
+  ([`0569cdc`](https://github.com/AnthusAI/Humanus/commit/0569cdc8e03598dbd52949b9d7e3a235b83ee8a3))
+
+A satire site's pun or idiom rendered with an equivalent was judged a mistranslation and held,
+  because the notes that reach the translator never reached the judge. A check request may carry
+  translationNotes; the judge prompt lists them and says a rendering they permit is not a problem
+  unless it changes the claim, who says it, or who or what is mocked. Without notes the prompt is
+  unchanged. Names, quotations, numbers, hedges and links stay parity checks.
+
+Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>
+
+
 ## v0.40.1 (2026-11-15)
 
 ### Bug Fixes
