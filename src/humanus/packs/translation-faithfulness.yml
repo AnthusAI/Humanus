@@ -83,16 +83,30 @@ policies:
     detectors:
       - {id: iso-dates, lane: parity, check: iso_dates}
   - id: names
-    version: 1
+    version: 2
     title: Names unchanged
     severity: error
-    evidence: {grade: folk, note: "A name is found by its shape (capitalized words, acronyms, OpenAI, GPT-6). Not yet measured on labelled translations."}
+    evidence: {grade: folk, note: "A name is found by its shape (acronyms, OpenAI, GPT-6). Not yet measured on labelled translations."}
     guidance: >-
-      Names of people, organisations, products and places stay as written,
-      unless the glossary gives an approved local form (a place or an
-      organisation with an established name in the target language).
+      Names whose shape says they stay as written (acronyms such as METR, brand
+      names such as OpenAI, GPT-6) appear in the translation as written (an
+      acronym's plural s may go: PCs is PC), unless the glossary gives an
+      approved local form.
     detectors:
-      - {id: names, lane: parity, check: names}
+      - {id: names, lane: parity, check: names, params: {kind: shaped}}
+  - id: names-adapted
+    version: 1
+    title: Names with a local rendering
+    severity: warn
+    evidence: {grade: folk, note: "Places, organisations and people with ordinary capitalized names are written the target language's way when it has an established form (London is 伦敦 and Londres). Rules cannot tell an established form from a mistranslation; the bilingual judge reads both texts, and the glossary lists the approved forms."}
+    guidance: >-
+      A capitalized name that is missing from the translation as written is
+      reported for review: it is right when the target language has an
+      established form of it, wrong when it was mistranslated. A name the
+      publication keeps in the original belongs in the glossary as
+      do-not-translate, which is an error when it changes.
+    detectors:
+      - {id: names-adapted, lane: parity, check: names, params: {kind: ordinary}}
   - id: glossary
     version: 1
     title: Glossary terms in their approved form

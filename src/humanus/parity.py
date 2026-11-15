@@ -425,6 +425,7 @@ class _Number:
     keys: frozenset  # Decimal values it can be read as, and its digits as written ("raw:...")
     scaled: bool  # a scale word (million, 万) follows
     value: Decimal | None  # the value in its own language's form, when it has one
+    companions: frozenset = frozenset()  # other values a translation may spell it with: a decade ("1980s") is "80年代" and "20世纪80年代"
 
 
 _DIGITS = re.compile(r"(?<![A-Za-z0-9])\d+(?:[.,]\d+)*")
@@ -442,6 +443,14 @@ def _read(token: str, decimal: str, group: str) -> Decimal | None:
         return Decimal(token.replace(group, "").replace(decimal, "."))
     except InvalidOperation:
         return None
+
+
+def _decade_forms(token: str, masked: str, end: int) -> tuple[Decimal, ...]:
+    """For a decade written as digits and an s ("1980s"): its short form (80) and its century number (20), else nothing."""
+    if len(token) != 4 or not token.isdigit() or masked[end : end + 1] != "s" or masked[end + 1 : end + 2].isalnum():
+        return ()
+    year = int(token)
+    return (Decimal(year % 100), Decimal(year // 100 + 1))
 
 
 def _numbers_in(text: str, language: Language) -> tuple[list[_Number], list[_Number]]:
@@ -469,7 +478,9 @@ def _numbers_in(text: str, language: Language) -> tuple[list[_Number], list[_Num
         values = {v for v in [local, *(_read(token, f["decimal"], f["group"]) for f in also_read)] if v is not None}
         end, scale = scale_after(match.end())
         keys = {v * scale for v in values} | {f"raw:{token}"}
-        hard.append(_Number(match.start(), end, frozenset(keys), scale != 1, None if local is None else local * scale))
+        decade = _decade_forms(token, masked, match.end())
+        # A decade is spelled in the target's own way: "1980s" is "80年代" (the short form) or "20世纪80年代" (century and short form).
+        hard.append(_Number(match.start(), end, frozenset(keys | set(decade[:1])), scale != 1, None if local is None else local * scale, frozenset(decade)))
 
     soft: list[_Number] = []
     if scale_pattern is not None:
@@ -544,6 +555,9 @@ def _numbers(bitext: Bitext, params: Mapping[str, Any]) -> Iterator[ParityMatch]
                 used.add(match)
             elif not any(number.keys & other.keys for other in t_soft):
                 missing.append(number)
+            if number.companions:
+                # the century and the short form of a decade are one number in the translation ("20世纪80年代"): neither is an addition
+                used.update(i for i, other in enumerate(t_hard) if other.keys & number.companions)
         added = [n for i, n in enumerate(t_hard) if i not in used and not any(n.keys & other.keys for other in s_soft)]
         s0, t0 = unit.source[0], unit.target[0]
         for s_num, t_num in zip(missing, added):
@@ -646,7 +660,7 @@ def _names_in(text: str, label: str, language: Language) -> list[tuple[str, int,
     masked = mask_inline(text)
     if shape == "latin-runs":
         runs = re.finditer(r"[A-Za-z][A-Za-z0-9&+.-]*(?:[ ][A-Za-z0-9][A-Za-z0-9&+.-]*)*(?<![.-])", masked)
-        return [(m.group(), m.start(), m.end(), (m.group(),)) for m in runs]
+        return [(m.group(), m.start(), m.end(), _kept_forms(m.group())) for m in runs]
     if shape != "capitalized":
         raise LanguageCannotRun(f"the {language.tag} language pack names an unknown name shape '{shape}'")
     common = {w.lower() for w in language.lexicons.get("functionWords", ())} | {w.lower() for w in language.lexicons.get("notNames", ())}
@@ -663,7 +677,7 @@ def _names_in(text: str, label: str, language: Language) -> list[tuple[str, int,
             return
         if title_like:
             # Headings are title-cased: only a word shaped like a name is one.
-            names.extend((t.group(), t.start(), t.end(), (t.group(),)) for t in tokens if _shaped(t.group()))
+            names.extend((t.group(), t.start(), t.end(), _kept_forms(t.group())) for t in tokens if _shaped(t.group()))
             return
         whole = masked[tokens[0].start() : tokens[-1].end()]
         if _sentence_initial(masked, tokens[0].start(), starts) and not _shaped(tokens[0].group()):
@@ -671,13 +685,13 @@ def _names_in(text: str, label: str, language: Language) -> list[tuple[str, int,
             if len(tokens) == 1:
                 return
             rest = masked[tokens[1].start() : tokens[-1].end()]
-            names.append((whole, tokens[0].start(), tokens[-1].end(), (whole, rest)))
+            names.append((whole, tokens[0].start(), tokens[-1].end(), (*_kept_forms(whole), *_kept_forms(rest))))
             return
-        names.append((whole, tokens[0].start(), tokens[-1].end(), (whole,)))
+        names.append((whole, tokens[0].start(), tokens[-1].end(), _kept_forms(whole)))
 
     for token in _WORD.finditer(masked):
         word = token.group()
-        name_like = (word[0].isupper() or _shaped(word)) and word.lower() not in common and not word.isdigit()
+        name_like = (word[0].isupper() or _shaped(word)) and word.lower() not in common and not word.isdigit() and not _is_ordinal_or_decade(word)
         if name_like and group and masked[group[-1].end() : token.start()] == " ":
             group.append(token)
         else:
@@ -686,6 +700,21 @@ def _names_in(text: str, label: str, language: Language) -> list[tuple[str, int,
                 group.append(token)
     flush()
     return names
+
+
+_ORDINAL_OR_DECADE = re.compile(r"\d+(?:st|nd|rd|th|s)")
+
+
+def _is_ordinal_or_decade(word: str) -> bool:
+    """"100th", "1960s", "3rd": a number with a suffix, which the numbers check reads. It is not a name."""
+    return _ORDINAL_OR_DECADE.fullmatch(word) is not None
+
+
+def _kept_forms(name: str) -> tuple[str, ...]:
+    """The forms that keep a name: as written, and for an acronym with a plural s ("PCs") the acronym alone, which is how most languages write the plural."""
+    if name.endswith("s") and len(name) > 2 and name[:-1].isalpha() and name[:-1].isupper():
+        return (name, name[:-1])
+    return (name,)
 
 
 def _shaped(word: str) -> bool:
@@ -719,7 +748,18 @@ def _contains(text: str, forms: Iterable[str], language: Language, case_sensitiv
     return language.phrase_pattern(tuple(forms), case_sensitive).search(mask_inline(text)) is not None
 
 
+def _is_shaped_name(name: str) -> bool:
+    """A name whose shape says it stays as written in every language: an acronym (METR, PCs), a capital inside (OpenAI) or letters with digits (GPT-6)."""
+    return any(_shaped(word) for word in re.findall(r"[^\W_][\w'’-]*", name))
+
+
 def _names(bitext: Bitext, params: Mapping[str, Any]) -> Iterator[ParityMatch]:
+    """Names missing from the translation. ``kind`` narrows which: ``shaped`` (acronyms, brand shapes: they stay as written everywhere) or ``ordinary``
+    (capitalized words: places and organisations that most languages write their own way, "London" is 伦敦; whether a rendering is established is for
+    the glossary and the bilingual judge, so the policy that carries them is a warning). Without ``kind``, both."""
+    kind = params.get("kind")
+    if kind not in (None, "shaped", "ordinary"):
+        raise ParityCannotRun(f"the names check takes kind shaped or ordinary, not {kind!r}")
     source_language, target_language = bitext.source.language, bitext.target.language
     for unit in bitext.units():
         s_text, t_text = bitext.source_text(unit), bitext.target_text(unit)
@@ -729,12 +769,17 @@ def _names(bitext: Bitext, params: Mapping[str, Any]) -> Iterator[ParityMatch]:
             if name in seen or any(a < end and start < b for a, b in covered):
                 continue
             seen.add(name)
+            if kind is not None and (kind == "shaped") != _is_shaped_name(name):
+                continue
             if not _contains(t_text, forms, target_language, case_sensitive=True):
                 yield (
                     *unit.target,
                     unit.source[0] + start,
                     unit.source[0] + end,
-                    f"The name {_quote(name)} is missing from the translation. Names stay as written unless the glossary gives an approved local form.",
+                    (f"The name {_quote(name)} is missing from the translation as written. If {target_language.tag} has an established form of it, that is right; "
+                     "if not, the name was lost. The glossary lists the approved forms."
+                     if kind == "ordinary" else
+                     f"The name {_quote(name)} is missing from the translation. Names stay as written unless the glossary gives an approved local form."),
                     None,
                 )
 

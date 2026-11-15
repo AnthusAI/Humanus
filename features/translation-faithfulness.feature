@@ -50,7 +50,6 @@ Feature: A translation says what the original says
       | thing                   | source                                           | translation              | policy     | missing                  |
       | a link                  | Read [the report](https://example.org/report).   | 阅读报告。               | links      | https://example.org/report |
       | a citation key          | Agents escaped the sandbox. [@metr]              | 智能体逃出了沙盒。       | citations  | @metr                    |
-      | a do-not-translate name | The cache ran on Artifactory.                    | 缓存运行在软件仓库上。   | names      | Artifactory              |
       | a quotation             | Smith wrote “we need songs fast” in 2018.        | 2018 年，史密斯写信要歌。 | quotations | “we need songs fast”     |
       | a code span             | Run `humanus check` first.                       | 先运行检查命令。         | code       | `humanus check`          |
 
@@ -80,17 +79,103 @@ Feature: A translation says what the original says
     When Humanus compares them
     Then no faithfulness finding is reported
 
-  Scenario: A name with no approved local form stays as written
+  Scenario: A name the glossary keeps in the original must stay unchanged
     Given the source in "en":
       """
-      A man in North Carolina was charged.
+      The cache ran on Artifactory.
       """
     And the translation in "zh-Hans":
       """
-      北卡罗来纳州一名男子被起诉。
+      缓存运行在软件仓库上。
+      """
+    And the "zh-Hans" glossary keeps "Artifactory" unchanged
+    When Humanus compares them
+    Then an error "glossary" finding quotes "Artifactory" from the source
+
+  Scenario Outline: A place or organisation with an established local form is a warning, never an error
+    Given the source in "en":
+      """
+      <source>
+      """
+    And the translation in "<language>":
+      """
+      <translation>
       """
     When Humanus compares them
-    Then an error "names" finding quotes "North Carolina" from the source
+    Then a warn "names-adapted" finding quotes "<name>" from the source
+    And no "names" finding is reported
+
+    Examples:
+      | language | source                                      | translation                    | name                    |
+      | zh-Hans  | A man in North Carolina was charged.        | 北卡罗来纳州一名男子被起诉。   | North Carolina          |
+      | zh-Hans  | The mayor of London spoke on Monday.        | 伦敦市长周一发表了讲话。       | London                  |
+      | zh-Hans  | The Federal Trade Commission sued Ring.     | 美国联邦贸易委员会起诉了 Ring。 | Federal Trade Commission |
+      | es-419   | The mayor of London spoke on Monday.        | El alcalde de Londres habló el lunes. | London            |
+
+  Scenario Outline: A name that stays as written in every language is an error when it is lost
+    Given the source in "en":
+      """
+      <source>
+      """
+    And the translation in "<language>":
+      """
+      <translation>
+      """
+    When Humanus compares them
+    Then an error "names" finding quotes "<name>" from the source
+
+    Examples:
+      | language | source                          | translation          | name    |
+      | zh-Hans  | METR tested the agent.          | 测试了该智能体。     | METR    |
+      | es-419   | OpenAI tested the agent.        | Se probó al agente.  | OpenAI  |
+
+  Scenario: The plural s of an acronym may go
+    Given the source in "en":
+      """
+      The PCs ran the demo.
+      """
+    And the translation in "zh-Hans":
+      """
+      这些 PC 运行了演示。
+      """
+    When Humanus compares them
+    Then no "names" finding is reported
+    And no "names-adapted" finding is reported
+
+  Scenario Outline: A decade, an ordinal and a century are read as values and are not names
+    Given the source in "en":
+      """
+      <source>
+      """
+    And the translation in "<language>":
+      """
+      <translation>
+      """
+    When Humanus compares them
+    Then no "numbers" finding is reported
+    And no "names" finding is reported
+    And no "names-adapted" finding is reported
+
+    Examples:
+      | language | source                                 | translation                  |
+      | zh-Hans  | The 1980s were different.              | 80 年代很不一样。            |
+      | zh-Hans  | The 1980s were different.              | 20 世纪 80 年代很不一样。    |
+      | zh-Hans  | Bands of the 1960s played here.        | 60 年代的乐队曾在此演出。    |
+      | es-419   | Bands of the 1960s played here.        | Los grupos de los años 60 tocaron aquí. |
+      | zh-Hans  | It was the 100th test.                 | 这是第 100 次测试。          |
+      | es-419   | It was the 100th test.                 | Fue la prueba número 100.    |
+
+  Scenario: A changed year is still an error
+    Given the source in "en":
+      """
+      The 1980s were different.
+      """
+    And the translation in "zh-Hans":
+      """
+      70 年代很不一样。
+      """
+    When Humanus compares them
+    Then an error "numbers" finding is reported
 
   Scenario: A dropped hedge is a faithfulness error
     Given the source in "en":

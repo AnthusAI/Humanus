@@ -9,7 +9,7 @@ from humanus.check import CheckRequestValidationError, check
 from humanus.contracts import validate_payload
 from humanus.languages import resolve_language
 from humanus.packs import builtin_pack
-from humanus.parity import _names_in, _native_numeral, _numbers_in
+from humanus.parity import _is_shaped_name, _kept_forms, _names_in, _native_numeral, _numbers_in
 
 
 @pytest.mark.parametrize(
@@ -103,3 +103,24 @@ def test_a_judge_answer_outside_its_schema_fails_the_lane():
     result = check(_request(), decision_model=None, bilingual_judge=lambda prompt: {"issues": [{"category": "style"}]})
     assert result["lanes"]["judge"]["status"] == "failed"
     assert "response schema" in result["lanes"]["judge"]["reason"]
+
+
+def test_ordinals_and_decades_are_not_names():
+    names = [n for n, *_ in _names_in("In the 1960s and the 100th test, 3rd place, METR said so.", "paragraph", resolve_language("en"))]
+    assert names == ["METR"]
+
+
+def test_a_decade_reads_as_its_short_form_and_its_century():
+    hard, _ = _numbers_in("The 1980s were different.", resolve_language("en"))
+    assert Decimal(80) in hard[0].keys and hard[0].companions == {Decimal(80), Decimal(20)}
+    plain, _ = _numbers_in("In 1980 and 1980sx.", resolve_language("en"))
+    assert all(not n.companions for n in plain)
+
+
+def test_an_acronym_plural_is_kept_by_the_acronym_alone():
+    assert _kept_forms("PCs") == ("PCs", "PC") and _kept_forms("Paris") == ("Paris",) and _kept_forms("LLMs") == ("LLMs", "LLM")
+
+
+def test_names_are_shaped_or_ordinary():
+    assert _is_shaped_name("METR") and _is_shaped_name("OpenAI") and _is_shaped_name("GPT-6") and _is_shaped_name("AI Pilot")
+    assert not _is_shaped_name("London") and not _is_shaped_name("Federal Trade Commission") and not _is_shaped_name("Hugging Face")
