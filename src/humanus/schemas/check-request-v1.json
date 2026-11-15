@@ -195,6 +195,24 @@
           },
           "description": "Approved forms in the content's language; the first is the one offered as the fix. A name's approved local form goes here (and the original too, when either is acceptable)."
         },
+        "variants": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "description": "Further forms the translation may use besides the approved ones: a plural, a gender, an adjective (estadounidense for US). Accepted, never offered as the fix."
+        },
+        "exceptIn": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "description": "Longer source phrases the term does not count in: a name that contains it (Chaos Communication Congress for Congress). The names checks read those names."
+        },
         "doNotTranslate": {
           "const": true,
           "description": "The term must appear unchanged."

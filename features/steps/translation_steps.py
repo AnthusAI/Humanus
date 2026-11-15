@@ -51,6 +51,16 @@ def step_glossary(context, language, term, translation):
     context.tf_glossary = {"language": language, "entries": [{"term": term, "translations": [translation]}]}
 
 
+@given('the "{language}" glossary lists "{term}" as "{translation}" with the variant "{variant}"')
+def step_glossary_variant(context, language, term, translation, variant):
+    context.tf_glossary = {"language": language, "entries": [{"term": term, "translations": [translation], "variants": [variant]}]}
+
+
+@given('the "{language}" glossary lists "{term}" as "{translation}" except inside "{phrase}"')
+def step_glossary_except(context, language, term, translation, phrase):
+    context.tf_glossary = {"language": language, "entries": [{"term": term, "translations": [translation], "exceptIn": [phrase], "caseSensitive": True}]}
+
+
 @given('the "{language}" glossary keeps "{term}" unchanged')
 def step_glossary_keeps(context, language, term):
     context.tf_glossary = {"language": language, "entries": [{"term": term, "doNotTranslate": True}]}

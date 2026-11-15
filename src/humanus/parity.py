@@ -48,10 +48,12 @@ class GlossaryEntry:
     term: str
     translations: tuple[str, ...]  # approved forms; empty when the term is not translated
     case_sensitive: bool = False
+    variants: tuple[str, ...] = ()  # more forms the translation may use (plural, adjective, gender), never offered as the fix
+    except_in: tuple[str, ...] = ()  # longer source phrases the term does not count in (a name that contains it)
 
     @property
     def accepted(self) -> tuple[str, ...]:
-        return self.translations or (self.term,)
+        return (self.translations or (self.term,)) + self.variants
 
 
 @dataclass(frozen=True)
@@ -756,7 +758,12 @@ def _sentence_initial(text: str, index: int, starts: set[int]) -> bool:
 
 def _glossary_spans(text: str, language: Language, glossary: tuple[GlossaryEntry, ...]) -> list[tuple[GlossaryEntry, int, int]]:
     masked = mask_inline(text)
-    return [(entry, m.start(), m.end()) for entry in glossary for m in language.phrase_pattern((entry.term,), entry.case_sensitive).finditer(masked)]
+    spans = []
+    for entry in glossary:
+        excluded = [(m.start(), m.end()) for m in language.phrase_pattern(entry.except_in, entry.case_sensitive).finditer(masked)] if entry.except_in else []
+        spans += [(entry, m.start(), m.end()) for m in language.phrase_pattern((entry.term,), entry.case_sensitive).finditer(masked)
+                  if not any(a <= m.start() and m.end() <= b for a, b in excluded)]
+    return spans
 
 
 def _contains(text: str, forms: Iterable[str], language: Language, case_sensitive: bool) -> bool:
