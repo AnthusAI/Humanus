@@ -353,7 +353,18 @@ def _same_tokens(bitext: Bitext, extract: Callable[[SegmentedDocument], list[tup
 
 
 def _links(bitext: Bitext, params: Mapping[str, Any]) -> Iterator[ParityMatch]:
-    return _same_tokens(bitext, _links_in, "link target")
+    yield from _same_tokens(bitext, _links_in, "link target")
+    # A link target written as plain text beside (or instead of) its link: ``这是(/articles/x/)一宗案件`` or ``[案件](/x/)(/x/)``. The link syntax is damaged
+    # even though the address is present, so the target counts must also agree outside links.
+    source_linked, target_linked = Counter(k for k, _, _ in _links_in(bitext.source)), Counter(k for k, _, _ in _links_in(bitext.target))
+    source_text, target_text = bitext.source.text, bitext.target.text
+    for key in source_linked:
+        stray = (target_text.count(key) - target_linked[key]) - (source_text.count(key) - source_linked[key])
+        if stray > 0:
+            start = target_text.rfind(key)
+            first = next((s for k, s, _ in _links_in(bitext.source) if k == key), 0)
+            yield (start, start + len(key), first, first + len(key),
+                   f"The translation writes the link target {_quote(key)} as plain text; a link is [text](target) with its text.", None)
 
 
 def _citations(bitext: Bitext, params: Mapping[str, Any]) -> Iterator[ParityMatch]:
