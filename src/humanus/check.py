@@ -121,6 +121,8 @@ def _bitext(request: Mapping[str, Any], pack: PolicyPack, document: SegmentedDoc
     """
     source = request.get("source")
     if source is None:
+        if request.get("translationNotes"):
+            raise CheckRequestValidationError(REQUEST_SCHEMA, "the request has translation notes but no source to compare the content with", "translationNotes")
         if pack.compares_translations:
             raise CheckRequestValidationError(
                 REQUEST_SCHEMA,
@@ -161,8 +163,13 @@ def _bitext(request: Mapping[str, Any], pack: PolicyPack, document: SegmentedDoc
             GlossaryEntry(entry["term"], tuple(entry.get("translations", ())), entry.get("caseSensitive", False), tuple(entry.get("variants", ())), tuple(entry.get("exceptIn", ())))
             for entry in glossary["entries"]
         )
+    notes = tuple(request.get("translationNotes") or ())
+    if notes and not any(d.lane == "judge" for p in pack.enabled_policies for d in p.detectors):
+        raise CheckRequestValidationError(
+            REQUEST_SCHEMA, f"the request has translation notes but policy pack '{pack.pack_id}' has no judge detector to read them", "translationNotes"
+        )
     source_document = segment_document(source["text"], source["format"], language=source_language, tables=tables)
-    return Bitext(source_document, document, source["format"], entries)
+    return Bitext(source_document, document, source["format"], entries, notes)
 
 
 def reading_language(

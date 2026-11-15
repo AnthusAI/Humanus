@@ -139,7 +139,9 @@ Length checks count in the language's unit.
 
 A check request may carry the text the content was translated from:
 `source` (`text`, `format`, `language`, each required) and, optionally, a
-`glossary` for the content's language. The pack's **parity** detectors then
+`glossary` for the content's language and the publication's `translationNotes`
+(a list of lines: its register, tone and wording choices for that language, the
+notes the translator was given). The pack's **parity** detectors then
 compare the two texts by code and its **judge** detectors ask a bilingual
 model judge about each block. Their findings carry `category: "faithfulness"`,
 a `span` in the translation and a `source.span` in the source, and a
@@ -184,11 +186,17 @@ prompt per block (`humanus.bilingual_judge.judge_prompt`: system and user
 messages and the JSON Schema of the answer), asks the caller's judge
 `passes` times, checks that every quote is in the text it quotes (`rejected`
 counts the ones that are not) and reports a problem every pass found as a
-violation and one only some passes found for review. Without a judge the lane
-reports `unavailable`. Back-translation is not an input to any check.
+violation and one only some passes found for review. With `translationNotes`
+the prompt lists them and tells the judge that a rendering they permit (an
+equivalent for wordplay, an idiom, a register choice) is not a problem, and is
+reported only if it changes the claim, who says it, or who or what is mocked;
+without notes the judge reads the block as before. Names, quotations, numbers,
+hedges and links stay parity checks and do not depend on the notes. Without a
+judge the lane reports `unavailable`. Back-translation is not an input to any check.
 
 A request missing either language, a source in a language with no pack, a
-glossary for another language, a faithfulness pack without a source and a
+glossary for another language, translation notes without a source or with no
+judge detector to read them, a faithfulness pack without a source and a
 source with nothing to compare it are all refused.
 
 ## Lanes

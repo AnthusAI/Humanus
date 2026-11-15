@@ -24,6 +24,15 @@
     "glossary": {
       "$ref": "#/$defs/glossary"
     },
+    "translationNotes": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "description": "The publication's notes for translating into the content's language (its register, tone and wording choices), the same notes the translator was given. Only judge detectors read them: a rendering the notes permit, such as an equivalent for wordplay, an idiom or a register choice, is not reported as unfaithful unless it changes the claim, who says it, or who or what is mocked. Needs a source."
+    },
     "pack": {
       "$ref": "policy-pack-v1.json"
     },

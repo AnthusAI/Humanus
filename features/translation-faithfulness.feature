@@ -414,6 +414,73 @@ Feature: A translation says what the original says
     Then the judge lane is "unavailable" and its reason says "no bilingual judge"
     And the parity lane ran
 
+  # --- a site's notes reach the judge (a satire site's puns and idioms) ----------------------
+
+  Scenario: An idiom rendered with an equivalent idiom passes when the notes permit equivalents
+    Given the source in "en":
+      """
+      The board let the budget go to the dogs.
+      """
+    And the translation in "es-419":
+      """
+      La junta dejó que el presupuesto se fuera al traste.
+      """
+    And the translation notes:
+      | note                                                                       |
+      | tone: Satire. Render wordplay and idioms with an equivalent in the language. |
+    And a bilingual judge that reports in every pass unless its prompt carries notes that permit the rendering:
+      | category       | sourceQuote           | targetQuote  | explanation                                    |
+      | mistranslation | go to the dogs        | al traste    | The idiom is rendered with a different idiom.  |
+    When the bilingual judge reads both blocks in 2 passes
+    Then no "bilingual-judge" finding is reported
+    And the judge prompt lists the note "tone: Satire. Render wordplay and idioms with an equivalent in the language." and says a rendering the notes permit is not a problem
+
+  Scenario: The same translation without the notes is still held
+    Given the source in "en":
+      """
+      The board let the budget go to the dogs.
+      """
+    And the translation in "es-419":
+      """
+      La junta dejó que el presupuesto se fuera al traste.
+      """
+    And a bilingual judge that reports in every pass unless its prompt carries notes that permit the rendering:
+      | category       | sourceQuote           | targetQuote  | explanation                                    |
+      | mistranslation | go to the dogs        | al traste    | The idiom is rendered with a different idiom.  |
+    When the bilingual judge reads both blocks in 2 passes
+    Then an error "bilingual-judge" finding quotes "go to the dogs" from the source and "al traste" from the translation
+    And the judge prompt has no notes section
+
+  Scenario: A rendering that changes who is mocked is held even when the notes permit equivalents
+    Given the source in "en":
+      """
+      The regulators let the chatbot write its own safety report.
+      """
+    And the translation in "es-419":
+      """
+      El chatbot dejó que los reguladores redactaran su propio informe de seguridad.
+      """
+    And the translation notes:
+      | note                                                                       |
+      | tone: Satire. Render wordplay and idioms with an equivalent in the language. |
+    And a bilingual judge that reports in every pass:
+      | category             | sourceQuote                 | targetQuote            | explanation                                            |
+      | attribution-changed  | The regulators let the chatbot | El chatbot dejó que los reguladores | The translation mocks the chatbot where the source mocks the regulators. |
+    When the bilingual judge reads both blocks in 2 passes
+    Then an error "bilingual-judge" finding quotes "The regulators let the chatbot" from the source and "El chatbot dejó que los reguladores" from the translation
+    And the judge prompt lists the note "tone: Satire. Render wordplay and idioms with an equivalent in the language." and says a rendering the notes permit is not a problem
+
+  Scenario: Translation notes without a source are refused
+    Given a draft in "es-419" with no source:
+      """
+      La junta dejó que el presupuesto se fuera al traste.
+      """
+    And the translation notes:
+      | note                                      |
+      | tone: Satire. Render wordplay with an equivalent. |
+    When Humanus compares them
+    Then the check is refused at "translationNotes" and the message names "no source"
+
   # --- defects found by the translation experiment ------------------------------------------
 
   Scenario: A translated credit attribute is restored (experiment, es_1)

@@ -77,9 +77,13 @@ def judge_prompt(
     context: list[tuple[str, str]],
     categories: tuple[str, ...],
     glossary: tuple[tuple[str, tuple[str, ...]], ...] = (),
+    notes: tuple[str, ...] = (),
     pass_number: int = 1,
 ) -> dict[str, Any]:
-    """The prompt for one block: what a bilingual judge reads and the schema its answer follows."""
+    """The prompt for one block: what a bilingual judge reads and the schema its answer follows.
+
+    ``notes`` are the publication's notes for this translation (its register, tone and wording choices): the notes the translator was given. With
+    them the judge is told that a rendering they permit is not a problem unless it changes the claim, who says it, or who or what is mocked."""
     definitions = "\n".join(f"- {name}: {CATEGORY_DEFINITIONS[name]}" for name in categories)
     system = (
         f"You compare a translation from {source_language.name} ({source_language.tag}) into {target_language.name} "
@@ -98,6 +102,13 @@ def judge_prompt(
             parts.append(f"SOURCE: {source}\nTRANSLATION: {target}")
     if glossary:
         parts.append("Glossary (approved renderings):\n" + "\n".join(f"- {term}: {' / '.join(forms) or '(keep unchanged)'}" for term, forms in glossary))
+    if notes:
+        parts.append(
+            "The publication's notes for this translation (the translator was given the same notes):\n" + "\n".join(f"- {note}" for note in notes)
+            + "\nA rendering these notes permit, such as an equivalent for wordplay, an idiom or a register choice, is not a problem even when it is "
+            "not word for word. Report it only if it changes the claim made, who says it, or who or what is mocked. A rendering the notes do not "
+            "permit is judged as before."
+        )
     parts.append(f"Block to judge.\nSOURCE ({source_language.tag}):\n{source_block}\n\nTRANSLATION ({target_language.tag}):\n{target_block}")
     return {
         "system": system,
@@ -156,6 +167,7 @@ def _judge_unit(bitext: Bitext, units: tuple[Unit, ...], index: int, policy: Pol
             context=context,
             categories=detector.categories,
             glossary=glossary,
+            notes=bitext.notes,
             pass_number=pass_number,
         )
         answer = judge(prompt)
