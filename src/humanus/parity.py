@@ -458,7 +458,7 @@ def _numbers_in(text: str, language: Language) -> tuple[list[_Number], list[_Num
     decimal, group, also_read, scales, words, months, numerals = language.number_data(
         "decimal", "group", "alsoRead", "scales", "words", "months", "numerals"
     )
-    masked = mask_inline(text)
+    masked = mask_inline(text, " ")
     scale_pattern = language.phrase_pattern(tuple(scales)) if scales else None
     scale_values = {" ".join(name.lower().split()): Decimal(str(value)) for name, value in scales.items()}
 
@@ -496,6 +496,10 @@ def _numbers_in(text: str, language: Language) -> tuple[list[_Number], list[_Num
         for start, end, value in _join_compound_words(found, masked):
             end, scale = scale_after(end)
             soft.append(_Number(start, end, frozenset({value * scale}), scale != 1, value * scale))
+        # "twentyfold" is twenty times: a number word with -fold
+        for m in re.finditer(rf"(?<![A-Za-z])({'|'.join(sorted(map(re.escape, word_values), key=len, reverse=True))})-?fold(?![A-Za-z])", masked, re.IGNORECASE):
+            value = word_values[m.group(1).lower()]
+            soft.append(_Number(m.start(), m.end(), frozenset({value}), False, value))
     if months:
         month_values = {name.lower(): Decimal(index + 1) for index, name in enumerate(months)}
         for m in language.phrase_pattern(tuple(months)).finditer(masked):

@@ -383,11 +383,12 @@ def split_sentences(source: str, language: Language) -> list[tuple[int, int]]:
     return [span for span in spans if span[0] < span[1]]
 
 
-def mask_inline(source: str) -> str:
-    """Replace inline code, URLs, link targets, citations and directive attributes with x's (same length)."""
+def mask_inline(source: str, fill: str = "x") -> str:
+    """Replace inline code, URLs, link targets, citations and directive attributes with ``fill`` (same length). The default x keeps a name's words
+    whole; a reader of numbers fills with a space, so a number written straight after a citation (``[@key]2005 年``) is still a number."""
     masked = source
     for pattern in _INLINE_MASKS:
-        masked = pattern.sub(lambda m: "x" * len(m.group(0)), masked)
+        masked = pattern.sub(lambda m: fill * len(m.group(0)), masked)
     return masked
 
 

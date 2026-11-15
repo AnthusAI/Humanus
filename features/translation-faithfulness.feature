@@ -165,6 +165,23 @@ Feature: A translation says what the original says
       | zh-Hans  | It was the 100th test.                 | 这是第 100 次测试。          |
       | es-419   | It was the 100th test.                 | Fue la prueba número 100.    |
 
+  Scenario Outline: A number written straight after a citation or beside -fold is still read
+    Given the source in "en":
+      """
+      <source>
+      """
+    And the translation in "zh-Hans":
+      """
+      <translation>
+      """
+    When Humanus compares them
+    Then no "numbers" finding is reported
+
+    Examples:
+      | source                                                              | translation                              |
+      | [@bainbridge] In 2005 and 2006, researchers watched a unit.         | [@bainbridge]2005 年和 2006 年，研究人员观察了一支部队。 |
+      | The demo audience had grown more than twentyfold in a month.        | 一个月内试玩版的玩家人数增长了 20 多倍。 |
+
   Scenario: A changed year is still an error
     Given the source in "en":
       """
