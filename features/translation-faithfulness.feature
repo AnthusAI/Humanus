@@ -53,6 +53,23 @@ Feature: A translation says what the original says
       | a quotation             | Smith wrote “we need songs fast” in 2018.        | 2018 年，史密斯写信要歌。 | quotations | “we need songs fast”     |
       | a code span             | Run `humanus check` first.                       | 先运行检查命令。         | code       | `humanus check`          |
 
+  Scenario Outline: A link whose brackets were lost or whose address is written twice is an error
+    Given the source in "en":
+      """
+      This was [a case about who could see](/articles/the-more-a-security-product-watches/) the footage.
+      """
+    And the translation in "zh-Hans":
+      """
+      <translation>
+      """
+    When Humanus compares them
+    Then an error "links" finding is reported
+
+    Examples:
+      | translation                                                                                       |
+      | 这是(/articles/the-more-a-security-product-watches/)一宗关于谁能看到录像的案件。                    |
+      | 这是[一宗关于谁能看到录像的案件](/articles/the-more-a-security-product-watches/)(/articles/the-more-a-security-product-watches/)。 |
+
   Scenario: A glossary term must be used
     Given the source in "en":
       """
