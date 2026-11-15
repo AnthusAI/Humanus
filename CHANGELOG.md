@@ -1,6 +1,20 @@
 # CHANGELOG
 
 
+## v0.38.1 (2026-11-15)
+
+### Bug Fixes
+
+- The translation-faithfulness pack is version 1.1.0
+  ([`c50734c`](https://github.com/AnthusAI/Humanus/commit/c50734cc3c5a26142e40c8d3e9eb809e6f22a349))
+
+Its names policy changed in 0.38.0 without a new pack version, and the translation procedure keys
+  its stored results by the pack's name and version, so a translation held under the old names check
+  would be replayed instead of checked again.
+
+Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>
+
+
 ## v0.38.0 (2026-11-15)
 
 ### Features
