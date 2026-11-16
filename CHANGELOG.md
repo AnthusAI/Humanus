@@ -1,6 +1,23 @@
 # CHANGELOG
 
 
+## v0.42.0 (2026-11-16)
+
+### Features
+
+- Basic content measurements: measure() and diff()
+  ([`a1246dd`](https://github.com/AnthusAI/Humanus/commit/a1246dd20419b6dfcacb1e7a559466d458780734))
+
+Humanus now reports plain numbers about a text: size (words, or characters in Simplified Chinese,
+  and reading time from each language pack's reading rate), structure (sections, longest paragraph
+  and sentence, headline, dek and blurb), sourcing (links and citations per 500 units, share of
+  paragraphs without any) and, comparing two texts, words added, removed and rewritten and the share
+  changed. Deterministic, no model calls, guidance never gates. Concept density is a later slice and
+  is refused rather than ignored.
+
+Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>
+
+
 ## v0.41.1 (2026-11-15)
 
 ### Bug Fixes
