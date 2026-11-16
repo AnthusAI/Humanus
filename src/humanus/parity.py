@@ -511,6 +511,11 @@ def _numbers_in(text: str, language: Language) -> tuple[list[_Number], list[_Num
         for start, end, value in _join_compound_words(found, masked):
             end, scale = scale_after(end)
             soft.append(_Number(start, end, frozenset({value * scale}), scale != 1, value * scale))
+        # "one and a half million" is 1.5 million, which a translation writes as 150 万 or 1,5 millones
+        for m in re.finditer(rf"(?<![A-Za-z])({'|'.join(sorted(map(re.escape, word_values), key=len, reverse=True))})\s+and\s+a\s+half(?![A-Za-z])", masked, re.IGNORECASE):
+            end, scale = scale_after(m.end())
+            value = (word_values[m.group(1).lower()] + Decimal("0.5")) * scale
+            soft.append(_Number(m.start(), end, frozenset({value}), scale != 1, value))
         # "twentyfold" is twenty times: a number word with -fold
         for m in re.finditer(rf"(?<![A-Za-z])({'|'.join(sorted(map(re.escape, word_values), key=len, reverse=True))})-?fold(?![A-Za-z])", masked, re.IGNORECASE):
             value = word_values[m.group(1).lower()]
@@ -1023,10 +1028,18 @@ def _untranslated(bitext: Bitext, params: Mapping[str, Any]) -> Iterator[ParityM
         if len(s_text.split()) > UNTRANSLATED_UNIT_WORDS:
             continue
         s_masked, t_masked = mask_inline(s_text), mask_inline(t_text)
+        common = {w.lower() for w in source_language.lexicons.get("functionWords", ())} | {w.lower() for w in source_language.lexicons.get("notNames", ())}
+        prose = not _title_cased(s_masked, common)   # in a sentence a run of capitalized words is a name (Songwriters of North America); in a headline title case proves nothing
         exempt = [(m.start(), m.end()) for entry in bitext.glossary for form in (entry.accepted + (entry.term,))
                   for m in target_language.phrase_pattern((form,), entry.case_sensitive).finditer(t_masked)]
         exempt += _quotation_spans(t_text, target_language)
         source_words = [m.group().lower() for m in _LATIN_WORD.finditer(s_masked)]
+        # a word the source writes with a capital wherever it stands (not only to open a sentence) belongs to a name
+        surfaces: dict[str, list[bool]] = {}
+        for m in _LATIN_WORD.finditer(s_masked):
+            opening = not s_masked[: m.start()].rstrip(" \t\"'“‘([").endswith((".", "!", "?", ":")) and bool(s_masked[: m.start()].strip())
+            surfaces.setdefault(m.group().lower(), []).append(m.group()[0].isupper() and (opening or m.start() > 0))
+        source_capitalized = {w for w, flags in surfaces.items() if flags and all(flags)}
         grams = {tuple(source_words[i : i + n]) for n in range(1, len(source_words) + 1) for i in range(len(source_words) - n + 1)}
         tokens = [m for m in _LATIN_WORD.finditer(t_masked) if not any(a <= m.start() < b for a, b in exempt)]
         index = 0
@@ -1038,6 +1051,9 @@ def _untranslated(bitext: Bitext, params: Mapping[str, Any]) -> Iterator[ParityM
                 length += 1
             run = tokens[index : index + length]
             foreign = {t.group().lower() for t in run if t.group().lower() in source_only}
+            if prose and length and all(w in common or w in source_capitalized for w in (t.group().lower() for t in run)):
+                index += max(length, 1)
+                continue
             if (length >= 4 and foreign) or (length == 3 and len(foreign) >= 2):
                 yield (unit.target[0] + run[0].start(), unit.target[0] + run[-1].end(), *unit.source,
                        f"The translation keeps the source's own words {_quote(' '.join(t.group() for t in run))} instead of translating them.", None)

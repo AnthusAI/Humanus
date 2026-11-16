@@ -243,6 +243,59 @@ Feature: A translation says what the original says
       | Sakana AI scientists ran the AI experiments   | Los científicos de Sakana AI hicieron los experimentos de IA |
       | Death by AI needed models and AI                | Death by AI necesitó modelos e IA                       |
 
+  Scenario Outline: "One and a half million" is 1.5 million, written the target's way
+    Given the source in "en":
+      """
+      Between one million and one and a half million rolls were made that year.
+      """
+    And the translation in "<language>":
+      """
+      <translation>
+      """
+    When Humanus compares them
+    Then no "numbers" finding is reported
+
+    Examples:
+      | language | translation                              |
+      | zh-Hans  | 那一年生产了 100 万至 150 万卷。          |
+      | es-419   | Ese año se hicieron entre un millón y 1,5 millones de rollos. |
+
+  Scenario: A changed "and a half" is still an error
+    Given the source in "en":
+      """
+      Between one million and one and a half million rolls were made that year.
+      """
+    And the translation in "es-419":
+      """
+      Ese año se hicieron entre un millón y 2 millones de rollos.
+      """
+    When Humanus compares them
+    Then an error "numbers" finding is reported
+
+  Scenario: A name of several words kept in English inside a sentence is not an untranslated run
+    Given the source in "en":
+      """
+      The group Songwriters of North America told the paper it was unfair to creators.
+      """
+    And the translation in "zh-Hans":
+      """
+      该组织 Songwriters of North America 对报纸说，这对创作者不公平。
+      """
+    When Humanus compares them
+    Then no "untranslated" finding is reported
+
+  Scenario: Lowercase words of the source left in a sentence are still an untranslated run
+    Given the source in "en":
+      """
+      The agent had to decide whether to keep going after the test failed badly.
+      """
+    And the translation in "es-419":
+      """
+      El agente tuvo que decide whether to keep going after the test failed badly.
+      """
+    When Humanus compares them
+    Then an error "untranslated" finding is reported
+
   Scenario: A locale's naming convention is respected without dropping the claim
     Given the source in "en":
       """
