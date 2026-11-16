@@ -17,6 +17,7 @@ from .check import CheckRequestValidationError, check
 from .contracts import ContractValidationError, load_schema, validate_payload
 from .finding_ids import finding_id
 from .languages import Language, UnsupportedLanguageError, list_languages, resolve_language
+from .measure import diff, measure
 from .packs import builtin_pack, list_builtin_packs
 from .policy_pack import PolicyPack, PolicyPackValidationError, load_policy_pack
 from .segmentation import SegmentedDocument, segment_document
@@ -40,11 +41,13 @@ __all__ = [
     "builtin_pack",
     "calibrate",
     "check",
+    "diff",
     "draft_questions",
     "finding_id",
     "judge_prompt",
     "list_builtin_packs",
     "list_languages",
+    "measure",
     "load_policy_pack",
     "load_schema",
     "policy_pack_from_style_profile",

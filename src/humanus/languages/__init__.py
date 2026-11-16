@@ -52,6 +52,7 @@ class Language:
     phrase_matching: str  # word | substring
     unit: str  # the name of the unit lengths are counted in: word | character
     unit_pattern: str
+    reading_units_per_minute: float  # how many units of length a reader reads in a minute (for reading time)
     terminators: str
     spaced_terminators: str
     closers: str
@@ -199,6 +200,7 @@ def _load(tag: str) -> Language:
         phrase_matching=raw["phraseMatching"],
         unit=raw["units"]["name"],
         unit_pattern=raw["units"]["pattern"],
+        reading_units_per_minute=float(raw["reading"]["unitsPerMinute"]),
         terminators=segmentation["terminators"],
         spaced_terminators=segmentation["spacedTerminators"],
         closers=segmentation["closers"],

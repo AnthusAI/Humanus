@@ -28,6 +28,10 @@ Use this skill when an agent (or a human with agent help) copy-edits prose again
 
 Policy authoring: `humanus draft-questions --request draft-questions-request.json` proposes classifier detectors for a policy written in prose; review them before adding them to the pack. `humanus pack builtin <name>` prints a starter pack: `ai-writing-tells`, `asd-ste100` (Simplified Technical English) or `plain-language` (Federal Plain Language Guidelines).
 
+## Measurements
+
+`humanus measure --draft draft.md --language en [--headline ... --dek ... --blurb ...]` prints plain numbers: **size** (words, or characters for `zh-Hans`; reading minutes), **structure** (sections, paragraphs, longest paragraph and sentence, and whether the headline, dek and blurb you pass are present and how long), **sourcing** (links and citations, per 500 units, and the share of paragraphs with none). `humanus diff --old a.md --new b.md --language en` reports how much a revision changed: units added, removed and rewritten and the share of the text changed. Python: `humanus.measure(text, language)` and `humanus.diff(old, new, language)`. They are deterministic and call no model. Treat the numbers as guidance: Humanus sets no limits, so do not shorten, pad or add links just to move a number.
+
 ## HTML usability
 
 Use this path for static HTML pages (landing pages, articles rendered to HTML)—not for markdown copy-edit drafts. It is **read-only**: Humanus reports findings; it does not rewrite the page. There is no `usability options`, `usability apply`, or other usability write commands.

@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "event_id": "3632517f-611b-4df1-b463-9e4cbe615495",
+  "issue_id": "LIM-e484ad0d-994a-4b41-b520-bc72e765400d",
+  "event_type": "issue_created",
+  "occurred_at": "2026-11-16T16:08:44.146Z",
+  "actor_id": "home",
+  "payload": {
+    "title": "Basic content measurements: measure() and diff()",
+    "description": "Humanus owns all measurement logic for Papyrus (PPY-f4035b): measure(text, language) for size, structure and sourcing; diff(old, new, language) for change size. Deterministic, language-aware, guidance never gates. Concept density is a later slice.\n\n```gherkin\nFeature: Basic content measurements\n  Scenario: Size counts words, characters in Chinese\n```\nSee features/content-measurements.feature.",
+    "issue_type": "story",
+    "status": "open",
+    "priority": 2,
+    "assignee": null,
+    "parent": null,
+    "labels": []
+  }
+}
