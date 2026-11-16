@@ -11,6 +11,12 @@ units:
   name: word
   pattern: '[^\W_]+(?:[''’-][^\W_]+)*'
 
+# How fast a reader goes, in this language's unit of length per minute, for
+# the reading-time measurement. Guidance for an estimate, not a limit.
+reading:
+  unitsPerMinute: 218
+  source: Brysbaert (2019), "How many words do we read per minute?", Journal of Memory and Language 109, meta-analysis of silent reading rates (Spanish, silent reading).
+
 segmentation:
   terminators: ''
   spacedTerminators: '.!?…'

@@ -102,6 +102,48 @@ length, reading grade, information density, paragraph length, uniform cadence,
 overused words) leave table cells out. Paragraph, sentence and
 finding ids derive from text, so they survive edits elsewhere.
 
+## Measurements
+
+Plain numbers about a text, for people and agents to judge a piece by. They are
+**guidance, never gates**: Humanus sets no limits and nothing passes or fails on
+a measurement. They are deterministic (no model is called) and language-aware.
+
+```python
+from humanus import measure, diff
+
+m = measure(text, "en", headline="...", dek="...", blurb="...")   # headline, dek and blurb are optional
+d = diff(old_text, new_text, "en")
+```
+
+```bash
+humanus measure --draft draft.md --language en [--headline T] [--dek T] [--blurb T]
+humanus diff --old v1.md --new v2.md --language en
+```
+
+`measure` returns:
+
+| Group | Fields |
+| --- | --- |
+| `size` | `unit` (`word`, or `character` in Simplified Chinese), `units`, `readingMinutes` (units over the language pack's `reading.unitsPerMinute`, from published silent-reading rates) |
+| `structure` | `sections` (headings), `paragraphs`, `longestParagraph`, `longestSentence` (in units), and for each of `headline`, `dek` and `blurb` that was passed, `{present, length}` |
+| `sourcing` | `links`, `citations` (one per `[@key]`), `sources`, `per500` (sources per 500 units), `paragraphsWithoutSource` and `shareParagraphsWithoutSource` |
+
+`diff` returns `oldUnits`, `newUnits`, `added`, `removed`, `rewritten`, `unchanged`
+and `shareChanged`. The texts are compared unit by unit after markup is
+stripped, so a markup-only edit changes nothing. In a replaced stretch the
+shorter side's units are *rewritten* and the surplus is *added* or *removed*;
+`shareChanged` is the touched units over the merged text, from 0.0 (identical)
+to 1.0 (nothing kept).
+
+Both read what a reader reads: front matter, code, Markus directives and raw
+HTML are skipped, and a block quotation counts toward size but not toward the
+structure figures, which describe the author's own paragraphs (`paragraphs`
+counts plain paragraphs, not list items or table cells) and sentences. Sourcing
+counts link targets (inline, reference-style, autolinks and bare URLs) and
+citation keys, and a paragraph with any of them is sourced. Concept density,
+which takes a list of concepts as input, is a later slice: `measure(...,
+concepts=[...])` is refused rather than ignored.
+
 ## Languages
 
 Every check request states the language of its content (`content.language`, a

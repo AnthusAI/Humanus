@@ -1,6 +1,8 @@
 """Humanus CLI entry point.
 
     humanus check --request <check-request.json> | --draft <file> --pack <policy-pack.yml> --language <tag> [--source <file> --source-language <tag>] [--format markus|markdown|text] [--output FILE]
+    humanus measure --draft <file> --language <tag> [--headline T] [--dek T] [--blurb T] [--format markus|markdown|text]   (size, structure, sourcing; guidance, never a gate)
+    humanus diff --old <file> --new <file> --language <tag>   (units added, removed, rewritten; share changed)
     humanus suggest --request <suggest-request.json>          (rewrite options; needs OPENAI_API_KEY)
     humanus draft-questions --request <draft-questions-request.json>
     humanus calibrate --labels <feedback-labels.json>          (per-detector calibration from editor decisions)
@@ -22,7 +24,9 @@ from . import __version__
 from .contract_commands import (
     contract_calibrate,
     contract_check,
+    contract_diff,
     contract_draft_questions,
+    contract_measure,
     contract_pack,
     contract_schema,
     contract_suggest,
@@ -43,6 +47,8 @@ def print_skill(flags: list[str]) -> None:
 
 COMMANDS = {
     "check": contract_check,
+    "measure": contract_measure,
+    "diff": contract_diff,
     "suggest": contract_suggest,
     "draft-questions": contract_draft_questions,
     "calibrate": contract_calibrate,

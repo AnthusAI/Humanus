@@ -9,6 +9,7 @@ from typing import Any
 
 from .calibration import calibrate
 from .check import check
+from .measure import diff, measure
 from .contracts import CONTRACT_SCHEMAS, load_schema
 from .packs import builtin_pack, list_builtin_packs
 from .policy_pack import load_policy_pack
@@ -46,6 +47,40 @@ def contract_check(flags: list[str]) -> int:
     else:
         parser.error("give --request, or --draft with --pack and --language")
     _emit(check(request), args.output)
+    return 0
+
+
+def contract_measure(flags: list[str]) -> int:
+    parser = argparse.ArgumentParser(
+        prog="humanus measure",
+        description="Plain measurements of a draft: size, structure and sourcing. Guidance, never a gate.",
+    )
+    parser.add_argument("--draft", required=True, help="document to measure")
+    parser.add_argument("--language", required=True, help="BCP 47 tag of the draft's language, e.g. en, es-419, zh-Hans")
+    parser.add_argument("--format", default="markus", choices=["markus", "markdown", "text"])
+    for name in ("headline", "dek", "blurb"):
+        parser.add_argument(f"--{name}", help=f"the story's {name}, to measure it too")
+    parser.add_argument("--output", help="write the result here instead of stdout")
+    args = parser.parse_args(flags)
+    texts = {name: getattr(args, name) for name in ("headline", "dek", "blurb")}
+    result = measure(Path(args.draft).read_text(encoding="utf-8"), args.language, format=args.format, **texts)
+    _emit(result, args.output)
+    return 0
+
+
+def contract_diff(flags: list[str]) -> int:
+    parser = argparse.ArgumentParser(
+        prog="humanus diff",
+        description="How much a revision changed: units added, removed and rewritten, and the share of the text changed.",
+    )
+    parser.add_argument("--old", required=True, help="the earlier text")
+    parser.add_argument("--new", required=True, help="the revised text")
+    parser.add_argument("--language", required=True, help="BCP 47 tag of the text's language")
+    parser.add_argument("--format", default="markus", choices=["markus", "markdown", "text"])
+    parser.add_argument("--output", help="write the result here instead of stdout")
+    args = parser.parse_args(flags)
+    result = diff(Path(args.old).read_text(encoding="utf-8"), Path(args.new).read_text(encoding="utf-8"), args.language, format=args.format)
+    _emit(result, args.output)
     return 0
 
 
