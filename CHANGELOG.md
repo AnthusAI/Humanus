@@ -1,6 +1,21 @@
 # CHANGELOG
 
 
+## v0.42.1 (2026-11-16)
+
+### Bug Fixes
+
+- One and a half million is 1.5 million; a name kept in a sentence is not an untranslated run
+  ([`1d6f12e`](https://github.com/AnthusAI/Humanus/commit/1d6f12e3fc99fac1da3e1053148aa80c244f0fc2))
+
+The numbers check read the Chinese 150 万 as an added number against 'one and a half million'. The
+  untranslated check held 'Dutch Institute for Vulnerability Disclosure' and 'Songwriters of North
+  America' kept in English inside zh sentences: a run of words the source capitalizes wherever it
+  stands is a name, kept in a sentence (a headline in title case stays strict).
+
+Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>
+
+
 ## v0.42.0 (2026-11-16)
 
 ### Features
