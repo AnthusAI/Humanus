@@ -1,6 +1,19 @@
 # CHANGELOG
 
 
+## v0.42.2 (2026-11-17)
+
+### Bug Fixes
+
+- The original in parentheses after the approved rendering is not a term left untranslated
+  ([`90d5961`](https://github.com/AnthusAI/Humanus/commit/90d5961f02cd0284cad05e509aee8b9f67c10a9e))
+
+Estados Unidos (US) is the original-on-first-mention convention; the 'still has US' glossary finding
+  held a translation that followed it.
+
+Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>
+
+
 ## v0.42.1 (2026-11-16)
 
 ### Bug Fixes
