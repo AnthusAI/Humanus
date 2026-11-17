@@ -833,7 +833,7 @@ def _glossary(bitext: Bitext, params: Mapping[str, Any]) -> Iterator[ParityMatch
                 continue
             seen.add(entry.term)
             if _contains(t_text, entry.accepted, target_language, entry.case_sensitive):
-                if not entry.translations or entry.term in entry.accepted or not _kept_loose(s_text, t_text, entry.term, target_language):
+                if not entry.translations or entry.term in entry.accepted or not _kept_loose(s_text, t_text, entry.term, target_language, entry.accepted):
                     continue
                 yield (*unit.target, unit.source[0] + start, unit.source[0] + end,
                        f"The translation still has {_quote(entry.term)}; the glossary renders it as {_quote(entry.translations[0])} in {target_language.tag}.", None)
@@ -846,13 +846,18 @@ def _glossary(bitext: Bitext, params: Mapping[str, Any]) -> Iterator[ParityMatch
             yield (*unit.target, unit.source[0] + start, unit.source[0] + end, message, None)
 
 
-def _kept_loose(source: str, target: str, term: str, language: Language) -> bool:
+def _kept_loose(source: str, target: str, term: str, language: Language, accepted: tuple[str, ...] = ()) -> bool:
     """Whether the target still has ``term`` as a word of its own: not inside a name the source also has (``Sakana AI``, ``Death by AI``), which is the pair of words next to it
-    appearing together in the source."""
+    appearing together in the source, nor the original written in parentheses straight after the approved rendering (``Estados Unidos (US)``), the convention of giving the
+    original on first mention."""
     words = [(m.group(), m.start(), m.end()) for m in _WORD.finditer(mask_inline(target))]
+    masked_target = mask_inline(target)
+    approved = [m for form in accepted if form != term for m in language.phrase_pattern((form,), False).finditer(masked_target)]
     source_pairs = {(a.lower(), b.lower()) for a, b in zip(re.findall(_WORD, source), re.findall(_WORD, source)[1:])}
     pattern = language.phrase_pattern((term,), True)
     for found in pattern.finditer(mask_inline(target)):
+        if any(re.fullmatch(r"\s*\(\s*", masked_target[m.end():found.start()]) and masked_target[found.end():found.end() + 1] == ")" for m in approved):
+            continue
         index = next((i for i, (_, start, end) in enumerate(words) if start <= found.start() < end), None)
         if index is None:
             return True

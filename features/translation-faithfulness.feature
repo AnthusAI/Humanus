@@ -296,6 +296,36 @@ Feature: A translation says what the original says
     When Humanus compares them
     Then an error "untranslated" finding is reported
 
+  Scenario Outline: The original in parentheses after the approved rendering is the original-on-first-mention convention, not a lost term
+    Given the source in "en":
+      """
+      <source>
+      """
+    And the translation in "es-419":
+      """
+      <translation>
+      """
+    And the "es-419" glossary lists "US" as "Estados Unidos" with the variant "EE. UU."
+    When Humanus compares them
+    Then no "glossary" finding is reported
+
+    Examples:
+      | source                                      | translation                                           |
+      | The study followed 715 users in the US.     | El estudio siguió a 715 usuarios en Estados Unidos (US). |
+
+  Scenario: The term left in a sentence beside the rendering, not in parentheses, is still held
+    Given the source in "en":
+      """
+      The study followed 715 users in the US.
+      """
+    And the translation in "es-419":
+      """
+      El estudio siguió a 715 usuarios en Estados Unidos y en el US.
+      """
+    And the "es-419" glossary lists "US" as "Estados Unidos" with the variant "EE. UU."
+    When Humanus compares them
+    Then an error "glossary" finding is reported
+
   Scenario: A locale's naming convention is respected without dropping the claim
     Given the source in "en":
       """
